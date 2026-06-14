@@ -1,0 +1,12 @@
+# Raw extracted text from restricted Barclays research (do not publish)
+pages_dump.txt
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
