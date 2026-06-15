@@ -28,7 +28,14 @@ pip install pandas numpy requests playwright
 playwright install chromium
 python analyze_sonia.py
 python build_sonia_dashboard.py
-# open sonia_dashboard.html
+python serve_sonia_dashboard.py   # opens http://127.0.0.1:8765/sonia_dashboard.html
+```
+
+**Don't double-click the HTML file** — browsers often block `file://` pages that load Chart.js from a CDN. Use the serve command above, or from the repo root:
+
+```bash
+python -m http.server 8765
+# then visit http://localhost:8765/sonia_dashboard.html
 ```
 
 ## Key findings
