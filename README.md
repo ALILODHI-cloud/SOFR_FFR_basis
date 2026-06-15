@@ -12,11 +12,23 @@ Analysis of the **FFR − SOFR** overnight basis (EFFR − SOFR, in bp) since SO
 - `index.html` — responsive (mobile + desktop) dashboard: verdict, distribution histogram,
   full history, autocorrelation cards, July seasonality, and the full trade write-up.
 - `basis_data.json` — computed snapshot used by the dashboard.
+- `analyze_sonia.py` — UK 1M SONIA Dec-27/Dec-26 slope, basis, Brent correlation & vol; writes `sonia_dashboard_data.json` (uses Playwright for ICE futures settles via Barchart).
+- `build_sonia_dashboard.py` — builds `sonia_dashboard.html` from that JSON.
+- `sonia_dashboard.html` — interactive UK rates monitor (50-session window, Chart.js hover tooltips).
 
 ## Reproduce
 ```bash
 python analyze.py        # refresh data + stats
 python build_app.py      # rebuild index.html
+```
+
+### SONIA slope / basis dashboard
+```bash
+pip install pandas numpy requests playwright
+playwright install chromium
+python analyze_sonia.py
+python build_sonia_dashboard.py
+# open sonia_dashboard.html
 ```
 
 ## Key findings
