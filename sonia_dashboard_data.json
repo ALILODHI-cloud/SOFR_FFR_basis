@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-15 02:30 UTC",
+  "generated_utc": "2026-06-18 03:37 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -11,62 +11,27 @@
     "dec27": "JUZ27 (ICE 1M SONIA Dec-27)"
   },
   "sources": {
-    "futures": "Barchart EOD settles (ICE via Barchart)",
+    "futures": "Barchart EOD settles (ICE 1M SONIA JUZ26 / JUZ27)",
     "sonia": "Bank of England IUDSOIA",
     "brent": "Yahoo Finance BZ=F"
   },
+  "data_end": "2026-06-17",
   "summary": {
-    "slope_bp": 3.0,
-    "basis_bp": 35.04,
-    "roll_corr_30": 0.616,
-    "basis_vol_ann": 82.98,
-    "brent": 87.33,
-    "dec26_rate": 4.08,
-    "dec27_rate": 4.11,
-    "slope_mean_50d": -5.28,
-    "slope_std_50d": 9.16,
-    "basis_mean_50d": 48.46,
+    "slope_bp": 0.5,
+    "basis_bp": 25.54,
+    "roll_corr_30": 0.524,
+    "basis_vol_ann": 78.1,
+    "brent": 79.55,
+    "dec26_rate": 3.985,
+    "dec27_rate": 3.99,
+    "slope_mean_50d": -4.16,
+    "slope_std_50d": 8.85,
+    "basis_mean_50d": 46.91,
     "n_days": 50,
-    "start": "2026-03-31",
-    "end": "2026-06-12"
+    "start": "2026-04-07",
+    "end": "2026-06-17"
   },
   "daily": [
-    {
-      "date": "2026-03-31",
-      "dec26_px": 95.67,
-      "dec27_px": 95.875,
-      "dec26_rate": 4.33,
-      "dec27_rate": 4.125,
-      "slope_bp": -20.5,
-      "basis_bp": 60.04,
-      "brent": 118.35,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
-    {
-      "date": "2026-04-01",
-      "dec26_px": 95.795,
-      "dec27_px": 95.93,
-      "dec26_rate": 4.205,
-      "dec27_rate": 4.07,
-      "slope_bp": -13.5,
-      "basis_bp": 47.53,
-      "brent": 101.16,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
-    {
-      "date": "2026-04-02",
-      "dec26_px": 95.77,
-      "dec27_px": 95.92,
-      "dec26_rate": 4.23,
-      "dec27_rate": 4.08,
-      "slope_bp": -15.0,
-      "basis_bp": 50.0,
-      "brent": 109.03,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
     {
       "date": "2026-04-07",
       "dec26_px": 95.645,
@@ -232,8 +197,8 @@
       "slope_bp": -13.5,
       "basis_bp": 54.45,
       "brent": 105.33,
-      "roll_corr_30": -0.357,
-      "basis_vol_ann": 262.4
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-04-27",
@@ -244,8 +209,8 @@
       "slope_bp": -13.5,
       "basis_bp": 54.93,
       "brent": 108.23,
-      "roll_corr_30": -0.374,
-      "basis_vol_ann": 261.04
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-04-28",
@@ -256,8 +221,8 @@
       "slope_bp": -12.5,
       "basis_bp": 59.94,
       "brent": 111.26,
-      "roll_corr_30": -0.369,
-      "basis_vol_ann": 261.19
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-04-29",
@@ -614,7 +579,7 @@
       "dec26_rate": 4.165,
       "dec27_rate": 4.215,
       "slope_bp": 5.0,
-      "basis_bp": 43.54,
+      "basis_bp": 43.45,
       "brent": 90.38,
       "roll_corr_30": 0.514,
       "basis_vol_ann": 89.23
@@ -626,10 +591,46 @@
       "dec26_rate": 4.08,
       "dec27_rate": 4.11,
       "slope_bp": 3.0,
-      "basis_bp": 35.04,
+      "basis_bp": 34.99,
       "brent": 87.33,
       "roll_corr_30": 0.616,
-      "basis_vol_ann": 82.98
+      "basis_vol_ann": 82.94
+    },
+    {
+      "date": "2026-06-15",
+      "dec26_px": 96.0,
+      "dec27_px": 95.98,
+      "dec26_rate": 4.0,
+      "dec27_rate": 4.02,
+      "slope_bp": 2.0,
+      "basis_bp": 27.04,
+      "brent": 83.17,
+      "roll_corr_30": 0.626,
+      "basis_vol_ann": 81.25
+    },
+    {
+      "date": "2026-06-16",
+      "dec26_px": 95.995,
+      "dec27_px": 95.95,
+      "dec26_rate": 4.005,
+      "dec27_rate": 4.05,
+      "slope_bp": 4.5,
+      "basis_bp": 27.54,
+      "brent": 78.96,
+      "roll_corr_30": 0.582,
+      "basis_vol_ann": 81.39
+    },
+    {
+      "date": "2026-06-17",
+      "dec26_px": 96.015,
+      "dec27_px": 96.01,
+      "dec26_rate": 3.985,
+      "dec27_rate": 3.99,
+      "slope_bp": 0.5,
+      "basis_bp": 25.54,
+      "brent": 79.55,
+      "roll_corr_30": 0.524,
+      "basis_vol_ann": 78.1
     }
   ]
 }

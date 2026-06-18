@@ -28,6 +28,9 @@ WINDOW_DAYS = 50
 ROLL_CORR = 30
 ROLL_VOL = 30
 ANN_FACTOR = np.sqrt(252)
+# Latest session to include (Barchart EOD). None = use last available in feed.
+DATA_END = date(2026, 6, 17)
+BARCHART_LIMIT = 200
 UA = {
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
@@ -84,39 +87,30 @@ def fetch_yahoo_daily(symbol: str, range_: str = "6mo") -> pd.Series:
     return pd.Series(out, name=symbol).sort_index()
 
 
-def fetch_barchart_eod(symbol: str, limit: int = 120) -> pd.DataFrame:
-    """Pull EOD settles from Barchart (needs headless browser for session cookies)."""
+def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame:
+    """Pull EOD settles from Barchart (ICE via Barchart historical API)."""
     from playwright.sync_api import sync_playwright
-
-    captured: list[dict] = []
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        ctx = browser.new_context(user_agent=UA["User-Agent"])
-        page = ctx.new_page()
-
-        def on_response(resp):
-            if "historical/get" in resp.url and symbol in resp.url and resp.status == 200:
-                try:
-                    captured.append(resp.json())
-                except Exception:
-                    pass
-
-        page.on("response", on_response)
-        page.goto(
-            f"https://www.barchart.com/futures/quotes/{symbol}/price-history/historical",
-            wait_until="networkidle",
+        page = browser.new_context(user_agent=UA["User-Agent"]).new_page()
+        with page.expect_response(
+            lambda r: "historical/get" in r.url and symbol in r.url and r.status == 200,
             timeout=90_000,
-        )
-        time.sleep(2)
+        ) as resp_info:
+            page.goto(
+                f"https://www.barchart.com/futures/quotes/{symbol}/price-history/historical",
+                wait_until="domcontentloaded",
+                timeout=90_000,
+            )
+        payload = resp_info.value.json()
+        time.sleep(1)
         browser.close()
-
-    if not captured or "data" not in captured[0]:
+    if not payload or "data" not in payload:
         raise RuntimeError(f"No Barchart history returned for {symbol}")
 
-    rows = captured[0]["data"][:limit]
     recs = []
-    for row in rows:
+    for row in payload["data"]:
         raw = row.get("raw") or {}
         d = raw.get("tradeTime") or row.get("tradeTime")
         if not d:
@@ -127,6 +121,7 @@ def fetch_barchart_eod(symbol: str, limit: int = 120) -> pd.DataFrame:
         recs.append({"date": pd.to_datetime(d), "price": float(px)})
     df = pd.DataFrame(recs).drop_duplicates("date").set_index("date").sort_index()
     df.index = df.index.normalize()
+    print(f"  {symbol}: {len(df)} Barchart rows, {df.index.min().date()} → {df.index.max().date()}")
     return df
 
 
@@ -140,18 +135,19 @@ def rolling_corr(a: pd.Series, b: pd.Series, window: int) -> pd.Series:
 
 
 def main() -> dict:
-    end = date.today()
+    end = DATA_END or date.today()
     start = end - timedelta(days=220)
 
     dec26 = fetch_barchart_eod("JUZ26")
     dec27 = fetch_barchart_eod("JUZ27")
-    sonia = fetch_sonia_spot(start, end)
+    sonia = fetch_sonia_spot(start, end + timedelta(days=5))
     brent = fetch_yahoo_daily("BZ=F", "6mo")
 
     dec26 = dec26.rename(columns={"price": "dec26_px"})
     dec27 = dec27.rename(columns={"price": "dec27_px"})
 
     df = dec26.join(dec27, how="inner")
+    df = df[df.index <= pd.Timestamp(end)]
     df = df.join(sonia, how="left")
     df = df.join(brent.rename("brent"), how="left")
     df = df.dropna(subset=["dec26_px", "dec27_px"])
@@ -226,10 +222,11 @@ def main() -> dict:
         },
         "contracts": {"dec26": "JUZ26 (ICE 1M SONIA Dec-26)", "dec27": "JUZ27 (ICE 1M SONIA Dec-27)"},
         "sources": {
-            "futures": "Barchart EOD settles (ICE via Barchart)",
+            "futures": "Barchart EOD settles (ICE 1M SONIA JUZ26 / JUZ27)",
             "sonia": "Bank of England IUDSOIA",
             "brent": "Yahoo Finance BZ=F",
         },
+        "data_end": end.isoformat(),
         "summary": summary,
         "daily": daily,
     }
