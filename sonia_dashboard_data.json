@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-19 16:31 UTC",
+  "generated_utc": "2026-06-19 17:07 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -25,14 +25,73 @@
     "dec26_rate": 4.175,
     "dec27_rate": 4.21,
     "in_window": true,
-    "pnl_slope_bp": 7.0
+    "pnl_slope_bp": 7.0,
+    "stats": {
+      "entry_date": "2026-06-05",
+      "exit_date": "2026-06-19",
+      "session_days": 10,
+      "calendar_days": 14,
+      "pnl_slope_bp": 7.0,
+      "pnl_gbp_per_pair": 87.5,
+      "return_gross_pct": 0.0088,
+      "return_margin_pct": 2.19,
+      "margin_assumed_gbp": 4000.0,
+      "cagr_margin_pct": 75.9,
+      "vol_ann_margin_pct": 16.3,
+      "sharpe_ann": 3.18,
+      "risk_free_pct": 3.5000000000000004,
+      "max_drawdown_gbp": -81.25,
+      "leg_pnl_bp": {
+        "long_dec26": 16.0,
+        "short_dec27": -9.0
+      },
+      "overall_move": {
+        "regime": "bull_steepening",
+        "label": "Bull steepening",
+        "dec26_bp": -16.0,
+        "dec27_bp": -9.0,
+        "slope_bp": 7.0
+      },
+      "pnl_from_steepening_bp": 17.0,
+      "pnl_from_flattening_bp": -10.0,
+      "regime_attribution": [
+        {
+          "regime": "bear_steepening",
+          "label": "Bear steepening",
+          "days": 4,
+          "pnl_slope_bp": 14.0,
+          "pnl_gbp": 175.0
+        },
+        {
+          "regime": "bull_flattening",
+          "label": "Bull flattening",
+          "days": 5,
+          "pnl_slope_bp": -10.0,
+          "pnl_gbp": -125.0
+        },
+        {
+          "regime": "mixed_steepening",
+          "label": "Mixed steepening",
+          "days": 1,
+          "pnl_slope_bp": 3.0,
+          "pnl_gbp": 37.5
+        }
+      ],
+      "dominant_regime": {
+        "regime": "bear_steepening",
+        "label": "Bear steepening",
+        "days": 4,
+        "pnl_slope_bp": 14.0,
+        "pnl_gbp": 175.0
+      }
+    }
   },
   "summary": {
     "slope_bp": 10.5,
     "basis_bp": 28.47,
-    "roll_corr_30": 0.525,
+    "roll_corr_30": 0.526,
     "basis_vol_ann": 71.03,
-    "brent": 80.6,
+    "brent": 80.65,
     "dec26_rate": 4.015,
     "dec27_rate": 4.12,
     "slope_mean_50d": -3.34,
@@ -639,8 +698,8 @@
       "dec27_rate": 4.12,
       "slope_bp": 10.5,
       "basis_bp": 28.47,
-      "brent": 80.6,
-      "roll_corr_30": 0.525,
+      "brent": 80.65,
+      "roll_corr_30": 0.526,
       "basis_vol_ann": 71.03
     }
   ]

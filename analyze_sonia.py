@@ -169,6 +169,157 @@ def rolling_corr(a: pd.Series, b: pd.Series, window: int) -> pd.Series:
     return a.rolling(window).corr(b)
 
 
+def classify_curve_move(d26: float, d27: float, dslope: float, eps: float = 0.25) -> str:
+    """Classify daily Dec26/Dec27 rate changes (bp). dslope = d27 - d26."""
+    if abs(dslope) < eps:
+        return "unchanged"
+    if dslope > 0:  # steepening
+        if d26 > eps and d27 > eps:
+            return "bear_steepening"
+        if d26 < -eps and d27 < -eps:
+            return "bull_steepening"
+        return "mixed_steepening"
+    # flattening
+    if d26 > eps and d27 > eps:
+        return "bear_flattening"
+    if d26 < -eps and d27 < -eps:
+        return "bull_flattening"
+    return "mixed_flattening"
+
+
+def compute_trade_stats(tail: pd.DataFrame, entry_date: str) -> dict | None:
+    """P&L and risk stats for Long Dec26 / Short Dec27 from entry EOD to latest."""
+    GBP_PER_BP = 12.50
+    FACE = 500_000.0
+    GROSS = 2 * FACE
+    MARGIN_RATE = 0.004
+    MARGIN = GROSS * MARGIN_RATE
+    RF = 0.035
+
+    if entry_date not in tail.index.strftime("%Y-%m-%d"):
+        return None
+
+    sub = tail.loc[tail.index >= pd.Timestamp(entry_date)].copy()
+    if len(sub) < 2:
+        return None
+
+    sub["d26_bp"] = sub["dec26_rate"].diff() * 100.0
+    sub["d27_bp"] = sub["dec27_rate"].diff() * 100.0
+    sub["dslope_bp"] = sub["slope_bp"].diff()
+    sub["pnl_gbp"] = sub["dslope_bp"] * GBP_PER_BP
+
+    entry_row = sub.iloc[0]
+    exit_row = sub.iloc[-1]
+    d26_tot = float(exit_row["dec26_rate"] - entry_row["dec26_rate"]) * 100.0
+    d27_tot = float(exit_row["dec27_rate"] - entry_row["dec27_rate"]) * 100.0
+    dslope_tot = float(exit_row["slope_bp"] - entry_row["slope_bp"])
+    pnl_gbp = dslope_tot * GBP_PER_BP
+
+    daily = sub.iloc[1:].copy()
+    daily["regime"] = [
+        classify_curve_move(float(a), float(b), float(c))
+        for a, b, c in zip(daily["d26_bp"], daily["d27_bp"], daily["dslope_bp"])
+    ]
+
+    regimes = [
+        "bear_steepening",
+        "bull_steepening",
+        "bear_flattening",
+        "bull_flattening",
+        "mixed_steepening",
+        "mixed_flattening",
+        "unchanged",
+    ]
+    regime_labels = {
+        "bear_steepening": "Bear steepening",
+        "bull_steepening": "Bull steepening",
+        "bear_flattening": "Bear flattening",
+        "bull_flattening": "Bull flattening",
+        "mixed_steepening": "Mixed steepening",
+        "mixed_flattening": "Mixed flattening",
+        "unchanged": "Unchanged",
+    }
+    attribution = []
+    for key in regimes:
+        mask = daily["regime"] == key
+        if not mask.any():
+            continue
+        bp = float(daily.loc[mask, "dslope_bp"].sum())
+        attribution.append(
+            {
+                "regime": key,
+                "label": regime_labels[key],
+                "days": int(mask.sum()),
+                "pnl_slope_bp": round(bp, 2),
+                "pnl_gbp": round(bp * GBP_PER_BP, 2),
+            }
+        )
+    attribution.sort(key=lambda x: abs(x["pnl_gbp"]), reverse=True)
+
+    overall_regime = classify_curve_move(d26_tot, d27_tot, dslope_tot, eps=0.5)
+    if dslope_tot > 0.5:
+        overall_label = regime_labels.get(overall_regime, overall_regime)
+    elif dslope_tot < -0.5:
+        overall_label = regime_labels.get(overall_regime, overall_regime)
+    else:
+        overall_label = "Flat"
+
+    rets = (daily["pnl_gbp"] / MARGIN).values
+    n = len(rets)
+    cal_days = (sub.index[-1] - sub.index[0]).days
+    total_margin_ret = pnl_gbp / MARGIN
+    cagr_margin = (1 + total_margin_ret) ** (365.25 / cal_days) - 1 if cal_days > 0 else None
+    ann_ret_margin = total_margin_ret * (252 / n) if n else None
+    vol_ann_margin = float(daily["pnl_gbp"].std(ddof=1) / MARGIN * np.sqrt(252)) if n > 1 else None
+    sharpe = (
+        (ann_ret_margin - RF) / vol_ann_margin
+        if ann_ret_margin is not None and vol_ann_margin and vol_ann_margin > 0
+        else None
+    )
+
+    cum = daily["pnl_gbp"].cumsum()
+    max_dd = float((cum - cum.cummax()).min()) if n else 0.0
+
+    steepening_pnl_bp = float(
+        daily.loc[daily["dslope_bp"] > 0, "dslope_bp"].sum()
+    ) if n else 0.0
+    flattening_pnl_bp = float(
+        daily.loc[daily["dslope_bp"] < 0, "dslope_bp"].sum()
+    ) if n else 0.0
+
+    return {
+        "entry_date": entry_date,
+        "exit_date": sub.index[-1].strftime("%Y-%m-%d"),
+        "session_days": n,
+        "calendar_days": cal_days,
+        "pnl_slope_bp": round(dslope_tot, 2),
+        "pnl_gbp_per_pair": round(pnl_gbp, 2),
+        "return_gross_pct": round(pnl_gbp / GROSS * 100, 4),
+        "return_margin_pct": round(total_margin_ret * 100, 2),
+        "margin_assumed_gbp": round(MARGIN, 0),
+        "cagr_margin_pct": round(cagr_margin * 100, 1) if cagr_margin is not None else None,
+        "vol_ann_margin_pct": round(vol_ann_margin * 100, 1) if vol_ann_margin else None,
+        "sharpe_ann": round(sharpe, 2) if sharpe is not None else None,
+        "risk_free_pct": RF * 100,
+        "max_drawdown_gbp": round(max_dd, 2),
+        "leg_pnl_bp": {
+            "long_dec26": round(-d26_tot, 2),
+            "short_dec27": round(d27_tot, 2),
+        },
+        "overall_move": {
+            "regime": overall_regime,
+            "label": overall_label,
+            "dec26_bp": round(d26_tot, 1),
+            "dec27_bp": round(d27_tot, 1),
+            "slope_bp": round(dslope_tot, 1),
+        },
+        "pnl_from_steepening_bp": round(steepening_pnl_bp, 2),
+        "pnl_from_flattening_bp": round(flattening_pnl_bp, 2),
+        "regime_attribution": attribution,
+        "dominant_regime": attribution[0] if attribution else None,
+    }
+
+
 def main() -> dict:
     end = DATA_END or date.today()
     start = end - timedelta(days=220)
@@ -234,6 +385,9 @@ def main() -> dict:
         trade_entry["dec27_rate"] = er["dec27_rate"]
         trade_entry["in_window"] = True
         trade_entry["pnl_slope_bp"] = round(last["slope_bp"] - er["slope_bp"], 2)
+        stats = compute_trade_stats(tail, TRADE_ENTRY_DATE)
+        if stats:
+            trade_entry["stats"] = stats
     else:
         trade_entry["in_window"] = False
 

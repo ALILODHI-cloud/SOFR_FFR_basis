@@ -32,13 +32,25 @@ header{padding:22px 18px;border:1px solid var(--line);border-radius:18px;
 h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .sub{color:var(--mut);font-size:14px;line-height:1.5}
 .grid{display:grid;gap:14px}
-@media(min-width:900px){.cols-4{grid-template-columns:repeat(4,1fr)}.cols-5{grid-template-columns:repeat(5,1fr)}.cols-2{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.cols-4{grid-template-columns:repeat(4,1fr)}.cols-5{grid-template-columns:repeat(5,1fr)}.cols-2{grid-template-columns:repeat(2,1fr)}.cols-3{grid-template-columns:repeat(3,1fr)}.cols-6{grid-template-columns:repeat(6,1fr)}}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
 .card h2{font-size:15px;margin:0 0 2px}
 .card .hint{color:var(--mut);font-size:12.5px;margin:0 0 12px;line-height:1.45}
 .stat{font-size:28px;font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
 .stat.green{color:var(--good)} .stat.amber{color:var(--warn)} .stat.red{color:var(--bad)} .stat.blue{color:var(--acc2)}
 .statlbl{color:var(--mut);font-size:12px;margin-top:4px}
+.stat.sm{font-size:22px}
+.card.trade{border-color:rgba(255,140,66,.35);background:linear-gradient(165deg,var(--card),rgba(255,140,66,.04))}
+.regimetable{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+.regimetable th,.regimetable td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+.regimetable td.num{text-align:right;font-variant-numeric:tabular-nums}
+.regimetable .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
+.tag-bear-steep{background:rgba(255,107,107,.15);color:#ff8a8a}
+.tag-bull-steep{background:rgba(57,217,138,.15);color:#5eeaa0}
+.tag-bear-flat{background:rgba(255,184,74,.15);color:#ffc966}
+.tag-bull-flat{background:rgba(74,168,255,.15);color:#7ec0ff}
+.tag-mixed{background:rgba(147,161,181,.15);color:#b0bdd0}
+.driversummary{font-size:13px;line-height:1.55;color:var(--ink);margin:0 0 12px;padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--line)}
 .chartbox{position:relative;width:100%;height:280px}
 .chartbox.tall{height:320px}
 .sectitle{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin:22px 4px 10px}
@@ -48,7 +60,7 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .chartlegend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mut);margin:0 0 10px}
 .chartlegend span{display:inline-flex;align-items:center;gap:6px}
 .chartlegend .swatch{width:22px;height:0;border-top:2px dashed var(--entry)}
-.chartlegend .dot{width:10px;height:10px;border-radius:50%;background:var(--entry);border:2px solid var(--bg)}
+.chartlegend .dot{width:6px;height:6px;border-radius:50%;background:var(--entry);border:1px solid var(--bg)}
 .foot{color:var(--mut);font-size:12px;margin-top:24px;line-height:1.65}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
 </style>
@@ -68,6 +80,26 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
     <span class="pill">Oil: Brent (BZ=F)</span>
   </div>
 </header>
+
+<div class="sectitle" id="tradeSectionTitle" style="display:none">Your trade &middot; since entry</div>
+<div class="grid cols-3" id="tradeStatsGrid" style="display:none"></div>
+<div class="grid cols-2" id="tradeDetailGrid" style="display:none">
+  <div class="card trade">
+    <h2>P&amp;L driver &mdash; curve regime</h2>
+    <p class="hint">Daily slope &Delta; attributed to bear/bull steepening or flattening (Dec26 vs Dec27 rate moves).</p>
+    <div id="driverSummary" class="driversummary"></div>
+    <div class="chartbox" style="height:220px"><canvas id="regimeChart"></canvas></div>
+  </div>
+  <div class="card trade">
+    <h2>Regime breakdown</h2>
+    <p class="hint">Session-level attribution of slope P&amp;L (£ per 1:1 contract pair).</p>
+    <table class="regimetable" id="regimeTbl">
+      <thead><tr><th>Regime</th><th class="num">Days</th><th class="num">P&amp;L (bp)</th><th class="num">P&amp;L (£)</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="note" id="tradeRiskNote"></p>
+  </div>
+</div>
 
 <div class="sectitle">Latest</div>
 <div class="grid cols-5">
@@ -112,8 +144,8 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="sectitle">Implied rates (rate space)</div>
 <div class="card">
   <h2>1M SONIA Dec-26 &amp; Dec-27 implied rates &mdash; last <span id="winLbl"></span> sessions</h2>
-  <p class="hint">ICE futures quoted as 100 &minus; rate; plotted here as implied % rates (not prices). Orange line = your entry (Fri 5 Jun).</p>
-  <div class="chartlegend"><span><i class="swatch"></i> Trade entry</span><span><i class="dot"></i> Entry session</span></div>
+  <p class="hint">ICE futures quoted as 100 &minus; rate. Thin orange dashed line = entry (Fri 5 Jun); small dot on entry session only.</p>
+  <div class="chartlegend"><span><i class="swatch"></i> Entry</span></div>
   <div class="chartbox tall"><canvas id="ratesChart"></canvas></div>
 </div>
 
@@ -217,9 +249,10 @@ const tipOpts = (digits=2, suffix='') => ({
   }
 });
 
-const ptR = (base) => labels.map((_, i) => (i === entryIdx ? 9 : base));
+const ptR = (base) => labels.map((_, i) => (i === entryIdx ? 4 : base));
 const ptBorder = (base, fill) => labels.map((_, i) => (i === entryIdx ? C.entry : fill));
 const ptBg = (base) => labels.map((_, i) => (i === entryIdx ? C.entry : base));
+const ptHover = (base) => labels.map((_, i) => (i === entryIdx ? 5 : base));
 
 const tradeEntryLinePlugin = {
   id: 'tradeEntryLine',
@@ -228,22 +261,108 @@ const tradeEntryLinePlugin = {
     const {ctx, chartArea: a, scales} = chart;
     const x = scales.x.getPixelForValue(entryIdx);
     ctx.save();
-    ctx.strokeStyle = C.entry;
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([7, 5]);
+    ctx.strokeStyle = 'rgba(255,140,66,.85)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
     ctx.beginPath();
     ctx.moveTo(x, a.top);
     ctx.lineTo(x, a.bottom);
     ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = C.entry;
-    ctx.font = 'bold 11px sans-serif';
-    ctx.fillText('ENTRY', x + 5, a.top + 14);
-    ctx.font = '10px sans-serif';
-    ctx.fillText(ENTRY.short_label.replace(' 2026', ''), x + 5, a.top + 28);
+    if (chart.canvas.id === 'slopeChart') {
+      ctx.fillStyle = C.entry;
+      ctx.font = '10px sans-serif';
+      ctx.fillText('Entry', x + 4, a.top + 12);
+    }
     ctx.restore();
   }
 };
+
+function regimeTagClass(key) {
+  if (key.startsWith('bear_steep')) return 'tag-bear-steep';
+  if (key.startsWith('bull_steep')) return 'tag-bull-steep';
+  if (key.startsWith('bear_flat')) return 'tag-bear-flat';
+  if (key.startsWith('bull_flat')) return 'tag-bull-flat';
+  return 'tag-mixed';
+}
+
+function renderTradeStats() {
+  const T = ENTRY && ENTRY.stats;
+  if (!T) return;
+  document.getElementById('tradeSectionTitle').style.display = '';
+  const grid = document.getElementById('tradeStatsGrid');
+  grid.style.display = '';
+  document.getElementById('tradeDetailGrid').style.display = '';
+
+  const fGbp = (x) => (x >= 0 ? '+' : '') + '£' + Math.abs(x).toFixed(0);
+  const cards = [
+    ['P&L (1 pair)', fGbp(T.pnl_gbp_per_pair), `${f1(T.pnl_slope_bp)} bp on slope`, T.pnl_gbp_per_pair >= 0 ? 'green' : 'red'],
+    ['Return on margin', f1(T.return_margin_pct) + '%', `~£${T.margin_assumed_gbp.toLocaleString()} assumed`, T.return_margin_pct >= 0 ? 'green' : 'red'],
+    ['Sharpe (ann.)', T.sharpe_ann == null ? '—' : f2(T.sharpe_ann), `rf ${T.risk_free_pct}% · ${T.session_days} sessions`, 'amber'],
+    ['Vol (ann.)', T.vol_ann_margin_pct == null ? '—' : f1(T.vol_ann_margin_pct) + '%', 'On margin returns', 'blue'],
+    ['CAGR (margin)', T.cagr_margin_pct == null ? '—' : f1(T.cagr_margin_pct) + '%', `${T.calendar_days} calendar days`, 'amber'],
+    ['Max drawdown', fGbp(T.max_drawdown_gbp), 'Intra-trade path', 'red'],
+  ];
+  grid.innerHTML = cards.map(([t, v, sub, cls]) =>
+    `<div class="card trade"><h2>${t}</h2><p class="hint">${ENTRY.position}</p>` +
+    `<div class="stat sm ${cls}">${v}</div><div class="statlbl">${sub}</div></div>`
+  ).join('');
+
+  const om = T.overall_move;
+  const dom = T.dominant_regime;
+  document.getElementById('driverSummary').innerHTML =
+    `<b>Overall move (${T.entry_date} → ${T.exit_date}):</b> ` +
+    `<span class="tag ${regimeTagClass(om.regime)}">${om.label}</span> — ` +
+    `Dec26 ${f1(om.dec26_bp)} bp, Dec27 ${f1(om.dec27_bp)} bp → slope ${f1(om.slope_bp)} bp. ` +
+    (dom ? `<b>Largest daily contributor:</b> ${dom.label} (${fGbp(dom.pnl_gbp)}, ${dom.days} session${dom.days>1?'s':''}). ` : '') +
+    `Steepening days ${f1(T.pnl_from_steepening_bp)} bp · flattening ${f1(T.pnl_from_flattening_bp)} bp.`;
+
+  const tbody = document.querySelector('#regimeTbl tbody');
+  tbody.innerHTML = '';
+  (T.regime_attribution || []).forEach(r => {
+    const tr = document.createElement('tr');
+    const cls = r.pnl_gbp >= 0 ? 'pos' : 'neg';
+    tr.innerHTML =
+      `<td><span class="tag ${regimeTagClass(r.regime)}">${r.label}</span></td>` +
+      `<td class="num">${r.days}</td>` +
+      `<td class="num ${cls}">${f1(r.pnl_slope_bp)}</td>` +
+      `<td class="num ${cls}">${fGbp(r.pnl_gbp)}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('tradeRiskNote').textContent =
+    `Leg P&L (bp): long Dec26 ${f1(T.leg_pnl_bp.long_dec26)}, short Dec27 ${f1(T.leg_pnl_bp.short_dec27)}. ` +
+    `Gross return ${T.return_gross_pct}% on £1m (2×£500k). Sharpe uses 3.5% rf on margin returns; short sample.`;
+
+  const REGIME_COLORS = {
+    bear_steepening: '#ff6b6b', bull_steepening: '#39d98a',
+    bear_flattening: '#ffb84a', bull_flattening: '#4aa8ff',
+    mixed_steepening: '#93a1b5', mixed_flattening: '#93a1b5', unchanged: '#56657a',
+  };
+  const attrs = T.regime_attribution || [];
+  new Chart(document.getElementById('regimeChart'), {
+    type: 'bar',
+    data: {
+      labels: attrs.map(a => a.label),
+      datasets: [{
+        label: 'P&L (£)',
+        data: attrs.map(a => a.pnl_gbp),
+        backgroundColor: attrs.map(a => REGIME_COLORS[a.regime] || '#93a1b5'),
+        borderWidth: 0
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: C.line }, title: { display: true, text: '£ per pair' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+}
+renderTradeStats();
 
 const lineOpts = (yLabel, suggestedMin, suggestedMax, tip=tipOpts()) => ({
   maintainAspectRatio: false,
@@ -275,7 +394,7 @@ new Chart(document.getElementById('ratesChart'), {
         pointRadius: ptR(2),
         pointBackgroundColor: ptBg(C.acc2),
         pointBorderColor: ptBorder(C.acc2, C.acc2),
-        pointHoverRadius: 7,
+        pointHoverRadius: ptHover(5),
         tension: 0.15
       },
       {
@@ -286,7 +405,7 @@ new Chart(document.getElementById('ratesChart'), {
         pointRadius: ptR(2),
         pointBackgroundColor: ptBg(C.warn),
         pointBorderColor: ptBorder(C.warn, C.warn),
-        pointHoverRadius: 7,
+        pointHoverRadius: ptHover(5),
         tension: 0.15
       }
     ]
@@ -319,7 +438,7 @@ new Chart(document.getElementById('slopeChart'), {
       pointRadius: ptR(2),
       pointBackgroundColor: ptBg(C.acc2),
       pointBorderColor: ptBorder(C.acc2, C.acc2),
-      pointHoverRadius: 7,
+      pointHoverRadius: ptHover(5),
       tension: 0.15,
       fill: true
     }]
@@ -347,7 +466,7 @@ new Chart(document.getElementById('corrChart'), {
       pointRadius: ptR(2),
       pointBackgroundColor: ptBg(C.warn),
       pointBorderColor: ptBorder(C.warn, C.warn),
-      pointHoverRadius: 7,
+      pointHoverRadius: ptHover(5),
       tension: 0.15,
       spanGaps: true
     }]
@@ -390,7 +509,7 @@ new Chart(document.getElementById('basisChart'), {
       pointRadius: ptR(2),
       pointBackgroundColor: ptBg(C.acc),
       pointBorderColor: ptBorder(C.acc, C.acc),
-      pointHoverRadius: 7,
+      pointHoverRadius: ptHover(5),
       tension: 0.15,
       fill: {target: 'origin', above: 'rgba(57,217,138,.08)', below: 'rgba(255,107,107,.10)'}
     }]
@@ -411,7 +530,7 @@ new Chart(document.getElementById('volChart'), {
       pointRadius: ptR(2),
       pointBackgroundColor: ptBg(C.good),
       pointBorderColor: ptBorder(C.good, C.good),
-      pointHoverRadius: 7,
+      pointHoverRadius: ptHover(5),
       tension: 0.15,
       spanGaps: true
     }]
