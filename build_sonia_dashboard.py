@@ -19,7 +19,7 @@ HTML = r"""<!DOCTYPE html>
 :root{
   --bg:#0b0f17; --card:#131a26; --card2:#0f1521; --line:#243043; --ink:#e8eef7;
   --mut:#93a1b5; --acc:#39d98a; --acc2:#4aa8ff; --warn:#ffb84a; --bad:#ff6b6b; --good:#39d98a;
-  --chip:#1b2536;
+  --chip:#1b2536; --entry:#ff8c42;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
@@ -44,6 +44,11 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .sectitle{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin:22px 4px 10px}
 .pill{display:inline-flex;align-items:center;gap:6px;background:var(--chip);border:1px solid var(--line);
   padding:6px 12px;border-radius:30px;font-size:12px;color:var(--mut);margin:4px 6px 0 0}
+.pill-entry{border-color:var(--entry);color:var(--entry);background:rgba(255,140,66,.12);font-weight:600}
+.chartlegend{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:var(--mut);margin:0 0 10px}
+.chartlegend span{display:inline-flex;align-items:center;gap:6px}
+.chartlegend .swatch{width:22px;height:0;border-top:2px dashed var(--entry)}
+.chartlegend .dot{width:10px;height:10px;border-radius:50%;background:var(--entry);border:2px solid var(--bg)}
 .foot{color:var(--mut);font-size:12px;margin-top:24px;line-height:1.65}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
 </style>
@@ -57,6 +62,7 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
   <div class="sub" id="asof"></div>
   <div style="margin-top:12px">
     <span class="pill" id="rangePill"></span>
+    <span class="pill pill-entry" id="entryPill"></span>
     <span class="pill">Futures: ICE 1M SONIA (JUZ26 / JUZ27)</span>
     <span class="pill">Spot: BoE SONIA</span>
     <span class="pill">Oil: Brent (BZ=F)</span>
@@ -106,21 +112,22 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="sectitle">Implied rates (rate space)</div>
 <div class="card">
   <h2>1M SONIA Dec-26 &amp; Dec-27 implied rates &mdash; last <span id="winLbl"></span> sessions</h2>
-  <p class="hint">ICE futures quoted as 100 &minus; rate; plotted here as implied % rates (not prices). Hover for date &amp; value.</p>
+  <p class="hint">ICE futures quoted as 100 &minus; rate; plotted here as implied % rates (not prices). Orange line = your entry (Fri 5 Jun).</p>
+  <div class="chartlegend"><span><i class="swatch"></i> Trade entry</span><span><i class="dot"></i> Entry session</span></div>
   <div class="chartbox tall"><canvas id="ratesChart"></canvas></div>
 </div>
 
 <div class="sectitle">Dec27 &minus; Dec26 slope (rate space)</div>
 <div class="card">
   <h2>Calendar slope = Dec-27 rate &minus; Dec-26 rate</h2>
-  <p class="hint">Spread in rate space (bp). Positive = Dec-27 implied above Dec-26. Hover for date &amp; value.</p>
+  <p class="hint">Spread in rate space (bp). Orange vertical line marks your Fri 5 Jun entry @ <span id="entrySlopeLbl"></span>.</p>
   <div class="chartbox tall"><canvas id="slopeChart"></canvas></div>
 </div>
 
 <div class="sectitle">Macro link</div>
 <div class="card">
   <h2>Rolling 30-day correlation: slope change vs Brent</h2>
-  <p class="hint">Correlation of daily slope change (bp) with Brent daily % return. Needs 30 observations to populate.</p>
+  <p class="hint">Correlation of daily slope change (bp) with Brent daily % return. Orange line = entry date.</p>
   <div class="chartbox tall"><canvas id="corrChart"></canvas></div>
 </div>
 
@@ -128,12 +135,12 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="grid cols-2">
   <div class="card">
     <h2>Dec26 cash&ndash;futures basis (bp)</h2>
-    <p class="hint">Futures implied rate minus same-day spot SONIA fixing.</p>
+    <p class="hint">Futures implied rate minus same-day spot SONIA fixing. Orange line = entry.</p>
     <div class="chartbox"><canvas id="basisChart"></canvas></div>
   </div>
   <div class="card">
     <h2>Annualised vol of daily basis changes</h2>
-    <p class="hint">30-day rolling stdev of daily basis changes, scaled to a one-year horizon (&times;&radic;252).</p>
+    <p class="hint">30-day rolling stdev of daily basis changes, scaled to a one-year horizon (&times;&radic;252). Orange line = entry.</p>
     <div class="chartbox"><canvas id="volChart"></canvas></div>
   </div>
 </div>
@@ -149,7 +156,7 @@ const f1 = (x) => (x == null || Number.isNaN(x)) ? '—' : ((x >= 0 ? '+' : '') 
 const fRate = (x) => (x == null || Number.isNaN(x)) ? '—' : x.toFixed(3) + '%';
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const C = {ink:css('--ink'),mut:css('--mut'),line:css('--line'),acc:css('--acc'),acc2:css('--acc2'),
-  warn:css('--warn'),bad:css('--bad'),good:css('--good')};
+  warn:css('--warn'),bad:css('--bad'),good:css('--good'),entry:css('--entry')};
 Chart.defaults.color = C.mut;
 Chart.defaults.font.family = "-apple-system,Segoe UI,Roboto,sans-serif";
 Chart.defaults.borderColor = C.line;
@@ -157,12 +164,27 @@ Chart.defaults.borderColor = C.line;
 const D = DATA.daily;
 const labels = D.map(r => r.date);
 const s = DATA.summary;
+const ENTRY = DATA.trade_entry || null;
+const entryIdx = ENTRY && ENTRY.in_window ? labels.indexOf(ENTRY.date) : -1;
 
 document.getElementById('asof').textContent =
   `Barchart EOD through ${s.end} (pulled ${DATA.generated_utc}). ` +
   `Dec26 ${s.dec26_rate.toFixed(3)}%, Dec27 ${s.dec27_rate.toFixed(3)}%, Brent $${s.brent.toFixed(2)}.`;
 document.getElementById('rangePill').textContent = `${s.n_days} sessions · ${s.start} → ${s.end}`;
 document.getElementById('winLbl').textContent = s.n_days;
+
+if (ENTRY && ENTRY.in_window) {
+  const pnl = ENTRY.pnl_slope_bp != null ? ` · P&L ${f1(ENTRY.pnl_slope_bp)} bp since entry` : '';
+  document.getElementById('entryPill').textContent =
+    `Entry ${ENTRY.short_label} · ${ENTRY.position} · slope ${f1(ENTRY.slope_bp)} bp${pnl}`;
+  const el = document.getElementById('entrySlopeLbl');
+  if (el) el.textContent = `${f1(ENTRY.slope_bp)} bp`;
+} else if (ENTRY) {
+  document.getElementById('entryPill').textContent =
+    `Entry ${ENTRY.short_label} (outside ${s.n_days}d window)`;
+} else {
+  document.getElementById('entryPill').style.display = 'none';
+}
 
 document.getElementById('kDec26').textContent = fRate(s.dec26_rate);
 document.getElementById('kDec26Sub').textContent = `JUZ26 · px ${D.at(-1).dec26_px.toFixed(3)}`;
@@ -187,10 +209,41 @@ const tipOpts = (digits=2, suffix='') => ({
   mode: 'index',
   intersect: false,
   callbacks: {
-    title: (items) => items[0].label,
+    title: (items) => {
+      const i = items[0].dataIndex;
+      return labels[i] + (i === entryIdx ? ' · YOUR ENTRY' : '');
+    },
     label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y == null ? '—' : ctx.parsed.y.toFixed(digits) + suffix}`
   }
 });
+
+const ptR = (base) => labels.map((_, i) => (i === entryIdx ? 9 : base));
+const ptBorder = (base, fill) => labels.map((_, i) => (i === entryIdx ? C.entry : fill));
+const ptBg = (base) => labels.map((_, i) => (i === entryIdx ? C.entry : base));
+
+const tradeEntryLinePlugin = {
+  id: 'tradeEntryLine',
+  afterDatasetsDraw(chart) {
+    if (entryIdx < 0) return;
+    const {ctx, chartArea: a, scales} = chart;
+    const x = scales.x.getPixelForValue(entryIdx);
+    ctx.save();
+    ctx.strokeStyle = C.entry;
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([7, 5]);
+    ctx.beginPath();
+    ctx.moveTo(x, a.top);
+    ctx.lineTo(x, a.bottom);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = C.entry;
+    ctx.font = 'bold 11px sans-serif';
+    ctx.fillText('ENTRY', x + 5, a.top + 14);
+    ctx.font = '10px sans-serif';
+    ctx.fillText(ENTRY.short_label.replace(' 2026', ''), x + 5, a.top + 28);
+    ctx.restore();
+  }
+};
 
 const lineOpts = (yLabel, suggestedMin, suggestedMax, tip=tipOpts()) => ({
   maintainAspectRatio: false,
@@ -219,8 +272,10 @@ new Chart(document.getElementById('ratesChart'), {
         data: D.map(r => r.dec26_rate),
         borderColor: C.acc2,
         borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 5,
+        pointRadius: ptR(2),
+        pointBackgroundColor: ptBg(C.acc2),
+        pointBorderColor: ptBorder(C.acc2, C.acc2),
+        pointHoverRadius: 7,
         tension: 0.15
       },
       {
@@ -228,8 +283,10 @@ new Chart(document.getElementById('ratesChart'), {
         data: D.map(r => r.dec27_rate),
         borderColor: C.warn,
         borderWidth: 2,
-        pointRadius: 2,
-        pointHoverRadius: 5,
+        pointRadius: ptR(2),
+        pointBackgroundColor: ptBg(C.warn),
+        pointBorderColor: ptBorder(C.warn, C.warn),
+        pointHoverRadius: 7,
         tension: 0.15
       }
     ]
@@ -245,7 +302,8 @@ new Chart(document.getElementById('ratesChart'), {
       x: {ticks: {maxTicksLimit: 10, autoSkip: true}, grid: {display: false}},
       y: {title: {display: true, text: 'implied rate (%)'}, grid: {color: C.line}}
     }
-  }
+  },
+  plugins: [tradeEntryLinePlugin]
 });
 
 new Chart(document.getElementById('slopeChart'), {
@@ -258,14 +316,16 @@ new Chart(document.getElementById('slopeChart'), {
       borderColor: C.acc2,
       backgroundColor: 'rgba(74,168,255,.12)',
       borderWidth: 2,
-      pointRadius: 2,
-      pointHoverRadius: 5,
+      pointRadius: ptR(2),
+      pointBackgroundColor: ptBg(C.acc2),
+      pointBorderColor: ptBorder(C.acc2, C.acc2),
+      pointHoverRadius: 7,
       tension: 0.15,
       fill: true
     }]
   },
   options: lineOpts('bp', undefined, undefined, tipOpts(2, ' bp')),
-  plugins: [{id: 'zero', afterDraw: (ch) => {
+  plugins: [tradeEntryLinePlugin, {id: 'zero', afterDraw: (ch) => {
     const {ctx, chartArea: a, scales} = ch;
     const yp = scales.y.getPixelForValue(0);
     ctx.save(); ctx.strokeStyle = C.mut; ctx.setLineDash([4,4]);
@@ -284,8 +344,10 @@ new Chart(document.getElementById('corrChart'), {
       data: D.map(r => r.roll_corr_30),
       borderColor: C.warn,
       borderWidth: 2,
-      pointRadius: 2,
-      pointHoverRadius: 5,
+      pointRadius: ptR(2),
+      pointBackgroundColor: ptBg(C.warn),
+      pointBorderColor: ptBorder(C.warn, C.warn),
+      pointHoverRadius: 7,
       tension: 0.15,
       spanGaps: true
     }]
@@ -297,13 +359,16 @@ new Chart(document.getElementById('corrChart'), {
       tooltip: {
         ...tipOpts(3),
         callbacks: {
-          title: (items) => items[0].label,
+          title: (items) => {
+            const i = items[0].dataIndex;
+            return labels[i] + (i === entryIdx ? ' · YOUR ENTRY' : '');
+          },
           label: (ctx) => `30d corr: ${ctx.parsed.y == null ? '—' : ctx.parsed.y.toFixed(3)}`
         }
       }
     }
   },
-  plugins: [{id: 'bands', afterDraw: (ch) => {
+  plugins: [tradeEntryLinePlugin, {id: 'bands', afterDraw: (ch) => {
     const {ctx, chartArea: a, scales} = ch;
     [-0.5, 0, 0.5].forEach(v => {
       const yp = scales.y.getPixelForValue(v);
@@ -322,13 +387,16 @@ new Chart(document.getElementById('basisChart'), {
       data: D.map(r => r.basis_bp),
       borderColor: C.acc,
       borderWidth: 2,
-      pointRadius: 2,
-      pointHoverRadius: 5,
+      pointRadius: ptR(2),
+      pointBackgroundColor: ptBg(C.acc),
+      pointBorderColor: ptBorder(C.acc, C.acc),
+      pointHoverRadius: 7,
       tension: 0.15,
       fill: {target: 'origin', above: 'rgba(57,217,138,.08)', below: 'rgba(255,107,107,.10)'}
     }]
   },
-  options: lineOpts('bp', undefined, undefined, tipOpts(2, ' bp'))
+  options: lineOpts('bp', undefined, undefined, tipOpts(2, ' bp')),
+  plugins: [tradeEntryLinePlugin]
 });
 
 new Chart(document.getElementById('volChart'), {
@@ -340,13 +408,16 @@ new Chart(document.getElementById('volChart'), {
       data: D.map(r => r.basis_vol_ann),
       borderColor: C.good,
       borderWidth: 2,
-      pointRadius: 2,
-      pointHoverRadius: 5,
+      pointRadius: ptR(2),
+      pointBackgroundColor: ptBg(C.good),
+      pointBorderColor: ptBorder(C.good, C.good),
+      pointHoverRadius: 7,
       tension: 0.15,
       spanGaps: true
     }]
   },
-  options: lineOpts('bp (ann.)', 0, undefined, tipOpts(2, ' bp'))
+  options: lineOpts('bp (ann.)', 0, undefined, tipOpts(2, ' bp')),
+  plugins: [tradeEntryLinePlugin]
 });
 
 document.getElementById('foot').innerHTML =
@@ -354,7 +425,11 @@ document.getElementById('foot').innerHTML =
   `${DATA.definitions.basis_bp} ` +
   `${DATA.definitions.roll_corr_30} ` +
   `${DATA.definitions.basis_vol_ann} ` +
-  `<b>Sources.</b> ${DATA.sources.futures}; ${DATA.sources.sonia}; ${DATA.sources.brent}. ` +
+  (ENTRY && ENTRY.in_window
+    ? `<b>Trade entry.</b> ${ENTRY.short_label}: ${ENTRY.position} at slope ${ENTRY.slope_bp} bp` +
+      (ENTRY.pnl_slope_bp != null ? `; mark-to-market ${ENTRY.pnl_slope_bp >= 0 ? '+' : ''}${ENTRY.pnl_slope_bp} bp on slope.` : '.')
+    : '') +
+  ` <b>Sources.</b> ${DATA.sources.futures}; ${DATA.sources.sonia}; ${DATA.sources.brent}. ` +
   `<b>Not investment advice.</b>`;
 </script>
 </body>

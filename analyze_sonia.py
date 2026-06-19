@@ -28,6 +28,13 @@ WINDOW_DAYS = 50
 ROLL_CORR = 30
 ROLL_VOL = 30
 ANN_FACTOR = np.sqrt(252)
+# Calendar-spread entry marker on dashboard (EOD settle date).
+TRADE_ENTRY_DATE = "2026-06-05"
+TRADE_ENTRY = {
+    "date": TRADE_ENTRY_DATE,
+    "short_label": "Fri 5 Jun 2026",
+    "position": "Long JUZ26 / Short JUZ27 (1:1)",
+}
 # Latest session to include. None = today (Barchart EOD capped to feed max).
 DATA_END: date | None = None
 BARCHART_LIMIT = 200
@@ -218,6 +225,18 @@ def main() -> dict:
     daily = [row_dict(idx, r) for idx, r in tail.iterrows()]
     last = daily[-1]
 
+    trade_entry = dict(TRADE_ENTRY)
+    entry_rows = [r for r in daily if r["date"] == TRADE_ENTRY_DATE]
+    if entry_rows:
+        er = entry_rows[0]
+        trade_entry["slope_bp"] = er["slope_bp"]
+        trade_entry["dec26_rate"] = er["dec26_rate"]
+        trade_entry["dec27_rate"] = er["dec27_rate"]
+        trade_entry["in_window"] = True
+        trade_entry["pnl_slope_bp"] = round(last["slope_bp"] - er["slope_bp"], 2)
+    else:
+        trade_entry["in_window"] = False
+
     summary = {
         "slope_bp": last["slope_bp"],
         "basis_bp": last["basis_bp"],
@@ -258,6 +277,7 @@ def main() -> dict:
         },
         "data_end": barchart_last.isoformat(),
         "fetched_on": date.today().isoformat(),
+        "trade_entry": trade_entry,
         "summary": summary,
         "daily": daily,
     }

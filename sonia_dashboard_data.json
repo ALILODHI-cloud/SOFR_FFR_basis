@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-19 16:03 UTC",
+  "generated_utc": "2026-06-19 16:31 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -17,12 +17,22 @@
   },
   "data_end": "2026-06-19",
   "fetched_on": "2026-06-19",
+  "trade_entry": {
+    "date": "2026-06-05",
+    "short_label": "Fri 5 Jun 2026",
+    "position": "Long JUZ26 / Short JUZ27 (1:1)",
+    "slope_bp": 3.5,
+    "dec26_rate": 4.175,
+    "dec27_rate": 4.21,
+    "in_window": true,
+    "pnl_slope_bp": 7.0
+  },
   "summary": {
     "slope_bp": 10.5,
     "basis_bp": 28.47,
-    "roll_corr_30": 0.521,
+    "roll_corr_30": 0.525,
     "basis_vol_ann": 71.03,
-    "brent": 80.44,
+    "brent": 80.6,
     "dec26_rate": 4.015,
     "dec27_rate": 4.12,
     "slope_mean_50d": -3.34,
@@ -629,8 +639,8 @@
       "dec27_rate": 4.12,
       "slope_bp": 10.5,
       "basis_bp": 28.47,
-      "brent": 80.44,
-      "roll_corr_30": 0.521,
+      "brent": 80.6,
+      "roll_corr_30": 0.525,
       "basis_vol_ann": 71.03
     }
   ]
