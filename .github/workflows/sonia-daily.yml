@@ -2,8 +2,9 @@ name: Refresh SONIA dashboard (daily)
 
 on:
   schedule:
-    # ~10:00 London (BST) on weekdays, after BoE SONIA publish
+    # Morning check (~10:00 London) + post-close (~18:30 London / 17:30 UTC)
     - cron: "0 9 * * 1-5"
+    - cron: "30 17 * * 1-5"
   workflow_dispatch:
 
 permissions:

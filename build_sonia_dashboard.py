@@ -159,7 +159,7 @@ const labels = D.map(r => r.date);
 const s = DATA.summary;
 
 document.getElementById('asof').textContent =
-  `Barchart EOD through ${DATA.data_end || s.end}. Generated ${DATA.generated_utc}. ` +
+  `Barchart EOD through ${s.end} (pulled ${DATA.generated_utc}). ` +
   `Dec26 ${s.dec26_rate.toFixed(3)}%, Dec27 ${s.dec27_rate.toFixed(3)}%, Brent $${s.brent.toFixed(2)}.`;
 document.getElementById('rangePill').textContent = `${s.n_days} sessions · ${s.start} → ${s.end}`;
 document.getElementById('winLbl').textContent = s.n_days;

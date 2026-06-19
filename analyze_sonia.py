@@ -147,6 +147,8 @@ def main() -> dict:
     dec27 = dec27.rename(columns={"price": "dec27_px"})
 
     df = dec26.join(dec27, how="inner")
+    barchart_last = df.index.max().date()
+    end = min(end, barchart_last) if DATA_END is None else end
     df = df[df.index <= pd.Timestamp(end)]
     df = df.join(sonia, how="left")
     df = df.join(brent.rename("brent"), how="left")
@@ -226,7 +228,8 @@ def main() -> dict:
             "sonia": "Bank of England IUDSOIA",
             "brent": "Yahoo Finance BZ=F",
         },
-        "data_end": end.isoformat(),
+        "data_end": barchart_last.isoformat(),
+        "fetched_on": date.today().isoformat(),
         "summary": summary,
         "daily": daily,
     }
