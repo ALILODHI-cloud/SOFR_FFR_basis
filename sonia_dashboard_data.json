@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-19 17:07 UTC",
+  "generated_utc": "2026-06-19 17:12 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -41,10 +41,124 @@
       "sharpe_ann": 3.18,
       "risk_free_pct": 3.5000000000000004,
       "max_drawdown_gbp": -81.25,
+      "legs": {
+        "dec26": {
+          "contract": "JUZ26",
+          "label": "Dec-26",
+          "side": "Long",
+          "entry_rate_pct": 4.175,
+          "exit_rate_pct": 4.015,
+          "rate_chg_bp": -16.0,
+          "entry_px": 95.825,
+          "exit_px": 95.985,
+          "px_chg": 0.16,
+          "price_return_pct": 0.167,
+          "spread_pnl_bp": 16.0,
+          "spread_pnl_gbp": 200.0
+        },
+        "dec27": {
+          "contract": "JUZ27",
+          "label": "Dec-27",
+          "side": "Short",
+          "entry_rate_pct": 4.21,
+          "exit_rate_pct": 4.12,
+          "rate_chg_bp": -9.0,
+          "entry_px": 95.79,
+          "exit_px": 95.88,
+          "px_chg": 0.09,
+          "price_return_pct": 0.094,
+          "spread_pnl_bp": -9.0,
+          "spread_pnl_gbp": -112.5
+        }
+      },
       "leg_pnl_bp": {
         "long_dec26": 16.0,
         "short_dec27": -9.0
       },
+      "slope_reconciliation": {
+        "dec27_minus_dec26_bp": 7.0,
+        "entry_slope_bp": 3.5,
+        "exit_slope_bp": 10.5
+      },
+      "trade_path": [
+        {
+          "date": "2026-06-05",
+          "dec26_rate": 4.175,
+          "dec27_rate": 4.21,
+          "slope_bp": 3.5,
+          "cum_pnl_gbp": 0.0
+        },
+        {
+          "date": "2026-06-08",
+          "dec26_rate": 4.195,
+          "dec27_rate": 4.26,
+          "slope_bp": 6.5,
+          "cum_pnl_gbp": 37.5
+        },
+        {
+          "date": "2026-06-09",
+          "dec26_rate": 4.165,
+          "dec27_rate": 4.22,
+          "slope_bp": 5.5,
+          "cum_pnl_gbp": 25.0
+        },
+        {
+          "date": "2026-06-10",
+          "dec26_rate": 4.17,
+          "dec27_rate": 4.24,
+          "slope_bp": 7.0,
+          "cum_pnl_gbp": 43.75
+        },
+        {
+          "date": "2026-06-11",
+          "dec26_rate": 4.165,
+          "dec27_rate": 4.215,
+          "slope_bp": 5.0,
+          "cum_pnl_gbp": 18.75
+        },
+        {
+          "date": "2026-06-12",
+          "dec26_rate": 4.08,
+          "dec27_rate": 4.11,
+          "slope_bp": 3.0,
+          "cum_pnl_gbp": -6.25
+        },
+        {
+          "date": "2026-06-15",
+          "dec26_rate": 4.0,
+          "dec27_rate": 4.02,
+          "slope_bp": 2.0,
+          "cum_pnl_gbp": -18.75
+        },
+        {
+          "date": "2026-06-16",
+          "dec26_rate": 4.005,
+          "dec27_rate": 4.05,
+          "slope_bp": 4.5,
+          "cum_pnl_gbp": 12.5
+        },
+        {
+          "date": "2026-06-17",
+          "dec26_rate": 3.985,
+          "dec27_rate": 3.99,
+          "slope_bp": 0.5,
+          "cum_pnl_gbp": -37.5
+        },
+        {
+          "date": "2026-06-18",
+          "dec26_rate": 3.98,
+          "dec27_rate": 4.015,
+          "slope_bp": 3.5,
+          "cum_pnl_gbp": 0.0
+        },
+        {
+          "date": "2026-06-19",
+          "dec26_rate": 4.015,
+          "dec27_rate": 4.12,
+          "slope_bp": 10.5,
+          "cum_pnl_gbp": 87.5
+        }
+      ],
       "overall_move": {
         "regime": "bull_steepening",
         "label": "Bull steepening",
@@ -89,9 +203,9 @@
   "summary": {
     "slope_bp": 10.5,
     "basis_bp": 28.47,
-    "roll_corr_30": 0.526,
+    "roll_corr_30": 0.525,
     "basis_vol_ann": 71.03,
-    "brent": 80.65,
+    "brent": 80.59,
     "dec26_rate": 4.015,
     "dec27_rate": 4.12,
     "slope_mean_50d": -3.34,
@@ -698,8 +812,8 @@
       "dec27_rate": 4.12,
       "slope_bp": 10.5,
       "basis_bp": 28.47,
-      "brent": 80.65,
-      "roll_corr_30": 0.526,
+      "brent": 80.59,
+      "roll_corr_30": 0.525,
       "basis_vol_ann": 71.03
     }
   ]

@@ -287,6 +287,39 @@ def compute_trade_stats(tail: pd.DataFrame, entry_date: str) -> dict | None:
         daily.loc[daily["dslope_bp"] < 0, "dslope_bp"].sum()
     ) if n else 0.0
 
+    def leg_detail(side: str, prefix: str, rate_chg_bp: float, spread_pnl_bp: float) -> dict:
+        e_rate = float(entry_row[f"{prefix}_rate"])
+        x_rate = float(exit_row[f"{prefix}_rate"])
+        e_px = float(entry_row[f"{prefix}_px"])
+        x_px = float(exit_row[f"{prefix}_px"])
+        px_chg = x_px - e_px
+        return {
+            "contract": "JUZ26" if prefix == "dec26" else "JUZ27",
+            "label": "Dec-26" if prefix == "dec26" else "Dec-27",
+            "side": side,
+            "entry_rate_pct": round(e_rate, 4),
+            "exit_rate_pct": round(x_rate, 4),
+            "rate_chg_bp": round(rate_chg_bp, 2),
+            "entry_px": round(e_px, 4),
+            "exit_px": round(x_px, 4),
+            "px_chg": round(px_chg, 4),
+            "price_return_pct": round(px_chg / e_px * 100, 4),
+            "spread_pnl_bp": round(spread_pnl_bp, 2),
+            "spread_pnl_gbp": round(spread_pnl_bp * GBP_PER_BP, 2),
+        }
+
+    trade_path = []
+    for idx, r in sub.iterrows():
+        trade_path.append(
+            {
+                "date": idx.strftime("%Y-%m-%d"),
+                "dec26_rate": round(float(r["dec26_rate"]), 4),
+                "dec27_rate": round(float(r["dec27_rate"]), 4),
+                "slope_bp": round(float(r["slope_bp"]), 2),
+                "cum_pnl_gbp": round(float((r["slope_bp"] - entry_row["slope_bp"]) * GBP_PER_BP), 2),
+            }
+        )
+
     return {
         "entry_date": entry_date,
         "exit_date": sub.index[-1].strftime("%Y-%m-%d"),
@@ -302,10 +335,20 @@ def compute_trade_stats(tail: pd.DataFrame, entry_date: str) -> dict | None:
         "sharpe_ann": round(sharpe, 2) if sharpe is not None else None,
         "risk_free_pct": RF * 100,
         "max_drawdown_gbp": round(max_dd, 2),
+        "legs": {
+            "dec26": leg_detail("Long", "dec26", d26_tot, -d26_tot),
+            "dec27": leg_detail("Short", "dec27", d27_tot, d27_tot),
+        },
         "leg_pnl_bp": {
             "long_dec26": round(-d26_tot, 2),
             "short_dec27": round(d27_tot, 2),
         },
+        "slope_reconciliation": {
+            "dec27_minus_dec26_bp": round(d27_tot - d26_tot, 2),
+            "entry_slope_bp": round(float(entry_row["slope_bp"]), 2),
+            "exit_slope_bp": round(float(exit_row["slope_bp"]), 2),
+        },
+        "trade_path": trade_path,
         "overall_move": {
             "regime": overall_regime,
             "label": overall_label,

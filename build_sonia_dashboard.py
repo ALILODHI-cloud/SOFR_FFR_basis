@@ -44,6 +44,7 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .regimetable{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
 .regimetable th,.regimetable td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
 .regimetable td.num{text-align:right;font-variant-numeric:tabular-nums}
+.regimetable tfoot td{font-weight:700;border-top:2px solid var(--line);padding-top:10px}
 .regimetable .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600}
 .tag-bear-steep{background:rgba(255,107,107,.15);color:#ff8a8a}
 .tag-bull-steep{background:rgba(57,217,138,.15);color:#5eeaa0}
@@ -83,6 +84,24 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 
 <div class="sectitle" id="tradeSectionTitle" style="display:none">Your trade &middot; since entry</div>
 <div class="grid cols-3" id="tradeStatsGrid" style="display:none"></div>
+<div class="card trade" id="legBreakdownCard" style="display:none">
+  <h2>Leg rate changes &mdash; entry to mark</h2>
+  <p class="hint">Implied rate (%) and ICE futures price at entry (Fri 5 Jun EOD) vs latest. Spread P&amp;L = short Dec27 contribution + long Dec26 contribution.</p>
+  <table class="regimetable" id="legTbl">
+    <thead><tr>
+      <th>Leg</th><th>Side</th>
+      <th class="num">Entry rate</th><th class="num">Exit rate</th><th class="num">Rate &Delta;</th>
+      <th class="num">Entry px</th><th class="num">Exit px</th><th class="num">Px &Delta;</th>
+      <th class="num">Spread P&amp;L</th>
+    </tr></thead>
+    <tbody></tbody>
+    <tfoot id="legTblFoot"></tfoot>
+  </table>
+  <div class="grid cols-2" style="margin-top:14px">
+    <div class="chartbox" style="height:240px"><canvas id="legRatesChart"></canvas></div>
+    <div class="chartbox" style="height:240px"><canvas id="tradePathChart"></canvas></div>
+  </div>
+</div>
 <div class="grid cols-2" id="tradeDetailGrid" style="display:none">
   <div class="card trade">
     <h2>P&amp;L driver &mdash; curve regime</h2>
@@ -308,6 +327,113 @@ function renderTradeStats() {
     `<div class="stat sm ${cls}">${v}</div><div class="statlbl">${sub}</div></div>`
   ).join('');
 
+  const L26 = T.legs.dec26;
+  const L27 = T.legs.dec27;
+  const legCard = document.getElementById('legBreakdownCard');
+  legCard.style.display = '';
+  const legBody = document.querySelector('#legTbl tbody');
+  legBody.innerHTML = '';
+  [L26, L27].forEach(L => {
+    const rc = L.rate_chg_bp >= 0 ? 'pos' : 'neg';
+    const pc = L.spread_pnl_bp >= 0 ? 'pos' : 'neg';
+    const tr = document.createElement('tr');
+    tr.innerHTML =
+      `<td><b>${L.label}</b> (${L.contract})</td><td>${L.side}</td>` +
+      `<td class="num">${L.entry_rate_pct.toFixed(3)}%</td>` +
+      `<td class="num">${L.exit_rate_pct.toFixed(3)}%</td>` +
+      `<td class="num ${rc}">${f1(L.rate_chg_bp)} bp</td>` +
+      `<td class="num">${L.entry_px.toFixed(3)}</td>` +
+      `<td class="num">${L.exit_px.toFixed(3)}</td>` +
+      `<td class="num ${rc}">${(L.px_chg >= 0 ? '+' : '') + L.px_chg.toFixed(3)} (${f1(L.price_return_pct)}%)</td>` +
+      `<td class="num ${pc}">${f1(L.spread_pnl_bp)} bp · ${fGbp(L.spread_pnl_gbp)}</td>`;
+    legBody.appendChild(tr);
+  });
+  const rec = T.slope_reconciliation;
+  document.getElementById('legTblFoot').innerHTML =
+    `<tr><td colspan="4"><b>Net spread (Dec27 − Dec26 rate)</b></td>` +
+    `<td class="num">${f1(rec.entry_slope_bp)} → ${f1(rec.exit_slope_bp)} bp</td>` +
+    `<td colspan="3"></td>` +
+    `<td class="num green"><b>${f1(T.pnl_slope_bp)} bp · ${fGbp(T.pnl_gbp_per_pair)}</b></td></tr>` +
+    `<tr><td colspan="9" class="note" style="border:none;padding-top:6px">` +
+    `Rate Δ: Dec27 ${f1(L27.rate_chg_bp)} − Dec26 ${f1(L26.rate_chg_bp)} = ${f1(rec.dec27_minus_dec26_bp)} bp on slope. ` +
+    `Long Dec26 wins when its rate falls (futures px rises); short Dec27 wins when Dec27 rate rises (px falls).</td></tr>`;
+
+  new Chart(document.getElementById('legRatesChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Dec-26 (long)', 'Dec-27 (short)'],
+      datasets: [
+        {
+          label: 'Entry rate (%)',
+          data: [L26.entry_rate_pct, L27.entry_rate_pct],
+          backgroundColor: 'rgba(147,161,181,.5)',
+        },
+        {
+          label: 'Exit rate (%)',
+          data: [L26.exit_rate_pct, L27.exit_rate_pct],
+          backgroundColor: [C.acc2, C.warn],
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'top' } },
+      scales: {
+        y: { title: { display: true, text: 'implied rate (%)' }, grid: { color: C.line } },
+        x: { grid: { display: false } },
+      },
+    },
+  });
+
+  const path = T.trade_path || [];
+  new Chart(document.getElementById('tradePathChart'), {
+    type: 'line',
+    data: {
+      labels: path.map(p => p.date),
+      datasets: [
+        {
+          label: 'Dec-26 rate (%)',
+          data: path.map(p => p.dec26_rate),
+          borderColor: C.acc2,
+          borderWidth: 2,
+          pointRadius: path.map(p => p.date === T.entry_date ? 4 : 1),
+          tension: 0.15,
+        },
+        {
+          label: 'Dec-27 rate (%)',
+          data: path.map(p => p.dec27_rate),
+          borderColor: C.warn,
+          borderWidth: 2,
+          pointRadius: path.map(p => p.date === T.entry_date ? 4 : 1),
+          tension: 0.15,
+        },
+        {
+          label: 'Cum P&L (£)',
+          data: path.map(p => p.cum_pnl_gbp),
+          borderColor: C.entry,
+          borderWidth: 2,
+          pointRadius: 1,
+          yAxisID: 'y1',
+          tension: 0.15,
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { position: 'top', labels: { boxWidth: 12 } } },
+      scales: {
+        x: { ticks: { maxTicksLimit: 8, autoSkip: true }, grid: { display: false } },
+        y: { title: { display: true, text: 'rate (%)' }, grid: { color: C.line } },
+        y1: {
+          position: 'right',
+          title: { display: true, text: 'cum P&L £' },
+          grid: { drawOnChartArea: false },
+        },
+      },
+    },
+  });
+
   const om = T.overall_move;
   const dom = T.dominant_regime;
   document.getElementById('driverSummary').innerHTML =
@@ -331,8 +457,7 @@ function renderTradeStats() {
   });
 
   document.getElementById('tradeRiskNote').textContent =
-    `Leg P&L (bp): long Dec26 ${f1(T.leg_pnl_bp.long_dec26)}, short Dec27 ${f1(T.leg_pnl_bp.short_dec27)}. ` +
-    `Gross return ${T.return_gross_pct}% on £1m (2×£500k). Sharpe uses 3.5% rf on margin returns; short sample.`;
+    `Sharpe uses 3.5% rf on margin returns (${T.session_days} sessions). Gross return ${T.return_gross_pct}% on £1m notional.`;
 
   const REGIME_COLORS = {
     bear_steepening: '#ff6b6b', bull_steepening: '#39d98a',
