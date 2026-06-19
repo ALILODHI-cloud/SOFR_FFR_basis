@@ -28,8 +28,8 @@ WINDOW_DAYS = 50
 ROLL_CORR = 30
 ROLL_VOL = 30
 ANN_FACTOR = np.sqrt(252)
-# Latest session to include (Barchart EOD). None = use last available in feed.
-DATA_END = date(2026, 6, 18)
+# Latest session to include. None = today (Barchart EOD capped to feed max).
+DATA_END: date | None = None
 BARCHART_LIMIT = 200
 UA = {
     "User-Agent": (

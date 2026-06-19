@@ -26,17 +26,18 @@ python build_app.py      # rebuild index.html
 ```bash
 pip install pandas numpy requests playwright
 playwright install chromium
-python analyze_sonia.py
+python analyze_sonia.py          # fetches latest Barchart EOD
 python build_sonia_dashboard.py
-python serve_sonia_dashboard.py   # opens http://127.0.0.1:8765/sonia_dashboard.html
+python serve_sonia_dashboard.py  # local only: http://127.0.0.1:8765/sonia_dashboard.html
 ```
 
-**Don't double-click the HTML file** — browsers often block `file://` pages that load Chart.js from a CDN. Use the serve command above, or from the repo root:
+**Automatic updates:** A GitHub Action (`.github/workflows/sonia-daily.yml`) refreshes from Barchart on **weekdays ~10:00 London** and redeploys to GitHub Pages — but only after you enable Pages once (repo **Settings → Pages → Source: GitHub Actions**).
 
-```bash
-python -m http.server 8765
-# then visit http://localhost:8765/sonia_dashboard.html
-```
+**Permanent link (after Pages enabled):** `https://alilodhi-cloud.github.io/SOFR_FFR_basis/`
+
+**Temporary cloud-agent links** (`*.trycloudflare.com`) expire when the agent session ends — do not rely on them.
+
+**Don't double-click the HTML file** — browsers often block `file://` pages loading Chart.js from a CDN. Use the serve command or GitHub Pages instead.
 
 ## Key findings
 - 99 months (Apr-2018 → Jun-2026). Mean ≈ +0.2bp, median ≈ +0.5bp, std ≈ 4.2bp.
