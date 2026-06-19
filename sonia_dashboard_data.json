@@ -22,7 +22,7 @@
     "basis_bp": 28.47,
     "roll_corr_30": 0.521,
     "basis_vol_ann": 71.03,
-    "brent": 80.4,
+    "brent": 80.44,
     "dec26_rate": 4.015,
     "dec27_rate": 4.12,
     "slope_mean_50d": -3.34,
@@ -629,7 +629,7 @@
       "dec27_rate": 4.12,
       "slope_bp": 10.5,
       "basis_bp": 28.47,
-      "brent": 80.4,
+      "brent": 80.44,
       "roll_corr_30": 0.521,
       "basis_vol_ann": 71.03
     }
