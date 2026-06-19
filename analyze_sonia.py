@@ -88,7 +88,7 @@ def fetch_yahoo_daily(symbol: str, range_: str = "6mo") -> pd.Series:
 
 
 def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame:
-    """Pull EOD settles from Barchart (ICE via Barchart historical API)."""
+    """Pull EOD history + latest Barchart quote for one contract."""
     from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
@@ -97,20 +97,40 @@ def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame
         with page.expect_response(
             lambda r: "historical/get" in r.url and symbol in r.url and r.status == 200,
             timeout=90_000,
-        ) as resp_info:
+        ) as hist_resp:
             page.goto(
                 f"https://www.barchart.com/futures/quotes/{symbol}/price-history/historical",
                 wait_until="domcontentloaded",
                 timeout=90_000,
             )
-        payload = resp_info.value.json()
-        time.sleep(1)
+        hist = hist_resp.value.json()
+        page.goto(
+            f"https://www.barchart.com/futures/quotes/{symbol}",
+            wait_until="networkidle",
+            timeout=90_000,
+        )
+        quote = page.evaluate(
+            """() => {
+              const html = document.documentElement.innerHTML;
+              const m = html.match(/"symbol":"SYMBOL"[^}]{0,800}/);
+              const block = m ? m[0] : '';
+              const price = block.match(/"lastPrice":([0-9.]+)/);
+              const t = block.match(/"tradeTime":"([^"]+)"/);
+              const session = html.match(/sessionDateDisplayLong[^A-Za-z0-9]+([A-Za-z]{3}, [^<]+)/);
+              return {
+                lastPrice: price ? +price[1] : null,
+                tradeTime: t ? t[1] : null,
+                sessionLabel: session ? session[1] : null,
+              };
+            }""".replace("SYMBOL", symbol)
+        )
         browser.close()
-    if not payload or "data" not in payload:
+
+    if not hist or "data" not in hist:
         raise RuntimeError(f"No Barchart history returned for {symbol}")
 
     recs = []
-    for row in payload["data"]:
+    for row in hist["data"]:
         raw = row.get("raw") or {}
         d = raw.get("tradeTime") or row.get("tradeTime")
         if not d:
@@ -119,9 +139,17 @@ def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame
         if px is None:
             px = float(str(row.get("lastPrice", "")).replace(",", ""))
         recs.append({"date": pd.to_datetime(d), "price": float(px)})
-    df = pd.DataFrame(recs).drop_duplicates("date").set_index("date").sort_index()
+
+    if quote.get("lastPrice") and quote.get("tradeTime"):
+        qd = pd.to_datetime(quote["tradeTime"])
+        recs.append({"date": qd, "price": float(quote["lastPrice"])})
+
+    df = pd.DataFrame(recs).drop_duplicates("date", keep="last").set_index("date").sort_index()
     df.index = df.index.normalize()
-    print(f"  {symbol}: {len(df)} Barchart rows, {df.index.min().date()} → {df.index.max().date()}")
+    print(
+        f"  {symbol}: {len(df)} rows, {df.index.min().date()} → {df.index.max().date()}"
+        + (f" (quote session: {quote.get('sessionLabel')})" if quote.get("sessionLabel") else "")
+    )
     return df
 
 

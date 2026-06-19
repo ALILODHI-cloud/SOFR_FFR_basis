@@ -22,22 +22,27 @@ python analyze.py        # refresh data + stats
 python build_app.py      # rebuild index.html
 ```
 
-### SONIA slope / basis dashboard
+### SONIA dashboard — permanent link + auto-refresh
+
+**One-time setup (you do this once):**
+1. Merge this branch to `main` (or ask the agent to)
+2. Open **https://github.com/ALILODHI-cloud/SOFR_FFR_basis/settings/pages**
+3. Set **Source → GitHub Actions**
+
+**Permanent URL:** https://alilodhi-cloud.github.io/SOFR_FFR_basis/
+
+GitHub Actions refreshes from **Barchart** twice on weekdays (~10:00 and ~18:30 London) and redeploys automatically. You can also trigger manually: **Actions → SONIA dashboard — fetch, build, deploy → Run workflow**.
+
+**Local refresh:**
 ```bash
-pip install pandas numpy requests playwright
+pip install -r requirements-sonia.txt
 playwright install chromium
-python analyze_sonia.py          # fetches latest Barchart EOD
+python analyze_sonia.py
 python build_sonia_dashboard.py
-python serve_sonia_dashboard.py  # local only: http://127.0.0.1:8765/sonia_dashboard.html
+python serve_sonia_dashboard.py   # http://127.0.0.1:8765/sonia_dashboard.html
 ```
 
-**Automatic updates:** A GitHub Action (`.github/workflows/sonia-daily.yml`) refreshes from Barchart on **weekdays ~10:00 London** and redeploys to GitHub Pages — but only after you enable Pages once (repo **Settings → Pages → Source: GitHub Actions**).
-
-**Permanent link (after Pages enabled):** `https://alilodhi-cloud.github.io/SOFR_FFR_basis/`
-
-**Temporary cloud-agent links** (`*.trycloudflare.com`) expire when the agent session ends — do not rely on them.
-
-**Don't double-click the HTML file** — browsers often block `file://` pages loading Chart.js from a CDN. Use the serve command or GitHub Pages instead.
+Do **not** use `*.trycloudflare.com` links — they expire when the cloud agent stops.
 
 ## Key findings
 - 99 months (Apr-2018 → Jun-2026). Mean ≈ +0.2bp, median ≈ +0.5bp, std ≈ 4.2bp.

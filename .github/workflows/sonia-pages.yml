@@ -1,8 +1,15 @@
-name: Refresh SONIA dashboard (daily)
+name: SONIA dashboard — fetch, build, deploy
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'analyze_sonia.py'
+      - 'build_sonia_dashboard.py'
+      - 'requirements-sonia.txt'
+      - '.github/workflows/sonia-pages.yml'
   schedule:
-    # Morning check (~10:00 London) + post-close (~18:30 London / 17:30 UTC)
+    # Weekdays: ~10:00 London + ~18:30 London (post ICE close)
     - cron: "0 9 * * 1-5"
     - cron: "30 17 * * 1-5"
   workflow_dispatch:
@@ -12,8 +19,12 @@ permissions:
   pages: write
   id-token: write
 
+concurrency:
+  group: sonia-pages
+  cancel-in-progress: false
+
 jobs:
-  refresh:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -24,10 +35,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install pandas numpy requests playwright
+          pip install -r requirements-sonia.txt
           playwright install chromium
 
-      - name: Fetch Barchart data and rebuild dashboard
+      - name: Fetch Barchart + rebuild dashboard
         run: |
           python analyze_sonia.py
           python build_sonia_dashboard.py
@@ -38,16 +49,16 @@ jobs:
         with:
           path: docs
 
-      - name: Commit refreshed JSON (if changed)
+      - name: Commit refreshed data (if changed)
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add sonia_dashboard_data.json sonia_dashboard.html docs/
-          git diff --staged --quiet || git commit -m "Auto-refresh SONIA dashboard $(date -u +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "Auto-refresh SONIA dashboard $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 
   deploy:
-    needs: refresh
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
