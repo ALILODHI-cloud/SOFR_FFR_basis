@@ -66,6 +66,16 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .chartlegend .dot{width:6px;height:6px;border-radius:50%;background:var(--entry);border:1px solid var(--bg)}
 .foot{color:var(--mut);font-size:12px;margin-top:24px;line-height:1.65}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
+.cumul-summary{font-size:13px;line-height:1.55;color:var(--ink);margin:0 0 12px;padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--line)}
+.stackwrap{margin:10px 0 16px}
+.stacklabel{display:flex;justify-content:space-between;font-size:12px;color:var(--mut);margin-bottom:4px}
+.stackbar{display:flex;height:26px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.stackbar span{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#0b0f17;min-width:2px}
+.stackbar .dec26{background:var(--acc2)}
+.stackbar .dec27{background:var(--warn)}
+.stacklegend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mut);margin:8px 0 0}
+.stacklegend span{display:inline-flex;align-items:center;gap:6px}
+.stacklegend i{width:10px;height:10px;border-radius:2px;display:inline-block}
 </style>
 </head>
 <body>
@@ -95,6 +105,37 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
     <thead><tr><th>Point on path</th><th class="num">Rate (%)</th><th class="num">vs Bank Rate (bp)</th><th>Market read</th></tr></thead>
     <tbody></tbody>
   </table>
+</div>
+
+<div class="sectitle">Cumulative through Dec-27</div>
+<div class="card policy">
+  <h2>Total hiking / cuts priced through Dec-27 &mdash; entry vs now</h2>
+  <p class="hint">Total = Dec-27 implied minus <b>3.75%</b> Bank Rate. Split into what is priced by <b>Dec-26</b> (front) vs the <b>Dec27&minus;Dec26</b> increment (back-end calendar slope).</p>
+  <div id="cumulSummary" class="cumul-summary"></div>
+  <table class="regimetable" id="cumulTbl">
+    <thead><tr>
+      <th>Component</th>
+      <th class="num">At entry (Fri 5 Jun)</th>
+      <th class="num">Now</th>
+      <th class="num">&Delta; since entry</th>
+      <th>Share of total (now)</th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="grid cols-2" style="margin-top:14px">
+    <div>
+      <div class="stacklabel"><span>At entry</span><span id="cumulEntryTotal"></span></div>
+      <div class="stackbar" id="cumulEntryBar"></div>
+    </div>
+    <div>
+      <div class="stacklabel"><span>Now</span><span id="cumulNowTotal"></span></div>
+      <div class="stackbar" id="cumulNowBar"></div>
+    </div>
+  </div>
+  <div class="stacklegend">
+    <span><i style="background:var(--acc2)"></i> Dec-26 portion (vs Bank)</span>
+    <span><i style="background:var(--warn)"></i> Dec27&minus;Dec26 increment (slope)</span>
+  </div>
   <div class="chartbox tall" style="margin-top:14px"><canvas id="policyChart"></canvas></div>
 </div>
 
@@ -234,6 +275,7 @@ const s = DATA.summary;
 const ENTRY = DATA.trade_entry || null;
 const entryIdx = ENTRY && ENTRY.in_window ? labels.indexOf(ENTRY.date) : -1;
 const POL = DATA.policy_pricing || null;
+const CUM = DATA.cumulative_through_dec27 || null;
 
 function fmtVsBank(bp) {
   if (bp == null || Number.isNaN(bp)) return '—';
@@ -298,6 +340,58 @@ if (POL) {
     `<tr><td>${name}</td><td class="num">${rate.toFixed(3)}%</td>` +
     `<td class="num">${fmtVsBank(bp)}</td><td>${txt}</td></tr>`
   ).join('');
+}
+
+function renderCumulativeDec27() {
+  if (!CUM || !CUM.current) return;
+  const cur = CUM.current;
+  const ent = CUM.entry || null;
+  const chg = CUM.change || null;
+
+  document.getElementById('cumulSummary').innerHTML =
+    `<b>Now:</b> ${cur.summary}` +
+    (ent ? `<br><b>At entry (${ent.date}):</b> ${ent.summary}` : '') +
+    (chg ? `<br><b>Change:</b> ${chg.summary}` : '');
+
+  const rows = [
+    ['Total through Dec-27', ent?.total_through_dec27_bp, cur.total_through_dec27_bp, chg?.total_through_dec27_bp, '100%'],
+    ['↳ Dec-26 portion (vs Bank)', ent?.dec26_portion_bp, cur.dec26_portion_bp, chg?.dec26_portion_bp,
+      cur.dec26_share_pct != null ? cur.dec26_share_pct + '%' : '—'],
+    ['↳ Dec27−Dec26 increment', ent?.dec27_increment_bp, cur.dec27_increment_bp, chg?.dec27_increment_bp,
+      cur.dec27_increment_share_pct != null ? cur.dec27_increment_share_pct + '%' : '—'],
+  ];
+  document.querySelector('#cumulTbl tbody').innerHTML = rows.map(([name, e, n, d, share]) =>
+    `<tr><td>${name}</td>` +
+    `<td class="num">${e != null ? fmtVsBank(e) : '—'}</td>` +
+    `<td class="num">${fmtVsBank(n)}</td>` +
+    `<td class="num">${d != null ? fmtVsBank(d) : '—'}</td>` +
+    `<td>${share}</td></tr>`
+  ).join('');
+
+  function fillStackBar(barId, totalId, snap) {
+    const totalEl = document.getElementById(totalId);
+    const barEl = document.getElementById(barId);
+    if (!snap || snap.total_through_dec27_bp == null) {
+      totalEl.textContent = '—';
+      barEl.innerHTML = '';
+      return;
+    }
+    totalEl.textContent = fmtVsBank(snap.total_through_dec27_bp);
+    const t = snap.total_through_dec27_bp;
+    if (Math.abs(t) < 0.01) {
+      barEl.innerHTML = '<span class="dec26" style="width:100%;background:var(--mut);color:var(--ink)">0 bp</span>';
+      return;
+    }
+    const d26 = Math.max(0, snap.dec26_share_pct || 0);
+    const d27 = Math.max(0, snap.dec27_increment_share_pct || 0);
+    const d26Lbl = d26 >= 12 ? `${snap.dec26_portion_bp >= 0 ? '+' : ''}${snap.dec26_portion_bp.toFixed(1)}` : '';
+    const d27Lbl = d27 >= 12 ? `${snap.dec27_increment_bp >= 0 ? '+' : ''}${snap.dec27_increment_bp.toFixed(1)}` : '';
+    barEl.innerHTML =
+      `<span class="dec26" style="width:${d26}%">${d26Lbl}</span>` +
+      `<span class="dec27" style="width:${d27}%">${d27Lbl}</span>`;
+  }
+  if (ent) fillStackBar('cumulEntryBar', 'cumulEntryTotal', ent);
+  fillStackBar('cumulNowBar', 'cumulNowTotal', cur);
 }
 
 document.getElementById('kDec26').textContent = fRate(s.dec26_rate);
@@ -633,6 +727,7 @@ const lineOpts = (yLabel, suggestedMin, suggestedMax, tip=tipOpts()) => ({
 });
 
 renderPolicyChart();
+renderCumulativeDec27();
 
 new Chart(document.getElementById('ratesChart'), {
   type: 'line',

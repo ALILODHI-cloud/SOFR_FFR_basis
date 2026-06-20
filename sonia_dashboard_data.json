@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-20 10:12 UTC",
+  "generated_utc": "2026-06-20 12:50 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -44,6 +44,38 @@
       "dec27_vs_bank_bp": -9.0,
       "entry_dec26_vs_bank_bp": 42.5,
       "entry_dec27_vs_bank_bp": 46.0
+    }
+  },
+  "cumulative_through_dec27": {
+    "definition": "Total hiking/cuts priced through Dec-27 = Dec-27 implied minus Bank Rate. Split: Dec-26 portion (Dec-26 vs Bank) + Dec27\u2212Dec26 increment (calendar slope).",
+    "bank_rate_pct": 3.75,
+    "current": {
+      "total_through_dec27_bp": 37.0,
+      "dec26_portion_bp": 26.5,
+      "dec27_increment_bp": 10.5,
+      "dec26_share_pct": 71.6,
+      "dec27_increment_share_pct": 28.4,
+      "summary": "+37.0 bp through Dec-27: Dec-26 +26.5 bp (71.6% of total) + Dec27\u2212Dec26 +10.5 bp (28.4%).",
+      "date": "2026-06-19",
+      "dec27_rate_pct": 4.12,
+      "dec26_rate_pct": 4.015
+    },
+    "entry": {
+      "total_through_dec27_bp": 46.0,
+      "dec26_portion_bp": 42.5,
+      "dec27_increment_bp": 3.5,
+      "dec26_share_pct": 92.4,
+      "dec27_increment_share_pct": 7.6,
+      "summary": "+46.0 bp through Dec-27: Dec-26 +42.5 bp (92.4% of total) + Dec27\u2212Dec26 +3.5 bp (7.6%).",
+      "date": "2026-06-05",
+      "dec27_rate_pct": 4.21,
+      "dec26_rate_pct": 4.175
+    },
+    "change": {
+      "total_through_dec27_bp": -9.0,
+      "dec26_portion_bp": -16.0,
+      "dec27_increment_bp": 7.0,
+      "summary": "Total -9.0 bp \u00b7 Dec-26 portion -16.0 bp \u00b7 Dec27\u2212Dec26 +7.0 bp."
     }
   },
   "trade_entry": {

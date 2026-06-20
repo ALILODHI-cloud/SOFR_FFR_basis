@@ -186,6 +186,35 @@ def pricing_plain(bp: float) -> str:
     return "In line with Bank Rate"
 
 
+def cumulative_through_dec27(
+    dec26_vs_bank_bp: float,
+    dec27_vs_bank_bp: float,
+    slope_bp: float,
+) -> dict:
+    """Decompose Dec-27 implied vs Bank into Dec-26 front + Dec27−Dec26 increment."""
+    total = round(dec27_vs_bank_bp, 2)
+    dec26_part = round(dec26_vs_bank_bp, 2)
+    dec27_incr = round(slope_bp, 2)
+    if abs(total) > 0.01:
+        dec26_share = round(dec26_part / total * 100.0, 1)
+        dec27_share = round(dec27_incr / total * 100.0, 1)
+    else:
+        dec26_share = dec27_share = None
+    return {
+        "total_through_dec27_bp": total,
+        "dec26_portion_bp": dec26_part,
+        "dec27_increment_bp": dec27_incr,
+        "dec26_share_pct": dec26_share,
+        "dec27_increment_share_pct": dec27_share,
+        "summary": (
+            f"{total:+.1f} bp through Dec-27: Dec-26 {dec26_part:+.1f} bp "
+            f"({dec26_share}% of total) + Dec27−Dec26 {dec27_incr:+.1f} bp ({dec27_share}%)."
+            if dec26_share is not None
+            else f"{total:+.1f} bp through Dec-27 (in line with policy)."
+        ),
+    }
+
+
 def classify_curve_move(d26: float, d27: float, dslope: float, eps: float = 0.25) -> str:
     """Classify daily Dec26/Dec27 rate changes (bp). dslope = d27 - d26."""
     if abs(dslope) < eps:
@@ -495,6 +524,42 @@ def main() -> dict:
             "entry_dec27_vs_bank_bp": er["dec27_vs_bank_bp"],
         }
 
+    current_cumulative = cumulative_through_dec27(d26_bank, d27_bank, last["slope_bp"])
+    cumulative_block: dict = {
+        "definition": (
+            "Total hiking/cuts priced through Dec-27 = Dec-27 implied minus Bank Rate. "
+            "Split: Dec-26 portion (Dec-26 vs Bank) + Dec27−Dec26 increment (calendar slope)."
+        ),
+        "bank_rate_pct": BANK_RATE_PCT,
+        "current": {
+            **current_cumulative,
+            "date": last["date"],
+            "dec27_rate_pct": last["dec27_rate"],
+            "dec26_rate_pct": last["dec26_rate"],
+        },
+    }
+    if entry_rows:
+        er = entry_rows[0]
+        entry_cumulative = cumulative_through_dec27(
+            er["dec26_vs_bank_bp"], er["dec27_vs_bank_bp"], er["slope_bp"]
+        )
+        cumulative_block["entry"] = {
+            **entry_cumulative,
+            "date": er["date"],
+            "dec27_rate_pct": er["dec27_rate"],
+            "dec26_rate_pct": er["dec26_rate"],
+        }
+        cumulative_block["change"] = {
+            "total_through_dec27_bp": round(d27_bank - er["dec27_vs_bank_bp"], 2),
+            "dec26_portion_bp": round(d26_bank - er["dec26_vs_bank_bp"], 2),
+            "dec27_increment_bp": round(last["slope_bp"] - er["slope_bp"], 2),
+            "summary": (
+                f"Total {round(d27_bank - er['dec27_vs_bank_bp'], 2):+.1f} bp · "
+                f"Dec-26 portion {round(d26_bank - er['dec26_vs_bank_bp'], 2):+.1f} bp · "
+                f"Dec27−Dec26 {round(last['slope_bp'] - er['slope_bp'], 2):+.1f} bp."
+            ),
+        }
+
     summary = {
         "slope_bp": last["slope_bp"],
         "basis_bp": last["basis_bp"],
@@ -543,6 +608,7 @@ def main() -> dict:
         "data_end": barchart_last.isoformat(),
         "fetched_on": date.today().isoformat(),
         "policy_pricing": policy_pricing,
+        "cumulative_through_dec27": cumulative_block,
         "trade_entry": trade_entry,
         "summary": summary,
         "daily": daily,
