@@ -35,6 +35,9 @@ TRADE_ENTRY = {
     "short_label": "Fri 5 Jun 2026",
     "position": "Long JUZ26 / Short JUZ27 (1:1)",
 }
+# BoE Bank Rate (policy). Update after each MPC; used for cuts/hikes priced in futures.
+BANK_RATE_PCT = 3.75
+BANK_RATE_AS_OF = "2026-06-18"
 # Latest session to include. None = today (Barchart EOD capped to feed max).
 DATA_END: date | None = None
 BARCHART_LIMIT = 200
@@ -167,6 +170,20 @@ def price_to_rate(price: pd.Series) -> pd.Series:
 
 def rolling_corr(a: pd.Series, b: pd.Series, window: int) -> pd.Series:
     return a.rolling(window).corr(b)
+
+
+def vs_bank_bp(implied_rate_pct: float, bank_rate_pct: float = BANK_RATE_PCT) -> float:
+    """Implied SONIA (%) minus Bank Rate (%), in bp. +ve = above policy (fewer cuts / hikes priced)."""
+    return round((implied_rate_pct - bank_rate_pct) * 100.0, 2)
+
+
+def pricing_plain(bp: float) -> str:
+    ab = abs(bp)
+    if bp >= 0.5:
+        return f"{ab:.1f} bp above Bank Rate — fewer cuts / higher SONIA priced"
+    if bp <= -0.5:
+        return f"{ab:.1f} bp below Bank Rate — cuts priced"
+    return "In line with Bank Rate"
 
 
 def classify_curve_move(d26: float, d27: float, dslope: float, eps: float = 0.25) -> str:
@@ -401,6 +418,8 @@ def main() -> dict:
     df["basis_vol_ann"] = df["basis_chg_bp"].rolling(ROLL_VOL).std() * ANN_FACTOR
 
     tail = df.tail(WINDOW_DAYS).copy()
+    tail["dec26_vs_bank_bp"] = (tail["dec26_rate"] - BANK_RATE_PCT) * 100.0
+    tail["dec27_vs_bank_bp"] = (tail["dec27_rate"] - BANK_RATE_PCT) * 100.0
 
     def row_dict(idx, r):
         return {
@@ -410,6 +429,9 @@ def main() -> dict:
             "dec26_rate": round(float(r["dec26_rate"]), 4),
             "dec27_rate": round(float(r["dec27_rate"]), 4),
             "slope_bp": round(float(r["slope_bp"]), 2),
+            "dec26_vs_bank_bp": round(float(r["dec26_vs_bank_bp"]), 2),
+            "dec27_vs_bank_bp": round(float(r["dec27_vs_bank_bp"]), 2),
+            "sonia_pct": round(float(r["sonia_pct"]), 4),
             "basis_bp": round(float(r["basis_bp"]), 2),
             "brent": round(float(r["brent"]), 2),
             "roll_corr_30": None if pd.isna(r["roll_corr_30"]) else round(float(r["roll_corr_30"]), 3),
@@ -426,6 +448,8 @@ def main() -> dict:
         trade_entry["slope_bp"] = er["slope_bp"]
         trade_entry["dec26_rate"] = er["dec26_rate"]
         trade_entry["dec27_rate"] = er["dec27_rate"]
+        trade_entry["dec26_vs_bank_bp"] = er["dec26_vs_bank_bp"]
+        trade_entry["dec27_vs_bank_bp"] = er["dec27_vs_bank_bp"]
         trade_entry["in_window"] = True
         trade_entry["pnl_slope_bp"] = round(last["slope_bp"] - er["slope_bp"], 2)
         stats = compute_trade_stats(tail, TRADE_ENTRY_DATE)
@@ -433,6 +457,43 @@ def main() -> dict:
             trade_entry["stats"] = stats
     else:
         trade_entry["in_window"] = False
+
+    spot_sonia = float(last["sonia_pct"])
+    d26_bank = vs_bank_bp(last["dec26_rate"])
+    d27_bank = vs_bank_bp(last["dec27_rate"])
+    policy_pricing = {
+        "bank_rate_pct": BANK_RATE_PCT,
+        "bank_rate_as_of": BANK_RATE_AS_OF,
+        "spot_sonia_pct": round(spot_sonia, 4),
+        "spot_vs_bank_bp": vs_bank_bp(spot_sonia),
+        "dec26": {
+            "contract": "JUZ26",
+            "label": "Dec-2026",
+            "implied_rate_pct": last["dec26_rate"],
+            "vs_bank_bp": d26_bank,
+            "summary": pricing_plain(d26_bank),
+        },
+        "dec27": {
+            "contract": "JUZ27",
+            "label": "Dec-2027",
+            "implied_rate_pct": last["dec27_rate"],
+            "vs_bank_bp": d27_bank,
+            "summary": pricing_plain(d27_bank),
+        },
+        "incremental_dec27_over_dec26_bp": last["slope_bp"],
+        "incremental_summary": (
+            f"Dec-27 implied {d27_bank:+.1f} bp vs Bank Rate; Dec-26 {d26_bank:+.1f} bp — "
+            f"back-end {last['slope_bp']:+.1f} bp above front."
+        ),
+    }
+    if entry_rows:
+        er = entry_rows[0]
+        policy_pricing["change_since_entry"] = {
+            "dec26_vs_bank_bp": round(d26_bank - er["dec26_vs_bank_bp"], 2),
+            "dec27_vs_bank_bp": round(d27_bank - er["dec27_vs_bank_bp"], 2),
+            "entry_dec26_vs_bank_bp": er["dec26_vs_bank_bp"],
+            "entry_dec27_vs_bank_bp": er["dec27_vs_bank_bp"],
+        }
 
     summary = {
         "slope_bp": last["slope_bp"],
@@ -442,6 +503,8 @@ def main() -> dict:
         "brent": last["brent"],
         "dec26_rate": last["dec26_rate"],
         "dec27_rate": last["dec27_rate"],
+        "dec26_vs_bank_bp": d26_bank,
+        "dec27_vs_bank_bp": d27_bank,
         "slope_mean_50d": round(float(tail["slope_bp"].mean()), 2),
         "slope_std_50d": round(float(tail["slope_bp"].std(ddof=1)), 2),
         "basis_mean_50d": round(float(tail["basis_bp"].mean()), 2),
@@ -465,6 +528,11 @@ def main() -> dict:
             "basis_vol_ann": (
                 f"{ROLL_VOL}-day rolling stdev of daily basis changes (bp), annualised ×√252."
             ),
+            "vs_bank_bp": (
+                "Implied futures rate minus current BoE Bank Rate (3.75%), in bp. "
+                "Positive = market prices SONIA above policy (fewer cuts / higher rates); "
+                "negative = cuts priced."
+            ),
         },
         "contracts": {"dec26": "JUZ26 (ICE 1M SONIA Dec-26)", "dec27": "JUZ27 (ICE 1M SONIA Dec-27)"},
         "sources": {
@@ -474,6 +542,7 @@ def main() -> dict:
         },
         "data_end": barchart_last.isoformat(),
         "fetched_on": date.today().isoformat(),
+        "policy_pricing": policy_pricing,
         "trade_entry": trade_entry,
         "summary": summary,
         "daily": daily,

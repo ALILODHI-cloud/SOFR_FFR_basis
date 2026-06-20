@@ -52,6 +52,8 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .tag-bull-flat{background:rgba(74,168,255,.15);color:#7ec0ff}
 .tag-mixed{background:rgba(147,161,181,.15);color:#b0bdd0}
 .driversummary{font-size:13px;line-height:1.55;color:var(--ink);margin:0 0 12px;padding:10px 12px;background:var(--card2);border-radius:10px;border:1px solid var(--line)}
+.card.policy{border-color:rgba(74,168,255,.25)}
+.pill-policy{border-color:var(--acc2);color:var(--acc2);background:rgba(74,168,255,.1)}
 .chartbox{position:relative;width:100%;height:280px}
 .chartbox.tall{height:320px}
 .sectitle{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin:22px 4px 10px}
@@ -76,11 +78,25 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
   <div style="margin-top:12px">
     <span class="pill" id="rangePill"></span>
     <span class="pill pill-entry" id="entryPill"></span>
+    <span class="pill pill-policy" id="policyPill"></span>
     <span class="pill">Futures: ICE 1M SONIA (JUZ26 / JUZ27)</span>
     <span class="pill">Spot: BoE SONIA</span>
     <span class="pill">Oil: Brent (BZ=F)</span>
   </div>
 </header>
+
+<div class="sectitle">Forward pricing vs Bank Rate</div>
+<div class="card policy">
+  <h2>Cuts / hikes priced in Dec-26 &amp; Dec-27 futures</h2>
+  <p class="hint">Versus BoE <b>Bank Rate 3.75%</b> (held 18 Jun 2026). Positive bp = implied SONIA <b>above</b> policy (fewer cuts / higher rates priced); negative = cuts priced.</p>
+  <div id="policySummary" class="driversummary"></div>
+  <div class="grid cols-4" id="policyKpiGrid"></div>
+  <table class="regimetable" id="policyPathTbl" style="margin-top:14px">
+    <thead><tr><th>Point on path</th><th class="num">Rate (%)</th><th class="num">vs Bank Rate (bp)</th><th>Market read</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="chartbox tall" style="margin-top:14px"><canvas id="policyChart"></canvas></div>
+</div>
 
 <div class="sectitle" id="tradeSectionTitle" style="display:none">Your trade &middot; since entry</div>
 <div class="grid cols-3" id="tradeStatsGrid" style="display:none"></div>
@@ -217,6 +233,18 @@ const labels = D.map(r => r.date);
 const s = DATA.summary;
 const ENTRY = DATA.trade_entry || null;
 const entryIdx = ENTRY && ENTRY.in_window ? labels.indexOf(ENTRY.date) : -1;
+const POL = DATA.policy_pricing || null;
+
+function fmtVsBank(bp) {
+  if (bp == null || Number.isNaN(bp)) return '—';
+  return (bp >= 0 ? '+' : '') + bp.toFixed(1) + ' bp';
+}
+function vsBankCls(bp) {
+  if (bp == null) return '';
+  if (bp >= 0.5) return 'amber';
+  if (bp <= -0.5) return 'green';
+  return 'blue';
+}
 
 document.getElementById('asof').textContent =
   `Barchart EOD through ${s.end} (pulled ${DATA.generated_utc}). ` +
@@ -237,16 +265,53 @@ if (ENTRY && ENTRY.in_window) {
   document.getElementById('entryPill').style.display = 'none';
 }
 
+if (POL) {
+  document.getElementById('policyPill').textContent =
+    `Bank Rate ${POL.bank_rate_pct.toFixed(2)}% · as of ${POL.bank_rate_as_of}`;
+  document.getElementById('policySummary').innerHTML =
+    `<b>Today’s futures</b> price average SONIA over the Dec-26 / Dec-27 contract windows. ` +
+    `Versus <b>${POL.bank_rate_pct}%</b> policy: Dec-26 <b>${fmtVsBank(POL.dec26.vs_bank_bp)}</b>, ` +
+    `Dec-27 <b>${fmtVsBank(POL.dec27.vs_bank_bp)}</b> ` +
+    `(back-end <b>${fmtVsBank(POL.incremental_dec27_over_dec26_bp)}</b> vs Dec-26). ` +
+    (POL.change_since_entry
+      ? `Since your entry: Dec-26 pricing ${fmtVsBank(POL.change_since_entry.dec26_vs_bank_bp)} · Dec-27 ${fmtVsBank(POL.change_since_entry.dec27_vs_bank_bp)}.`
+      : '');
+
+  const pk = [
+    ['Bank Rate (policy)', POL.bank_rate_pct.toFixed(2) + '%', `BoE · ${POL.bank_rate_as_of}`, 'blue'],
+    ['Spot SONIA', POL.spot_sonia_pct.toFixed(3) + '%', fmtVsBank(POL.spot_vs_bank_bp) + ' vs policy', vsBankCls(POL.spot_vs_bank_bp)],
+    ['Dec-26 implied', POL.dec26.implied_rate_pct.toFixed(3) + '%', fmtVsBank(POL.dec26.vs_bank_bp), vsBankCls(POL.dec26.vs_bank_bp)],
+    ['Dec-27 implied', POL.dec27.implied_rate_pct.toFixed(3) + '%', fmtVsBank(POL.dec27.vs_bank_bp), vsBankCls(POL.dec27.vs_bank_bp)],
+  ];
+  document.getElementById('policyKpiGrid').innerHTML = pk.map(([t, v, sub, cls]) =>
+    `<div class="card policy"><h2>${t}</h2><div class="stat sm ${cls}">${v}</div><div class="statlbl">${sub}</div></div>`
+  ).join('');
+
+  const pathRows = [
+    ['Bank Rate (now)', POL.bank_rate_pct, 0, 'Policy anchor'],
+    ['Spot SONIA (fixing)', POL.spot_sonia_pct, POL.spot_vs_bank_bp, POL.spot_vs_bank_bp >= 0 ? 'Cash above policy' : 'Cash below policy'],
+    ['Dec-26 future (JUZ26)', POL.dec26.implied_rate_pct, POL.dec26.vs_bank_bp, POL.dec26.summary],
+    ['Dec-27 future (JUZ27)', POL.dec27.implied_rate_pct, POL.dec27.vs_bank_bp, POL.dec27.summary],
+  ];
+  const ptbody = document.querySelector('#policyPathTbl tbody');
+  ptbody.innerHTML = pathRows.map(([name, rate, bp, txt]) =>
+    `<tr><td>${name}</td><td class="num">${rate.toFixed(3)}%</td>` +
+    `<td class="num">${fmtVsBank(bp)}</td><td>${txt}</td></tr>`
+  ).join('');
+}
+
 document.getElementById('kDec26').textContent = fRate(s.dec26_rate);
-document.getElementById('kDec26Sub').textContent = `JUZ26 · px ${D.at(-1).dec26_px.toFixed(3)}`;
+document.getElementById('kDec26Sub').textContent =
+  `JUZ26 · px ${D.at(-1).dec26_px.toFixed(3)} · ${fmtVsBank(s.dec26_vs_bank_bp)} vs 3.75% policy`;
 document.getElementById('kDec27').textContent = fRate(s.dec27_rate);
-document.getElementById('kDec27Sub').textContent = `JUZ27 · px ${D.at(-1).dec27_px.toFixed(3)}`;
+document.getElementById('kDec27Sub').textContent =
+  `JUZ27 · px ${D.at(-1).dec27_px.toFixed(3)} · ${fmtVsBank(s.dec27_vs_bank_bp)} vs 3.75% policy`;
 
 const kSlope = document.getElementById('kSlope');
 kSlope.textContent = f1(s.slope_bp) + ' bp';
 kSlope.className = 'stat ' + (s.slope_bp >= 0 ? 'green' : 'red');
 document.getElementById('kSlopeSub').textContent =
-  `= ${fRate(s.dec27_rate)} − ${fRate(s.dec26_rate)} · 50d μ ${f1(s.slope_mean_50d)}`;
+  `Dec27 ${fmtVsBank(s.dec27_vs_bank_bp)} vs policy · Dec26 ${fmtVsBank(s.dec26_vs_bank_bp)} · 50d μ ${f1(s.slope_mean_50d)}`;
 
 const kBasis = document.getElementById('kBasis');
 kBasis.textContent = f1(s.basis_bp) + ' bp';
@@ -296,6 +361,67 @@ const tradeEntryLinePlugin = {
     ctx.restore();
   }
 };
+
+function renderPolicyChart() {
+  if (!POL) return;
+  new Chart(document.getElementById('policyChart'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Dec-26 vs Bank Rate (bp)',
+          data: D.map(r => r.dec26_vs_bank_bp),
+          borderColor: C.acc2,
+          borderWidth: 2,
+          pointRadius: 1,
+          tension: 0.15,
+        },
+        {
+          label: 'Dec-27 vs Bank Rate (bp)',
+          data: D.map(r => r.dec27_vs_bank_bp),
+          borderColor: C.warn,
+          borderWidth: 2,
+          pointRadius: 1,
+          tension: 0.15,
+        },
+        {
+          label: 'Zero (in line with policy)',
+          data: labels.map(() => 0),
+          borderColor: 'rgba(147,161,181,.5)',
+          borderDash: [4, 4],
+          borderWidth: 1,
+          pointRadius: 0,
+        },
+      ],
+    },
+    options: {
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const v = ctx.parsed.y;
+              const lbl = ctx.dataset.label;
+              if (lbl.startsWith('Zero')) return 'Bank Rate level (0 bp)';
+              return `${lbl.split(' (')[0]}: ${fmtVsBank(v)}`;
+            },
+          },
+        },
+      },
+      scales: {
+        x: { ticks: { maxTicksLimit: 10, autoSkip: true }, grid: { display: false } },
+        y: {
+          title: { display: true, text: 'bp vs Bank Rate 3.75%' },
+          grid: { color: C.line },
+        },
+      },
+    },
+    plugins: [tradeEntryLinePlugin],
+  });
+}
 
 function regimeTagClass(key) {
   if (key.startsWith('bear_steep')) return 'tag-bear-steep';
@@ -506,6 +632,8 @@ const lineOpts = (yLabel, suggestedMin, suggestedMax, tip=tipOpts()) => ({
   }
 });
 
+renderPolicyChart();
+
 new Chart(document.getElementById('ratesChart'), {
   type: 'line',
   data: {
@@ -532,7 +660,16 @@ new Chart(document.getElementById('ratesChart'), {
         pointBorderColor: ptBorder(C.warn, C.warn),
         pointHoverRadius: ptHover(5),
         tension: 0.15
-      }
+      },
+      ...(POL ? [{
+        label: 'Bank Rate 3.75%',
+        data: labels.map(() => POL.bank_rate_pct),
+        borderColor: 'rgba(147,161,181,.65)',
+        borderDash: [6, 4],
+        borderWidth: 1.5,
+        pointRadius: 0,
+        tension: 0,
+      }] : []),
     ]
   },
   options: {
@@ -666,6 +803,7 @@ new Chart(document.getElementById('volChart'), {
 
 document.getElementById('foot').innerHTML =
   `<b>Definitions.</b> ${DATA.definitions.slope_bp} ` +
+  (DATA.definitions.vs_bank_bp ? `${DATA.definitions.vs_bank_bp} ` : '') +
   `${DATA.definitions.basis_bp} ` +
   `${DATA.definitions.roll_corr_30} ` +
   `${DATA.definitions.basis_vol_ann} ` +
