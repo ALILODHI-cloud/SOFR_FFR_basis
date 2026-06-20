@@ -1,6 +1,6 @@
 # UK SONIA Dec27−Dec26: Front-Loaded Hike Pricing and the Calendar Steepener
 
-At trade inception (Friday 5 June 2026 EOD), cumulative hiking priced through Dec-2027 sat at **+46 bp** versus the BoE Bank Rate of **3.75%** — but **92%** of that total was already embedded in Dec-2026, with only **+3.5 bp** in the Dec27−Dec26 calendar increment (Figure 1). That is an unusually front-loaded curve: the belly of the UK STIR complex had cheapened in an outsize manner relative to the back end, much as the EUR 10y sector cheapened versus 5s and 30s when mortgage convexity hedgers paid fixed in 2022.
+At trade inception (Friday 5 June 2026 EOD), cumulative hiking priced through Dec-2027 sat at **+46 bp** versus the BoE Bank Rate of **3.75%** — but **92%** of that total was already embedded in Dec-2026, with only **+3.5 bp** in the Dec27−Dec26 calendar increment (Figure 1). That is an unusually front-loaded curve: almost the entire hiking path sits in the front contract, and the calendar belly is barely priced for any further restriction beyond Dec-2026.
 
 *Figure 1. Cumulative through Dec-27 — stacked share bars at entry vs mark. At entry (5 Jun 2026): +46.0 bp total priced above 3.75% Bank Rate; +42.5 bp (92%) in Dec-26, +3.5 bp (8%) in Dec27−Dec26 increment. Dashboard section: “Cumulative through Dec-27”. Source: `sonia_dashboard.html` / `sonia_dashboard_data.json`.*
 
@@ -8,9 +8,9 @@ At trade inception (Friday 5 June 2026 EOD), cumulative hiking priced through De
 
 ---
 
-Banks are in the business of maturity transformation; they borrow short, and lend long. In the UK rates context, the analogue is not identical to the EUR mortgage-convexity story — SONIA futures reflect the market's expectation of average policy-rate settings over contract windows, not a bank's asset-liability duration gap directly. But the *market mechanism* rhymes: when participants believe the BoE must tighten materially, they pay fixed (or sell front-end futures), and the belly tends to bear the brunt of repricing before the back end catches up.
+ICE 1M SONIA futures are quoted as 100 minus the implied average SONIA rate over each contract window. When the market prices a hawkish BoE path, front-end contracts — here Dec-2026 — tend to absorb the bulk of the repricing before the back end moves. The implied rate on JUZ26 rises (the future falls), and the Dec27−Dec26 spread compresses unless Dec-2027 is repricing in lockstep.
 
-So the causal chain, as conventionally told, runs as follows: the Middle East conflict pushes up energy prices → headline CPI re-accelerates → the BoE must hike (or reverse previously priced cuts) → front-end SONIA futures cheapen → the Dec27−Dec26 slope compresses or inverts. A natural expression is to **pay fixed in the belly** — or, equivalently, to **short the front leg** of a Dec-26 / Dec-27 calendar spread.
+So the causal chain, as conventionally told, runs as follows: the Middle East conflict pushes up energy prices → headline CPI re-accelerates → the BoE must hike (or reverse previously priced cuts) → Dec-2026 implied rates rise further → the Dec27−Dec26 slope compresses or inverts. A natural expression is to **sell the front leg** of a Dec-26 / Dec-27 calendar spread — or, in swap space, to **pay fixed** at the Dec-2026 point.
 
 But in fact one step is missing. That conclusion only follows if: **(i)** the BoE's required policy response is genuinely hawkish relative to what is already priced; and **(ii)** that response must fall disproportionately on the front end of the curve (Dec-2026), rather than being absorbed by a repricing of the back end alone. Absent **(i)**, the entire hiking narrative is moot — the curve is fairly priced and there is nothing to pay. Absent **(ii)**, even a modest tightening requirement would widen the Dec27−Dec26 increment rather than crush it, and the correct trade is the opposite of belly-paying: **long Dec-26 / short Dec-27**, i.e. a bull steepener.
 
@@ -42,7 +42,7 @@ Macro releases available at inception undercut **Scenario C** and support **A/B*
 - **S&P Global UK Services PMI** (final, 3 Jun): **49.3** in May (from **52.7** in Apr) — first contraction since Apr 2025; new orders down three months running.
 - **Retail sales, Great Britain: April 2026** (ONS, 22 May): volumes **−1.3% m/m** (consensus **−0.6%**); ex-fuel **−0.4%**.
 
-The question then stands: with the BoE holding at **3.75%** (8–1 at April MPC; Megan Greene the sole dissenter for +25 bp) and financial conditions already **~55 bp tighter** than February, can we expect another wave of front-end hike pricing — and thus paying in the Dec-26 belly — as witnessed when energy shocks last forced the curve to reprice?
+The question then stands: with the BoE holding at **3.75%** (8–1 at April MPC; Megan Greene the sole dissenter for +25 bp) and financial conditions already **~55 bp tighter** than February, can we expect another wave of front-end hike pricing — and thus further selling of Dec-2026 versus Dec-2027 — as the energy shock works through?
 
 Well, we need just check whether **(i)** and **(ii)** obtain. Though not quite just that. Though true the macro data favour **A/B**, we need also know the **extant pricing** in SONIA futures: maybe the front end is *already* too hawkish — perhaps because markets front-ran a Scenario C that the BoE explicitly rejects, or because the **~55 bp** of market tightening since February was loaded into Dec-2026 rather than distributed across the curve — in which case we should expect not paying but **unwinding**: Dec-26 implied rates fall faster than Dec-27, and the Dec27−Dec26 slope **widens**.
 
@@ -52,7 +52,7 @@ So in reality one must know:
 2. **Which BoE scenario the curve embeds** — A/B (reverse priced cuts, active hold) vs C (material second-round effects, Bank Rate toward ~5.25%);
 3. **Whether incoming data confirm or refute second-round pass-through** — labour slack, services CPI, inflation expectations, activity PMIs.
 
-It is only after furnishing answers to these questions that one may propose doing some **steepening** of their own — long Dec-26 / short Dec-27 in the belly of the UK SONIA curve.
+It is only after furnishing answers to these questions that one may propose doing some **steepening** of their own — long Dec-26 / short Dec-27 on the UK SONIA curve.
 
 ---
 
