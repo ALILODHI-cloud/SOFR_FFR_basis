@@ -209,6 +209,9 @@ def main() -> dict:
             "dec26_rate": round(float(r["dec26_rate"]), 4),
             "dec27_rate": round(float(r["dec27_rate"]), 4),
             "slope_bp": round(float(r["slope_bp"]), 2),
+            "slope_chg_bp": None
+            if pd.isna(r["slope_chg_bp"])
+            else round(float(r["slope_chg_bp"]), 2),
             "basis_bp": round(float(r["basis_bp"]), 2),
             "brent": round(float(r["brent"]), 2),
             "roll_corr_30": None if pd.isna(r["roll_corr_30"]) else round(float(r["roll_corr_30"]), 3),
@@ -218,8 +221,32 @@ def main() -> dict:
     daily = [row_dict(idx, r) for idx, r in tail.iterrows()]
     last = daily[-1]
 
+    chg = tail["slope_chg_bp"].dropna()
+    abs_chg = chg.abs()
+    latest_chg = tail["slope_chg_bp"].iloc[-1]
+    top_moves = []
+    moves_df = tail.dropna(subset=["slope_chg_bp"]).copy()
+    moves_df["abs_chg"] = moves_df["slope_chg_bp"].abs()
+    for idx, r in moves_df.nlargest(5, "abs_chg").iterrows():
+        top_moves.append(
+            {
+                "date": idx.strftime("%Y-%m-%d"),
+                "slope_chg_bp": round(float(r["slope_chg_bp"]), 2),
+                "slope_bp": round(float(r["slope_bp"]), 2),
+            }
+        )
+
     summary = {
         "slope_bp": last["slope_bp"],
+        "slope_chg_bp": None if pd.isna(latest_chg) else round(float(latest_chg), 2),
+        "slope_chg_rank": None
+        if pd.isna(latest_chg)
+        else int((abs_chg >= abs(float(latest_chg))).sum()),
+        "slope_chg_n": int(len(chg)),
+        "slope_chg_mean_50d": round(float(chg.mean()), 2),
+        "slope_chg_std_50d": round(float(chg.std(ddof=1)), 2) if len(chg) > 1 else None,
+        "slope_chg_p90_abs": round(float(abs_chg.quantile(0.9)), 2) if len(chg) else None,
+        "top_slope_moves": top_moves,
         "basis_bp": last["basis_bp"],
         "roll_corr_30": last["roll_corr_30"],
         "basis_vol_ann": last["basis_vol_ann"],
@@ -248,6 +275,10 @@ def main() -> dict:
             ),
             "basis_vol_ann": (
                 f"{ROLL_VOL}-day rolling stdev of daily basis changes (bp), annualised ×√252."
+            ),
+            "slope_chg_bp": (
+                "Day-over-day change in the Dec27−Dec26 slope (bp). "
+                "Large moves are highlighted vs the 50-session window."
             ),
         },
         "contracts": {"dec26": "JUZ26 (ICE 1M SONIA Dec-26)", "dec27": "JUZ27 (ICE 1M SONIA Dec-27)"},

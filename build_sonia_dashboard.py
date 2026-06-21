@@ -46,6 +46,13 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
   padding:6px 12px;border-radius:30px;font-size:12px;color:var(--mut);margin:4px 6px 0 0}
 .foot{color:var(--mut);font-size:12px;margin-top:24px;line-height:1.65}
 .note{font-size:12px;color:var(--mut);margin-top:8px}
+.movetable{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.movetable th,.movetable td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+.movetable th{color:var(--mut);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.movetable td.num{font-variant-numeric:tabular-nums;text-align:right}
+.movetable tr.highlight td{background:rgba(255,184,74,.08)}
+.movetable .big{font-weight:700}
+.pos{color:var(--good)} .neg{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -84,6 +91,12 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
     <div class="statlbl" id="kSlopeSub"></div>
   </div>
   <div class="card">
+    <h2>Daily slope &Delta;</h2>
+    <p class="hint">Change vs prior session (bp)</p>
+    <div class="stat" id="kSlopeChg"></div>
+    <div class="statlbl" id="kSlopeChgSub"></div>
+  </div>
+  <div class="card">
     <h2>Cash&ndash;futures basis</h2>
     <p class="hint">Dec26 implied &minus; spot SONIA (bp)</p>
     <div class="stat" id="kBasis"></div>
@@ -113,8 +126,25 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="sectitle">Dec27 &minus; Dec26 slope (rate space)</div>
 <div class="card">
   <h2>Calendar slope = Dec-27 rate &minus; Dec-26 rate</h2>
-  <p class="hint">Spread in rate space (bp). Positive = Dec-27 implied above Dec-26. Hover for date &amp; value.</p>
+  <p class="hint">Spread in rate space (bp). Large daily moves (&ge; p90) shown as larger dots. Hover for level and daily &Delta;.</p>
   <div class="chartbox tall"><canvas id="slopeChart"></canvas></div>
+</div>
+
+<div class="sectitle">Daily slope changes</div>
+<div class="grid cols-2">
+  <div class="card">
+    <h2>Day-over-day slope &Delta; (bp)</h2>
+    <p class="hint">Green = steepening; red = flattening. Bars at or above the dashed line are top-decile moves in this window.</p>
+    <div class="chartbox tall"><canvas id="slopeChgChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>Largest |slope &Delta;| in window</h2>
+    <p class="hint">Top 5 daily moves ranked by absolute change. Latest session highlighted.</p>
+    <table class="movetable" id="topMovesTbl">
+      <thead><tr><th>Date</th><th class="num">Slope &Delta;</th><th class="num">Level</th><th class="num">Rank</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
 </div>
 
 <div class="sectitle">Macro link</div>
@@ -175,6 +205,21 @@ kSlope.className = 'stat ' + (s.slope_bp >= 0 ? 'green' : 'red');
 document.getElementById('kSlopeSub').textContent =
   `= ${fRate(s.dec27_rate)} − ${fRate(s.dec26_rate)} · 50d μ ${f1(s.slope_mean_50d)}`;
 
+const kSlopeChg = document.getElementById('kSlopeChg');
+const chg = s.slope_chg_bp;
+if (chg == null) {
+  kSlopeChg.textContent = '—';
+  document.getElementById('kSlopeChgSub').textContent = 'First session in window';
+} else {
+  kSlopeChg.textContent = f1(chg) + ' bp';
+  kSlopeChg.className = 'stat ' + (Math.abs(chg) >= (s.slope_chg_p90_abs || 999) ? 'amber' : (chg >= 0 ? 'green' : 'red'));
+  const rankTxt = s.slope_chg_rank != null
+    ? `#${s.slope_chg_rank} of ${s.slope_chg_n} by |move|`
+    : '';
+  document.getElementById('kSlopeChgSub').textContent =
+    `${rankTxt} · 50d σ ${f1(s.slope_chg_std_50d)} · p90 |Δ| ${f1(s.slope_chg_p90_abs)}`;
+}
+
 const kBasis = document.getElementById('kBasis');
 kBasis.textContent = f1(s.basis_bp) + ' bp';
 kBasis.className = 'stat ' + (s.basis_bp >= 0 ? 'green' : 'red');
@@ -190,6 +235,35 @@ const tipOpts = (digits=2, suffix='') => ({
     title: (items) => items[0].label,
     label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y == null ? '—' : ctx.parsed.y.toFixed(digits) + suffix}`
   }
+});
+
+const p90 = s.slope_chg_p90_abs ?? 5;
+const isBigMove = (v) => v != null && Math.abs(v) >= p90;
+const chgColors = D.map(r => {
+  if (r.slope_chg_bp == null) return 'rgba(147,161,181,.35)';
+  return r.slope_chg_bp >= 0 ? 'rgba(57,217,138,.75)' : 'rgba(255,107,107,.75)';
+});
+const slopePtRadius = D.map(r => isBigMove(r.slope_chg_bp) ? 6 : 2);
+const slopePtColors = D.map(r => isBigMove(r.slope_chg_bp) ? C.warn : C.acc2);
+
+const absChgs = D.filter(r => r.slope_chg_bp != null).map(r => Math.abs(r.slope_chg_bp)).sort((a,b) => b-a);
+const rankOf = (v) => {
+  if (v == null) return '—';
+  const i = absChgs.findIndex(x => Math.abs(x - Math.abs(v)) < 1e-9);
+  return String(i >= 0 ? i + 1 : absChgs.filter(x => x >= Math.abs(v)).length);
+};
+
+const topBody = document.querySelector('#topMovesTbl tbody');
+(s.top_slope_moves || []).forEach(m => {
+  const tr = document.createElement('tr');
+  if (m.date === s.end) tr.className = 'highlight';
+  const cls = m.slope_chg_bp >= 0 ? 'pos' : 'neg';
+  tr.innerHTML =
+    `<td>${m.date}${m.date === s.end ? ' <span class="big">(latest)</span>' : ''}</td>` +
+    `<td class="num ${cls} big">${f1(m.slope_chg_bp)}</td>` +
+    `<td class="num">${f1(m.slope_bp)}</td>` +
+    `<td class="num">${rankOf(m.slope_chg_bp)}</td>`;
+  topBody.appendChild(tr);
 });
 
 const lineOpts = (yLabel, suggestedMin, suggestedMax, tip=tipOpts()) => ({
@@ -258,19 +332,87 @@ new Chart(document.getElementById('slopeChart'), {
       borderColor: C.acc2,
       backgroundColor: 'rgba(74,168,255,.12)',
       borderWidth: 2,
-      pointRadius: 2,
-      pointHoverRadius: 5,
+      pointRadius: slopePtRadius,
+      pointBackgroundColor: slopePtColors,
+      pointHoverRadius: 7,
       tension: 0.15,
       fill: true
     }]
   },
-  options: lineOpts('bp', undefined, undefined, tipOpts(2, ' bp')),
+  options: {
+    ...lineOpts('bp', undefined, undefined),
+    plugins: {
+      legend: {display: false},
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        callbacks: {
+          title: (items) => items[0].label,
+          label: (ctx) => {
+            const row = D[ctx.dataIndex];
+            const lvl = `Slope: ${ctx.parsed.y.toFixed(2)} bp`;
+            const d = row.slope_chg_bp;
+            if (d == null) return lvl;
+            const tag = isBigMove(d) ? ' · large move' : '';
+            return [lvl, `Daily Δ: ${(d >= 0 ? '+' : '') + d.toFixed(1)} bp${tag}`];
+          }
+        }
+      }
+    }
+  },
   plugins: [{id: 'zero', afterDraw: (ch) => {
     const {ctx, chartArea: a, scales} = ch;
     const yp = scales.y.getPixelForValue(0);
     ctx.save(); ctx.strokeStyle = C.mut; ctx.setLineDash([4,4]);
     ctx.beginPath(); ctx.moveTo(a.left, yp); ctx.lineTo(a.right, yp); ctx.stroke();
     ctx.fillStyle = C.mut; ctx.font = '10px sans-serif'; ctx.fillText('0', a.left + 4, yp - 3);
+    ctx.restore();
+  }}]
+});
+
+new Chart(document.getElementById('slopeChgChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Slope Δ (bp)',
+      data: D.map(r => r.slope_chg_bp),
+      backgroundColor: chgColors,
+      borderWidth: 0
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    interaction: {mode: 'index', intersect: false},
+    plugins: {
+      legend: {display: false},
+      tooltip: {
+        callbacks: {
+          title: (items) => items[0].label,
+          label: (ctx) => {
+            const v = ctx.parsed.y;
+            if (v == null) return 'Slope Δ: —';
+            const tag = isBigMove(v) ? ' (top decile)' : '';
+            return `Slope Δ: ${(v >= 0 ? '+' : '') + v.toFixed(1)} bp${tag}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {ticks: {maxTicksLimit: 10, autoSkip: true}, grid: {display: false}},
+      y: {title: {display: true, text: 'bp'}, grid: {color: C.line}}
+    }
+  },
+  plugins: [{id: 'p90line', afterDraw: (ch) => {
+    const {ctx, chartArea: a, scales} = ch;
+    [p90, -p90].forEach(v => {
+      const yp = scales.y.getPixelForValue(v);
+      ctx.save(); ctx.strokeStyle = C.warn; ctx.setLineDash([5,4]); ctx.globalAlpha = 0.7;
+      ctx.beginPath(); ctx.moveTo(a.left, yp); ctx.lineTo(a.right, yp); ctx.stroke();
+      ctx.restore();
+    });
+    ctx.save(); ctx.fillStyle = C.warn; ctx.font = '10px sans-serif';
+    ctx.fillText(`p90 ±${p90.toFixed(1)}`, a.right - 58, scales.y.getPixelForValue(p90) - 4);
     ctx.restore();
   }}]
 });
@@ -351,6 +493,7 @@ new Chart(document.getElementById('volChart'), {
 
 document.getElementById('foot').innerHTML =
   `<b>Definitions.</b> ${DATA.definitions.slope_bp} ` +
+  `${DATA.definitions.slope_chg_bp} ` +
   `${DATA.definitions.basis_bp} ` +
   `${DATA.definitions.roll_corr_30} ` +
   `${DATA.definitions.basis_vol_ann} ` +
