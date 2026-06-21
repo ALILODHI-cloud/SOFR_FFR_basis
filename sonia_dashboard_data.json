@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-20 12:50 UTC",
+  "generated_utc": "2026-06-21 09:00 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -17,7 +17,7 @@
     "brent": "Yahoo Finance BZ=F"
   },
   "data_end": "2026-06-19",
-  "fetched_on": "2026-06-20",
+  "fetched_on": "2026-06-21",
   "policy_pricing": {
     "bank_rate_pct": 3.75,
     "bank_rate_as_of": "2026-06-18",
