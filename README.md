@@ -15,12 +15,20 @@ Analysis of the **FFR − SOFR** overnight basis (EFFR − SOFR, in bp) since SO
 - `analyze_sonia.py` — UK 1M SONIA Dec-27/Dec-26 slope, basis, Brent correlation & vol; writes `sonia_dashboard_data.json` (uses Playwright for ICE futures settles via Barchart).
 - `build_sonia_dashboard.py` — builds `sonia_dashboard.html` from that JSON.
 - `sonia_dashboard.html` — interactive UK rates monitor (50-session window, Chart.js hover tooltips).
+- `spx_dispersion.py` — pulls 10 years of Yahoo Finance daily prices for SPX and the current
+  top 10 S&P 500 constituents, then plots 60-day annualized dispersion
+  (`SPX vol − average top-10 constituent vol`). Writes `data/spx_dispersion_60d_10y.csv`
+  and `charts/spx_dispersion_60d_10y.png`.
 
 ## Reproduce
 ```bash
 python analyze.py        # refresh data + stats
 python build_app.py      # rebuild index.html
+pip3 install -r requirements-spx.txt
+python3 spx_dispersion.py # refresh SPX dispersion chart + CSV
 ```
+
+Override the top-ten constituent list with `--symbols NVDA,AAPL,MSFT,AMZN,GOOGL,GOOG,AVGO,META,TSLA,BRK-B`.
 
 ### SONIA dashboard — permanent link + auto-refresh
 
