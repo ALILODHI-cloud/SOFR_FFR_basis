@@ -235,7 +235,7 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="sectitle">Macro link</div>
 <div class="card">
   <h2>Rolling 30-day correlation: slope change vs Brent</h2>
-  <p class="hint">Correlation of daily slope change (bp) with Brent daily % return. Orange line = entry date.</p>
+  <p class="hint">Correlation of daily slope change (bp) with Brent daily % return — full JUZ26∩JUZ27 overlap (<span id="corrRangeLbl"></span> sessions). Orange line = entry date.</p>
   <div class="chartbox tall"><canvas id="corrChart"></canvas></div>
 </div>
 
@@ -271,9 +271,13 @@ Chart.defaults.borderColor = C.line;
 
 const D = DATA.daily;
 const labels = D.map(r => r.date);
+const DC = DATA.daily_corr || D;
+const corrLabels = DC.map(r => r.date);
+const CH = DATA.corr_history || null;
 const s = DATA.summary;
 const ENTRY = DATA.trade_entry || null;
 const entryIdx = ENTRY && ENTRY.in_window ? labels.indexOf(ENTRY.date) : -1;
+const corrEntryIdx = ENTRY ? corrLabels.indexOf(ENTRY.date) : -1;
 const POL = DATA.policy_pricing || null;
 const CUM = DATA.cumulative_through_dec27 || null;
 
@@ -293,6 +297,12 @@ document.getElementById('asof').textContent =
   `Dec26 ${s.dec26_rate.toFixed(3)}%, Dec27 ${s.dec27_rate.toFixed(3)}%, Brent $${s.brent.toFixed(2)}.`;
 document.getElementById('rangePill').textContent = `${s.n_days} sessions · ${s.start} → ${s.end}`;
 document.getElementById('winLbl').textContent = s.n_days;
+if (CH) {
+  document.getElementById('corrRangeLbl').textContent =
+    `${CH.n_days} · ${CH.start} → ${CH.end}`;
+} else {
+  document.getElementById('corrRangeLbl').textContent = `${corrLabels.length}`;
+}
 
 if (ENTRY && ENTRY.in_window) {
   const pnl = ENTRY.pnl_slope_bp != null ? ` · P&L ${f1(ENTRY.pnl_slope_bp)} bp since entry` : '';
@@ -435,9 +445,10 @@ const ptHover = (base) => labels.map((_, i) => (i === entryIdx ? 5 : base));
 const tradeEntryLinePlugin = {
   id: 'tradeEntryLine',
   afterDatasetsDraw(chart) {
-    if (entryIdx < 0) return;
+    const idx = chart.canvas.id === 'corrChart' ? corrEntryIdx : entryIdx;
+    if (idx < 0) return;
     const {ctx, chartArea: a, scales} = chart;
-    const x = scales.x.getPixelForValue(entryIdx);
+    const x = scales.x.getPixelForValue(idx);
     ctx.save();
     ctx.strokeStyle = 'rgba(255,140,66,.85)';
     ctx.lineWidth = 1.5;
@@ -814,16 +825,16 @@ new Chart(document.getElementById('slopeChart'), {
 new Chart(document.getElementById('corrChart'), {
   type: 'line',
   data: {
-    labels,
+    labels: corrLabels,
     datasets: [{
       label: '30d corr',
-      data: D.map(r => r.roll_corr_30),
+      data: DC.map(r => r.roll_corr_30),
       borderColor: C.warn,
       borderWidth: 2,
-      pointRadius: ptR(2),
-      pointBackgroundColor: ptBg(C.warn),
-      pointBorderColor: ptBorder(C.warn, C.warn),
-      pointHoverRadius: ptHover(5),
+      pointRadius: corrLabels.map((_, i) => (i === corrEntryIdx ? 4 : 2)),
+      pointBackgroundColor: corrLabels.map((_, i) => (i === corrEntryIdx ? C.entry : C.warn)),
+      pointBorderColor: corrLabels.map((_, i) => (i === corrEntryIdx ? C.entry : C.warn)),
+      pointHoverRadius: corrLabels.map((_, i) => (i === corrEntryIdx ? 5 : 5)),
       tension: 0.15,
       spanGaps: true
     }]
@@ -837,7 +848,7 @@ new Chart(document.getElementById('corrChart'), {
         callbacks: {
           title: (items) => {
             const i = items[0].dataIndex;
-            return labels[i] + (i === entryIdx ? ' · YOUR ENTRY' : '');
+            return corrLabels[i] + (i === corrEntryIdx ? ' · YOUR ENTRY' : '');
           },
           label: (ctx) => `30d corr: ${ctx.parsed.y == null ? '—' : ctx.parsed.y.toFixed(3)}`
         }

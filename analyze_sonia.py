@@ -6,7 +6,7 @@ Fetches:
   - Spot SONIA (Bank of England IUDSOIA)
   - Brent front-month (Yahoo BZ=F)
 
-Computes (last ~50 business days):
+Computes (last ~50 business days for main panels; full contract overlap for rolling Brent correlation):
   - Slope in rate space: implied_rate(Dec27) − implied_rate(Dec26), in bp
   - Rolling 30-day correlation: daily slope change vs Brent daily % return
   - Cash–futures basis: Dec26 implied rate − spot SONIA, in bp
@@ -95,6 +95,22 @@ def fetch_yahoo_daily(symbol: str, range_: str = "6mo") -> pd.Series:
             continue
         out[pd.Timestamp.fromtimestamp(t, tz="UTC").tz_convert(None).normalize()] = float(c)
     return pd.Series(out, name=symbol).sort_index()
+
+
+def yahoo_range_for_span(start: date, end: date) -> str:
+    """Pick a Yahoo chart range that covers the futures overlap (+ buffer)."""
+    days = max(1, (end - start).days + 30)
+    if days <= 35:
+        return "1mo"
+    if days <= 100:
+        return "3mo"
+    if days <= 200:
+        return "6mo"
+    if days <= 400:
+        return "1y"
+    if days <= 800:
+        return "2y"
+    return "5y"
 
 
 def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame:
@@ -411,20 +427,26 @@ def compute_trade_stats(tail: pd.DataFrame, entry_date: str) -> dict | None:
 
 def main() -> dict:
     end = DATA_END or date.today()
-    start = end - timedelta(days=220)
 
     dec26 = fetch_barchart_eod("JUZ26")
     dec27 = fetch_barchart_eod("JUZ27")
-    sonia = fetch_sonia_spot(start, end + timedelta(days=5))
-    brent = fetch_yahoo_daily("BZ=F", "6mo")
 
-    dec26 = dec26.rename(columns={"price": "dec26_px"})
-    dec27 = dec27.rename(columns={"price": "dec27_px"})
+    df = dec26.rename(columns={"price": "dec26_px"}).join(
+        dec27.rename(columns={"price": "dec27_px"}),
+        how="inner",
+    )
+    if df.empty:
+        raise RuntimeError("No overlapping JUZ26 / JUZ27 history")
 
-    df = dec26.join(dec27, how="inner")
+    overlap_start = df.index.min().date()
     barchart_last = df.index.max().date()
     end = min(end, barchart_last) if DATA_END is None else end
     df = df[df.index <= pd.Timestamp(end)]
+
+    sonia = fetch_sonia_spot(overlap_start - timedelta(days=7), end + timedelta(days=5))
+    brent_range = yahoo_range_for_span(overlap_start, end)
+    brent = fetch_yahoo_daily("BZ=F", brent_range)
+
     df = df.join(sonia, how="left")
     df = df.join(brent.rename("brent"), how="left")
     df = df.dropna(subset=["dec26_px", "dec27_px"])
@@ -446,9 +468,8 @@ def main() -> dict:
     df["roll_corr_30"] = rolling_corr(df["slope_chg_bp"], df["brent_ret_pct"], ROLL_CORR)
     df["basis_vol_ann"] = df["basis_chg_bp"].rolling(ROLL_VOL).std() * ANN_FACTOR
 
-    tail = df.tail(WINDOW_DAYS).copy()
-    tail["dec26_vs_bank_bp"] = (tail["dec26_rate"] - BANK_RATE_PCT) * 100.0
-    tail["dec27_vs_bank_bp"] = (tail["dec27_rate"] - BANK_RATE_PCT) * 100.0
+    df["dec26_vs_bank_bp"] = (df["dec26_rate"] - BANK_RATE_PCT) * 100.0
+    df["dec27_vs_bank_bp"] = (df["dec27_rate"] - BANK_RATE_PCT) * 100.0
 
     def row_dict(idx, r):
         return {
@@ -467,6 +488,10 @@ def main() -> dict:
             "basis_vol_ann": None if pd.isna(r["basis_vol_ann"]) else round(float(r["basis_vol_ann"]), 2),
         }
 
+    daily_corr = [row_dict(idx, r) for idx, r in df.iterrows()]
+    corr_valid = sum(1 for r in daily_corr if r["roll_corr_30"] is not None)
+
+    tail = df.tail(WINDOW_DAYS).copy()
     daily = [row_dict(idx, r) for idx, r in tail.iterrows()]
     last = daily[-1]
 
@@ -611,13 +636,26 @@ def main() -> dict:
         "cumulative_through_dec27": cumulative_block,
         "trade_entry": trade_entry,
         "summary": summary,
+        "corr_history": {
+            "n_days": len(daily_corr),
+            "n_valid_corr": corr_valid,
+            "start": daily_corr[0]["date"],
+            "end": daily_corr[-1]["date"],
+            "overlap_start": overlap_start.isoformat(),
+            "note": (
+                f"Full JUZ26∩JUZ27 overlap ({len(daily_corr)} sessions). "
+                f"First {ROLL_CORR - 1} sessions have no {ROLL_CORR}d rolling correlation."
+            ),
+        },
         "daily": daily,
+        "daily_corr": daily_corr,
     }
     with open("sonia_dashboard_data.json", "w", encoding="utf-8") as f:
         json.dump(out, f, indent=2)
     print(
         f"Wrote sonia_dashboard_data.json — {summary['n_days']} days "
-        f"({summary['start']} → {summary['end']}), slope {summary['slope_bp']:+.1f}bp"
+        f"({summary['start']} → {summary['end']}), slope {summary['slope_bp']:+.1f}bp; "
+        f"corr history {len(daily_corr)} days ({corr_valid} with 30d corr)"
     )
     return out
 
