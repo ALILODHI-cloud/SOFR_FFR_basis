@@ -228,7 +228,8 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="sectitle">Dec27 &minus; Dec26 slope (rate space)</div>
 <div class="card">
   <h2>Calendar slope = Dec-27 rate &minus; Dec-26 rate</h2>
-  <p class="hint">Spread in rate space (bp). Orange vertical line marks your Fri 5 Jun entry @ <span id="entrySlopeLbl"></span>.</p>
+  <p class="hint">Full JUZ26∩JUZ27 overlap (<span id="slopeRangeLbl"></span> sessions). Orange line = Fri 5 Jun entry @ <span id="entrySlopeLbl"></span>. Peak in sample: <span id="slopePeakLbl"></span>.</p>
+  <div id="legCorrSummary" class="driversummary" style="display:none"></div>
   <div class="chartbox tall"><canvas id="slopeChart"></canvas></div>
 </div>
 
@@ -274,6 +275,8 @@ const labels = D.map(r => r.date);
 const DC = DATA.daily_corr || D;
 const corrLabels = DC.map(r => r.date);
 const CH = DATA.corr_history || null;
+const SH = DATA.slope_history || null;
+const LEGCORR = DATA.leg_correlations || null;
 const s = DATA.summary;
 const ENTRY = DATA.trade_entry || null;
 const entryIdx = ENTRY && ENTRY.in_window ? labels.indexOf(ENTRY.date) : -1;
@@ -302,6 +305,28 @@ if (CH) {
     `${CH.n_days} · ${CH.start} → ${CH.end}`;
 } else {
   document.getElementById('corrRangeLbl').textContent = `${corrLabels.length}`;
+}
+if (SH) {
+  document.getElementById('slopeRangeLbl').textContent =
+    `${SH.n_days} · ${SH.start} → ${SH.end}`;
+  const pk = SH.peak;
+  document.getElementById('slopePeakLbl').textContent =
+    pk ? `${pk.slope_bp} bp (${pk.date})` : '—';
+} else {
+  document.getElementById('slopeRangeLbl').textContent = `${corrLabels.length}`;
+}
+if (LEGCORR && Object.keys(LEGCORR).length > 1) {
+  const el = document.getElementById('legCorrSummary');
+  el.style.display = '';
+  const r30 = LEGCORR.roll_30d_slope_chg_vs_brent;
+  el.innerHTML =
+    `<b>Daily-change correlations</b> (full ${LEGCORR.n_sessions}d overlap): ` +
+    `slope Δ vs Brent <b>${LEGCORR.slope_chg_vs_brent}</b> · ` +
+    `Dec26 Δ vs Brent <b>${LEGCORR.dec26_chg_vs_brent}</b> · ` +
+    `Dec27 Δ vs Brent <b>${LEGCORR.dec27_chg_vs_brent}</b> · ` +
+    `Dec26 Δ vs Dec27 Δ <b>${LEGCORR.dec26_chg_vs_dec27_chg}</b> · ` +
+    `Dec26 Δ vs slope Δ <b>${LEGCORR.dec26_chg_vs_slope_chg}</b>` +
+    (r30 != null ? ` · <b>30d</b> slope Δ vs Brent <b>${r30}</b>` : '') + '.';
 }
 
 if (ENTRY && ENTRY.in_window) {
@@ -796,22 +821,46 @@ new Chart(document.getElementById('ratesChart'), {
 new Chart(document.getElementById('slopeChart'), {
   type: 'line',
   data: {
-    labels,
+    labels: corrLabels,
     datasets: [{
       label: 'Slope (bp)',
-      data: D.map(r => r.slope_bp),
+      data: DC.map(r => r.slope_bp),
       borderColor: C.acc2,
       backgroundColor: 'rgba(74,168,255,.12)',
       borderWidth: 2,
-      pointRadius: ptR(2),
-      pointBackgroundColor: ptBg(C.acc2),
-      pointBorderColor: ptBorder(C.acc2, C.acc2),
-      pointHoverRadius: ptHover(5),
+      pointRadius: corrLabels.map((_, i) => (i === corrEntryIdx ? 4 : 2)),
+      pointBackgroundColor: corrLabels.map((_, i) => (i === corrEntryIdx ? C.entry : C.acc2)),
+      pointBorderColor: corrLabels.map((_, i) => (i === corrEntryIdx ? C.entry : C.acc2)),
+      pointHoverRadius: corrLabels.map((_, i) => (i === corrEntryIdx ? 5 : 5)),
       tension: 0.15,
       fill: true
     }]
   },
-  options: lineOpts('bp', undefined, undefined, tipOpts(2, ' bp')),
+  options: {
+    ...lineOpts('bp', undefined, undefined, tipOpts(2, ' bp')),
+    plugins: {
+      legend: {display: false},
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        callbacks: {
+          title: (items) => {
+            const i = items[0].dataIndex;
+            return corrLabels[i] + (i === corrEntryIdx ? ' · YOUR ENTRY' : '');
+          },
+          label: (ctx) => {
+            const r = DC[ctx.dataIndex];
+            const lines = [`Slope: ${f1(r.slope_bp)} bp`];
+            if (r.slope_chg_bp != null) lines.push(`Slope Δ: ${f1(r.slope_chg_bp)} bp`);
+            if (r.dec26_chg_bp != null) lines.push(`Dec26 Δ: ${f1(r.dec26_chg_bp)} bp`);
+            if (r.dec27_chg_bp != null) lines.push(`Dec27 Δ: ${f1(r.dec27_chg_bp)} bp`);
+            if (r.brent_ret_pct != null) lines.push(`Brent: ${r.brent_ret_pct >= 0 ? '+' : ''}${r.brent_ret_pct.toFixed(2)}%`);
+            return lines;
+          }
+        }
+      }
+    }
+  },
   plugins: [tradeEntryLinePlugin, {id: 'zero', afterDraw: (ch) => {
     const {ctx, chartArea: a, scales} = ch;
     const yp = scales.y.getPixelForValue(0);

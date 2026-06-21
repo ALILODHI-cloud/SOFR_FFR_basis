@@ -188,6 +188,70 @@ def rolling_corr(a: pd.Series, b: pd.Series, window: int) -> pd.Series:
     return a.rolling(window).corr(b)
 
 
+def compute_leg_correlations(df: pd.DataFrame) -> dict:
+    """Daily-change correlations across legs, slope, and Brent (full overlap)."""
+    d = df.copy()
+    d["dec26_chg_bp"] = d["dec26_rate"].diff() * 100.0
+    d["dec27_chg_bp"] = d["dec27_rate"].diff() * 100.0
+    d = d.dropna(subset=["slope_chg_bp", "brent_ret_pct", "dec26_chg_bp", "dec27_chg_bp"])
+    if len(d) < 5:
+        return {}
+    pairs = [
+        ("slope_chg_vs_brent", "slope_chg_bp", "brent_ret_pct"),
+        ("dec26_chg_vs_brent", "dec26_chg_bp", "brent_ret_pct"),
+        ("dec27_chg_vs_brent", "dec27_chg_bp", "brent_ret_pct"),
+        ("dec26_chg_vs_dec27_chg", "dec26_chg_bp", "dec27_chg_bp"),
+        ("dec26_chg_vs_slope_chg", "dec26_chg_bp", "slope_chg_bp"),
+        ("dec27_chg_vs_slope_chg", "dec27_chg_bp", "slope_chg_bp"),
+    ]
+    out: dict = {"n_sessions": int(len(d))}
+    for key, col_a, col_b in pairs:
+        out[key] = round(float(d[col_a].corr(d[col_b])), 3)
+    for window in (10, 20, 30):
+        tail = d.tail(window)
+        if len(tail) < window:
+            continue
+        out[f"roll_{window}d_slope_chg_vs_brent"] = round(
+            float(tail["slope_chg_bp"].corr(tail["brent_ret_pct"])), 3
+        )
+        out[f"roll_{window}d_dec26_chg_vs_brent"] = round(
+            float(tail["dec26_chg_bp"].corr(tail["brent_ret_pct"])), 3
+        )
+        out[f"roll_{window}d_dec27_chg_vs_brent"] = round(
+            float(tail["dec27_chg_bp"].corr(tail["brent_ret_pct"])), 3
+        )
+    return out
+
+
+def notable_slope_days(df: pd.DataFrame, n: int = 5) -> dict:
+    """Largest daily slope changes with leg decomposition."""
+    d = df.dropna(subset=["slope_chg_bp"]).copy()
+    d["dec26_chg_bp"] = (d["dec26_rate"].diff() * 100.0).round(1)
+    d["dec27_chg_bp"] = (d["dec27_rate"].diff() * 100.0).round(1)
+    rows = []
+    for idx, r in d.iterrows():
+        rows.append(
+            {
+                "date": idx.strftime("%Y-%m-%d"),
+                "slope_bp": round(float(r["slope_bp"]), 1),
+                "slope_chg_bp": round(float(r["slope_chg_bp"]), 1),
+                "dec26_chg_bp": None if pd.isna(r["dec26_chg_bp"]) else float(r["dec26_chg_bp"]),
+                "dec27_chg_bp": None if pd.isna(r["dec27_chg_bp"]) else float(r["dec27_chg_bp"]),
+                "brent": round(float(r["brent"]), 2),
+                "brent_ret_pct": None
+                if pd.isna(r["brent_ret_pct"])
+                else round(float(r["brent_ret_pct"]), 2),
+            }
+        )
+    by_chg = sorted(rows, key=lambda x: x["slope_chg_bp"], reverse=True)
+    return {
+        "steepest_days": by_chg[:n],
+        "flattest_days": sorted(rows, key=lambda x: x["slope_chg_bp"])[:n],
+        "peak_slope": max(rows, key=lambda x: x["slope_bp"]),
+        "trough_slope": min(rows, key=lambda x: x["slope_bp"]),
+    }
+
+
 def vs_bank_bp(implied_rate_pct: float, bank_rate_pct: float = BANK_RATE_PCT) -> float:
     """Implied SONIA (%) minus Bank Rate (%), in bp. +ve = above policy (fewer cuts / hikes priced)."""
     return round((implied_rate_pct - bank_rate_pct) * 100.0, 2)
@@ -472,6 +536,9 @@ def main() -> dict:
     df["dec27_vs_bank_bp"] = (df["dec27_rate"] - BANK_RATE_PCT) * 100.0
 
     def row_dict(idx, r):
+        sc = r.get("slope_chg_bp")
+        d26c = r.get("dec26_chg_bp") if "dec26_chg_bp" in r.index else np.nan
+        d27c = r.get("dec27_chg_bp") if "dec27_chg_bp" in r.index else np.nan
         return {
             "date": idx.strftime("%Y-%m-%d"),
             "dec26_px": round(float(r["dec26_px"]), 4),
@@ -484,9 +551,20 @@ def main() -> dict:
             "sonia_pct": round(float(r["sonia_pct"]), 4),
             "basis_bp": round(float(r["basis_bp"]), 2),
             "brent": round(float(r["brent"]), 2),
+            "slope_chg_bp": None if pd.isna(sc) else round(float(sc), 2),
+            "dec26_chg_bp": None if pd.isna(d26c) else round(float(d26c), 2),
+            "dec27_chg_bp": None if pd.isna(d27c) else round(float(d27c), 2),
+            "brent_ret_pct": None
+            if pd.isna(r["brent_ret_pct"])
+            else round(float(r["brent_ret_pct"]), 2),
             "roll_corr_30": None if pd.isna(r["roll_corr_30"]) else round(float(r["roll_corr_30"]), 3),
             "basis_vol_ann": None if pd.isna(r["basis_vol_ann"]) else round(float(r["basis_vol_ann"]), 2),
         }
+
+    df["dec26_chg_bp"] = df["dec26_rate"].diff() * 100.0
+    df["dec27_chg_bp"] = df["dec27_rate"].diff() * 100.0
+    leg_correlations = compute_leg_correlations(df)
+    slope_moves = notable_slope_days(df)
 
     daily_corr = [row_dict(idx, r) for idx, r in df.iterrows()]
     corr_valid = sum(1 for r in daily_corr if r["roll_corr_30"] is not None)
@@ -647,6 +725,15 @@ def main() -> dict:
                 f"First {ROLL_CORR - 1} sessions have no {ROLL_CORR}d rolling correlation."
             ),
         },
+        "slope_history": {
+            "n_days": len(daily_corr),
+            "start": daily_corr[0]["date"],
+            "end": daily_corr[-1]["date"],
+            "peak": slope_moves.get("peak_slope"),
+            "trough": slope_moves.get("trough_slope"),
+        },
+        "leg_correlations": leg_correlations,
+        "notable_slope_days": slope_moves,
         "daily": daily,
         "daily_corr": daily_corr,
     }
