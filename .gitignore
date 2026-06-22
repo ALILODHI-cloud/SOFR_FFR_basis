@@ -12,3 +12,7 @@ venv/
 Thumbs.db
 
 gh_auth.log
+.stir_devtunnel_id
+.stir_devtunnel_url
+/tmp/stir-*.log
+devtunnel
