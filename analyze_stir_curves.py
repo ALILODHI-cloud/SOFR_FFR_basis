@@ -1,8 +1,8 @@
 """
 Fetch Jun-2026 → Dec-2028 STIR curves from Barchart EOD:
   - 3M SOFR (CME, SQ*)
-  - 1M SONIA (ICE, JU*)
-  - 3M €STR (CME, EB*) — falls back to 1M €STR (EG*) if 3M missing
+  - 3M SONIA (ICE, J8*)
+  - 3M €STR (CME, EB*)
 
 Writes stir_curves_data.json for build_stir_curves_dashboard.py.
 """
@@ -39,19 +39,17 @@ CURVES = {
         "prefix": "SQ",
         "tenor": "3M compounded SOFR",
     },
-    "sonia_1m": {
-        "label": "1M SONIA",
+    "sonia_3m": {
+        "label": "3M SONIA",
         "exchange": "ICE",
-        "prefix": "JU",
-        "tenor": "1M SONIA average",
+        "prefix": "J8",
+        "tenor": "3M compounded SONIA",
     },
     "estr_3m": {
         "label": "3M €STR",
         "exchange": "CME",
         "prefix": "EB",
         "tenor": "3M compounded €STR",
-        "fallback_prefix": "EG",
-        "fallback_label": "1M €STR",
     },
 }
 
@@ -179,15 +177,9 @@ def fetch_curve(
 def main() -> None:
     print("Fetching STIR curves from Barchart (Jun-26 → Dec-28)…")
     all_syms: list[str] = []
-    sym_map: dict[str, tuple[str, dict]] = {}
-    for key, cfg in CURVES.items():
+    for cfg in CURVES.values():
         for _ym, code, _label in CURVE_MONTHS:
-            sym = f"{cfg['prefix']}{code}"
-            all_syms.append(sym)
-            sym_map[sym] = (key, cfg)
-            if cfg.get("fallback_prefix"):
-                fb = f"{cfg['fallback_prefix']}{code}"
-                all_syms.append(fb)
+            all_syms.append(f"{cfg['prefix']}{code}")
     all_syms = list(dict.fromkeys(all_syms))
     print(f"Batch fetch: {len(all_syms)} symbols…")
     batch = fetch_barchart_batch(all_syms)

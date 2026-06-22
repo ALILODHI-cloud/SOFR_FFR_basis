@@ -46,7 +46,7 @@ th{color:var(--mut);font-weight:600}
   <div>
     <span class="pill">Source: Barchart EOD</span>
     <span class="pill">3M SOFR (SQ*) · CME</span>
-    <span class="pill">1M SONIA (JU*) · ICE</span>
+    <span class="pill">3M SONIA (J8*) · ICE</span>
     <span class="pill">3M €STR (EB*) · CME</span>
   </div>
 </header>
@@ -56,7 +56,7 @@ th{color:var(--mut);font-weight:600}
   <p class="hint">Latest EOD settle per contract. Futures quoted 100 − rate.</p>
   <div class="legend">
     <span><i style="background:var(--sofr)"></i>3M SOFR</span>
-    <span><i style="background:var(--sonia)"></i>1M SONIA</span>
+    <span><i style="background:var(--sonia)"></i>3M SONIA</span>
     <span><i style="background:var(--estr)"></i>3M €STR</span>
   </div>
   <div class="chartbox"><canvas id="curveChart"></canvas></div>
@@ -65,7 +65,7 @@ th{color:var(--mut);font-weight:600}
 <div class="card">
   <h2>Current levels</h2>
   <div style="overflow-x:auto"><table id="levelsTbl"><thead><tr>
-    <th>Delivery</th><th>3M SOFR</th><th>1M SONIA</th><th>3M €STR</th>
+    <th>Delivery</th><th>3M SOFR</th><th>3M SONIA</th><th>3M €STR</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
@@ -76,7 +76,7 @@ th{color:var(--mut);font-weight:600}
 </div>
 
 <div class="card">
-  <h2>1M SONIA · implied rate over time</h2>
+  <h2>3M SONIA · implied rate over time</h2>
   <p class="hint" id="soniaHint"></p>
   <div class="chartbox sm"><canvas id="soniaTs"></canvas></div>
 </div>
@@ -91,7 +91,7 @@ th{color:var(--mut);font-weight:600}
 </div>
 <script>
 const DATA = __DATA_JSON__;
-const COLORS = {sofr_3m:'#4aa8ff', sonia_1m:'#39d98a', estr_3m:'#ffb84a'};
+const COLORS = {sofr_3m:'#4aa8ff', sonia_3m:'#39d98a', estr_3m:'#ffb84a'};
 const MONTHS = DATA.curve_months.map(m => m.label);
 
 function byCurve(key) {
@@ -110,13 +110,13 @@ document.getElementById('asof').textContent =
   `Generated ${DATA.generated_utc}. Latest history through ${latestEnd()}.`;
 
 const sofr = byCurve('sofr_3m');
-const sonia = byCurve('sonia_1m');
+const sonia = byCurve('sonia_3m');
 const estr = byCurve('estr_3m');
 const keys = DATA.curve_months.map(m => m.ym);
 
 const curveDatasets = [
   {label:'3M SOFR', data: keys.map(k => sofr[k] ?? null), borderColor: COLORS.sofr_3m, backgroundColor: COLORS.sofr_3m, tension:.25, pointRadius:4},
-  {label:'1M SONIA', data: keys.map(k => sonia[k] ?? null), borderColor: COLORS.sonia_1m, backgroundColor: COLORS.sonia_1m, tension:.25, pointRadius:4},
+  {label:'3M SONIA', data: keys.map(k => sonia[k] ?? null), borderColor: COLORS.sonia_3m, backgroundColor: COLORS.sonia_3m, tension:.25, pointRadius:4},
   {label:'3M €STR', data: keys.map(k => estr[k] ?? null), borderColor: COLORS.estr_3m, backgroundColor: COLORS.estr_3m, tension:.25, pointRadius:4},
 ];
 
@@ -176,12 +176,11 @@ function tsChart(canvasId, curveKey, hintId) {
 }
 
 tsChart('sofrTs', 'sofr_3m', 'sofrHint');
-tsChart('soniaTs', 'sonia_1m', 'soniaHint');
+tsChart('soniaTs', 'sonia_3m', 'soniaHint');
 tsChart('estrTs', 'estr_3m', 'estrHint');
 
 document.getElementById('foot').textContent =
-  'Note: SONIA is 1M-average ICE futures; SOFR and €STR are 3M compounded quarterly contracts. ' +
-  'Tenors differ — compare shape, not level. SONIA Barchart history may stop before Jun-28 if contracts are illiquid/unlisted. ' +
+  'All three curves are 3-month quarterly STIR futures (SOFR SQ*, SONIA J8*, €STR EB*) from Barchart EOD. ' +
   'Not investment advice.';
 </script>
 </body>
