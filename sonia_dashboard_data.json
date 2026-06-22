@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-19 16:03 UTC",
+  "generated_utc": "2026-06-22 14:30 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -16,13 +16,13 @@
     "brent": "Yahoo Finance BZ=F"
   },
   "data_end": "2026-06-19",
-  "fetched_on": "2026-06-19",
+  "fetched_on": "2026-06-22",
   "summary": {
     "slope_bp": 10.5,
-    "basis_bp": 28.47,
-    "roll_corr_30": 0.521,
+    "basis_bp": 28.5,
+    "roll_corr_30": 0.508,
     "basis_vol_ann": 71.03,
-    "brent": 80.44,
+    "brent": 79.85,
     "dec26_rate": 4.015,
     "dec27_rate": 4.12,
     "slope_mean_50d": -3.34,
@@ -616,7 +616,7 @@
       "dec26_rate": 3.98,
       "dec27_rate": 4.015,
       "slope_bp": 3.5,
-      "basis_bp": 24.97,
+      "basis_bp": 25.0,
       "brent": 79.85,
       "roll_corr_30": 0.52,
       "basis_vol_ann": 69.92
@@ -628,9 +628,9 @@
       "dec26_rate": 4.015,
       "dec27_rate": 4.12,
       "slope_bp": 10.5,
-      "basis_bp": 28.47,
-      "brent": 80.44,
-      "roll_corr_30": 0.521,
+      "basis_bp": 28.5,
+      "brent": 79.85,
+      "roll_corr_30": 0.508,
       "basis_vol_ann": 71.03
     }
   ]
