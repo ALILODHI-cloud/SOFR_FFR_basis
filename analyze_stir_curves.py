@@ -55,6 +55,50 @@ CURVES = {
 
 HISTORY_LIMIT = 200
 
+# Calendar spreads to track over time (back − front, in bp).
+CALENDAR_SPREADS = [
+    {"id": "dec28_minus_jun27", "label": "Dec-28 − Jun-27", "back": "2028-12", "front": "2027-06"},
+    {"id": "dec28_minus_jun26", "label": "Dec-28 − Jun-26", "back": "2028-12", "front": "2026-06"},
+    {"id": "dec27_minus_dec26", "label": "Dec-27 − Dec-26", "back": "2027-12", "front": "2026-12"},
+]
+
+
+def compute_calendar_spreads(all_wide: dict[str, pd.DataFrame]) -> dict:
+    """Daily calendar slopes (bp) per curve for configured back/front pairs."""
+    out: dict = {}
+    for spread in CALENDAR_SPREADS:
+        sid = spread["id"]
+        back, front = spread["back"], spread["front"]
+        entry: dict = {
+            "label": spread["label"],
+            "back_key": back,
+            "front_key": front,
+            "by_curve": {},
+        }
+        for curve_key, wide in all_wide.items():
+            if back not in wide.columns or front not in wide.columns:
+                continue
+            slope = (wide[back] - wide[front]).dropna() * 100.0
+            if slope.empty:
+                continue
+            rows = [
+                {"date": str(dt.date()), "slope_bp": round(float(v), 2)}
+                for dt, v in slope.items()
+            ]
+            entry["by_curve"][curve_key] = {
+                "label": CURVES[curve_key]["label"],
+                "current_bp": round(float(slope.iloc[-1]), 2),
+                "current_date": str(slope.index[-1].date()),
+                "min_bp": round(float(slope.min()), 2),
+                "max_bp": round(float(slope.max()), 2),
+                "n_sessions": int(len(slope)),
+                "start": str(slope.index.min().date()),
+                "end": str(slope.index.max().date()),
+                "rows": rows,
+            }
+        out[sid] = entry
+    return out
+
 
 def _parse_barchart_hist(hist: dict, symbol: str) -> pd.DataFrame:
     if not hist or "data" not in hist:
@@ -235,6 +279,8 @@ def main() -> None:
             "start": str(sub.index.min().date()) if len(sub) else None,
             "end": str(sub.index.max().date()) if len(sub) else None,
         }
+
+    payload["calendar_spreads"] = compute_calendar_spreads(all_wide)
 
     out = "/workspace/stir_curves_data.json"
     with open(out, "w") as f:

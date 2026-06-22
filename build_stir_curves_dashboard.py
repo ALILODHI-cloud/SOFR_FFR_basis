@@ -26,6 +26,11 @@ h1{margin:4px 0;font-size:clamp(20px,4vw,28px)}
 .pill{display:inline-block;background:#1b2536;border:1px solid var(--line);padding:5px 10px;border-radius:20px;font-size:12px;color:var(--mut);margin:4px 6px 0 0}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
 .card h2{font-size:15px;margin:0 0 4px}
+.sectitle{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin:22px 4px 10px}
+.stat{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.statlbl{color:var(--mut);font-size:12px;margin-top:4px}
+.grid{display:grid;gap:14px}
+@media(min-width:800px){.cols-3{grid-template-columns:repeat(3,1fr)}}
 .hint{color:var(--mut);font-size:12px;margin:0 0 10px;line-height:1.45}
 .chartbox{position:relative;height:320px}
 .chartbox.sm{height:260px}
@@ -69,8 +74,35 @@ th{color:var(--mut);font-weight:600}
   </tr></thead><tbody></tbody></table></div>
 </div>
 
+<div class="sectitle">Calendar slopes · over time</div>
+
 <div class="card">
-  <h2>3M SOFR · implied rate over time</h2>
+  <h2>Dec-28 − Jun-27 slope (bp)</h2>
+  <p class="hint" id="slopeMainHint">Implied rate(Dec-28) − implied rate(Jun-27), in bp. Negative = cuts priced from Jun-27 peak to Dec-28.</p>
+  <div class="grid cols-3" id="slopeStats"></div>
+  <div class="chartbox" style="margin-top:12px"><canvas id="slopeJun27Chart"></canvas></div>
+</div>
+
+<div class="card">
+  <h2>Other calendar slopes · current vs history</h2>
+  <div style="overflow-x:auto"><table id="spreadTbl"><thead><tr>
+    <th>Spread</th><th>3M SOFR</th><th>3M SONIA</th><th>3M €STR</th>
+  </tr></thead><tbody></tbody></table></div>
+</div>
+
+<div class="card">
+  <h2>Dec-28 − Jun-26 slope over time (bp)</h2>
+  <p class="hint" id="slopeJun26Hint"></p>
+  <div class="chartbox sm"><canvas id="slopeJun26Chart"></canvas></div>
+</div>
+
+<div class="card">
+  <h2>Dec-27 − Dec-26 slope over time (bp)</h2>
+  <p class="hint" id="slopeDecHint"></p>
+  <div class="chartbox sm"><canvas id="slopeDecChart"></canvas></div>
+</div>
+
+<div class="sectitle">Implied rates · over time (by contract)</div>
   <p class="hint" id="sofrHint"></p>
   <div class="chartbox sm"><canvas id="sofrTs"></canvas></div>
 </div>
@@ -178,6 +210,91 @@ function tsChart(canvasId, curveKey, hintId) {
 tsChart('sofrTs', 'sofr_3m', 'sofrHint');
 tsChart('soniaTs', 'sonia_3m', 'soniaHint');
 tsChart('estrTs', 'estr_3m', 'estrHint');
+
+const SPREAD_COLORS = {sofr_3m: COLORS.sofr_3m, sonia_3m: COLORS.sonia_3m, estr_3m: COLORS.estr_3m};
+const CURVE_ORDER = ['sofr_3m', 'sonia_3m', 'estr_3m'];
+
+function spreadChart(canvasId, spreadId, hintId, tall) {
+  const sp = DATA.calendar_spreads?.[spreadId];
+  if (!sp) return;
+  const datasets = [];
+  let minStart = null, maxEnd = null;
+  CURVE_ORDER.forEach(k => {
+    const s = sp.by_curve?.[k];
+    if (!s) return;
+    datasets.push({
+      label: s.label,
+      data: s.rows.map(r => r.slope_bp),
+      borderColor: SPREAD_COLORS[k],
+      backgroundColor: SPREAD_COLORS[k],
+      pointRadius: 0,
+      borderWidth: 2,
+      tension: 0.15,
+    });
+    if (!minStart || s.start < minStart) minStart = s.start;
+    if (!maxEnd || s.end > maxEnd) maxEnd = s.end;
+  });
+  if (!datasets.length) return;
+  const labels = sp.by_curve[CURVE_ORDER.find(k => sp.by_curve[k])].rows.map(r => r.date);
+  if (hintId) {
+    document.getElementById(hintId).textContent =
+      `${sp.label}: ${labels.length} sessions, ${minStart} → ${maxEnd}.`;
+  }
+  new Chart(document.getElementById(canvasId), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(1)} bp` } },
+      },
+      scales: {
+        y: { title: { display: true, text: 'Slope (bp)' }, ticks: { callback: v => v + ' bp' } },
+        x: { ticks: { maxTicksLimit: 8 } },
+      },
+    },
+  });
+}
+
+function renderSlopeStats() {
+  const sp = DATA.calendar_spreads?.dec28_minus_jun27;
+  if (!sp) return;
+  const el = document.getElementById('slopeStats');
+  CURVE_ORDER.forEach(k => {
+    const s = sp.by_curve?.[k];
+    if (!s) return;
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.style.padding = '12px';
+    div.style.margin = '0';
+    const cls = s.current_bp >= 0 ? 'stat amber' : 'stat green';
+    div.innerHTML = `<div class="${cls}">${s.current_bp >= 0 ? '+' : ''}${s.current_bp.toFixed(1)} bp</div>
+      <div class="statlbl">${s.label} · ${s.current_date}<br>Range ${s.min_bp} to ${s.max_bp} bp</div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderSpreadTable() {
+  const tbody = document.querySelector('#spreadTbl tbody');
+  Object.values(DATA.calendar_spreads || {}).forEach(sp => {
+    const tr = document.createElement('tr');
+    const cell = k => {
+      const s = sp.by_curve?.[k];
+      return s ? `${s.current_bp >= 0 ? '+' : ''}${s.current_bp.toFixed(1)} bp` : '—';
+    };
+    tr.innerHTML = `<td>${sp.label}</td><td class="num">${cell('sofr_3m')}</td><td class="num">${cell('sonia_3m')}</td><td class="num">${cell('estr_3m')}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+renderSlopeStats();
+renderSpreadTable();
+spreadChart('slopeJun27Chart', 'dec28_minus_jun27', null, true);
+spreadChart('slopeJun26Chart', 'dec28_minus_jun26', 'slopeJun26Hint', false);
+spreadChart('slopeDecChart', 'dec27_minus_dec26', 'slopeDecHint', false);
 
 document.getElementById('foot').textContent =
   'All three curves are 3-month quarterly STIR futures (SOFR SQ*, SONIA J8*, €STR EB*) from Barchart EOD. ' +
