@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-22 14:30 UTC",
+  "generated_utc": "2026-06-22 20:24 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -15,36 +15,24 @@
     "sonia": "Bank of England IUDSOIA",
     "brent": "Yahoo Finance BZ=F"
   },
-  "data_end": "2026-06-19",
+  "data_end": "2026-06-22",
   "fetched_on": "2026-06-22",
   "summary": {
-    "slope_bp": 10.5,
-    "basis_bp": 28.5,
-    "roll_corr_30": 0.508,
-    "basis_vol_ann": 71.03,
-    "brent": 79.85,
-    "dec26_rate": 4.015,
-    "dec27_rate": 4.12,
-    "slope_mean_50d": -3.34,
-    "slope_std_50d": 8.92,
-    "basis_mean_50d": 46.08,
+    "slope_bp": 10.0,
+    "basis_bp": 24.5,
+    "roll_corr_30": 0.524,
+    "basis_vol_ann": 70.88,
+    "brent": 78.2,
+    "dec26_rate": 3.975,
+    "dec27_rate": 4.075,
+    "slope_mean_50d": -2.94,
+    "slope_std_50d": 9.06,
+    "basis_mean_50d": 45.82,
     "n_days": 50,
-    "start": "2026-04-09",
-    "end": "2026-06-19"
+    "start": "2026-04-10",
+    "end": "2026-06-22"
   },
   "daily": [
-    {
-      "date": "2026-04-09",
-      "dec26_px": 95.895,
-      "dec27_px": 95.995,
-      "dec26_rate": 4.105,
-      "dec27_rate": 4.005,
-      "slope_bp": -10.0,
-      "basis_bp": 37.56,
-      "brent": 95.92,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
     {
       "date": "2026-04-10",
       "dec26_px": 95.87,
@@ -234,8 +222,8 @@
       "slope_bp": -14.0,
       "basis_bp": 61.05,
       "brent": 108.17,
-      "roll_corr_30": -0.358,
-      "basis_vol_ann": 263.81
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-05-05",
@@ -632,6 +620,18 @@
       "brent": 79.85,
       "roll_corr_30": 0.508,
       "basis_vol_ann": 71.03
+    },
+    {
+      "date": "2026-06-22",
+      "dec26_px": 96.025,
+      "dec27_px": 95.925,
+      "dec26_rate": 3.975,
+      "dec27_rate": 4.075,
+      "slope_bp": 10.0,
+      "basis_bp": 24.5,
+      "brent": 78.2,
+      "roll_corr_30": 0.524,
+      "basis_vol_ann": 70.88
     }
   ]
 }
