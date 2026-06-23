@@ -132,7 +132,7 @@ def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame
         hist = hist_resp.value.json()
         page.goto(
             f"https://www.barchart.com/futures/quotes/{symbol}",
-            wait_until="networkidle",
+            wait_until="domcontentloaded",
             timeout=90_000,
         )
         quote = page.evaluate(

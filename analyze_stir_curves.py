@@ -12,10 +12,13 @@ from __future__ import annotations
 import json
 import re
 from datetime import datetime, timezone
+from pathlib import Path
 
 import pandas as pd
 
 from analyze_sonia import UA, price_to_rate
+
+ROOT = Path(__file__).resolve().parent
 
 CURVES = {
     "sofr_3m": {
@@ -291,8 +294,8 @@ def build_payload() -> dict:
 
 def main() -> None:
     payload = build_payload()
-    out = "/workspace/stir_curves_data.json"
-    with open(out, "w") as f:
+    out = ROOT / "stir_curves_data.json"
+    with out.open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
     print(f"Wrote {out}")
 
