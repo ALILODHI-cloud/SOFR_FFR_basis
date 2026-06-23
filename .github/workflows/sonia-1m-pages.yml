@@ -7,7 +7,10 @@ on:
       - 'analyze_sonia_1m.py'
       - 'analyze_sonia.py'
       - 'analyze_stir_curves.py'
+      - 'analyze_jul27_dec26_trade.py'
       - 'build_sonia_1m_dashboard.py'
+      - 'build_trade_tracker.py'
+      - 'trades/**'
       - 'requirements-sonia.txt'
       - '.github/workflows/sonia-1m-pages.yml'
   schedule:
@@ -44,6 +47,8 @@ jobs:
         run: |
           python analyze_sonia_1m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
           python build_sonia_1m_dashboard.py
+          python analyze_jul27_dec26_trade.py || echo "::warning::Trade mark failed"
+          python build_trade_tracker.py
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -53,7 +58,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html
+          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html docs/portal.html docs/trade_tracker.html jul27_dec26_trade_data.json trades/jul27_dec26_steepener.json
           git diff --staged --quiet || git commit -m "Auto-refresh 1M SONIA dashboard $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 
