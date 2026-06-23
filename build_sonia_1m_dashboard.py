@@ -93,6 +93,43 @@ tr.mpc-past td{color:var(--mut)}
 #chgTbl td.chg-flat{color:var(--mut)}
 #chgTbl th.slope-col{border-left:1px solid var(--line);color:var(--hist)}
 #chgTbl td.slope-col{border-left:1px solid var(--line);font-weight:600}
+.viewbar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:12px 0 0;flex-wrap:wrap}
+.viewbar span.lbl{font-size:11px;color:var(--mut);letter-spacing:.06em;text-transform:uppercase}
+.viewtoggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#1b2536}
+.viewtoggle button{background:transparent;border:0;color:var(--mut);padding:7px 14px;font-size:12px;cursor:pointer;line-height:1}
+.viewtoggle button.active{background:var(--acc);color:#0b0f17;font-weight:700}
+.viewtoggle button:not(.active):hover{color:var(--ink)}
+body.view-phone .wrap{padding:12px 12px calc(48px + env(safe-area-inset-bottom))}
+body.view-phone header{padding:14px}
+body.view-phone .hint.long{display:none}
+body.view-phone .chart-wrap{flex-direction:column}
+body.view-phone .chartbox{height:min(52vw, 340px);min-height:260px}
+body.view-phone #pinTray{width:100%;max-height:none;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+body.view-phone #pinTray:empty::before{min-width:100%}
+body.view-phone .pin-card{min-width:168px;margin-bottom:0;flex-shrink:0}
+body.view-phone .mpc-chartbox{height:180px}
+body.view-phone .mpc-stat{min-width:calc(50% - 6px);flex:1 1 calc(50% - 6px)}
+body.view-phone .sliderrow{gap:8px}
+body.view-phone .sliderrow .btn{flex:1;min-width:0;padding:10px 8px}
+body.view-phone .sliderrow input[type=range]{min-width:100%;order:3;flex-basis:100%}
+body.view-phone .sliderdate{order:4;width:100%;text-align:center}
+body.view-phone .tblwrap{max-height:240px}
+body.view-phone .chg-wrap{max-height:360px}
+body.view-phone h1{font-size:20px}
+body.view-phone .pill{font-size:11px;padding:4px 8px}
+@media (max-width: 720px){
+  .chart-wrap{flex-direction:column}
+  .chartbox{height:min(52vw, 340px);min-height:260px}
+  #pinTray{width:100%;max-height:none;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  #pinTray:empty::before{min-width:100%}
+  .pin-card{min-width:168px;margin-bottom:0;flex-shrink:0}
+  .mpc-chartbox{height:180px}
+  .mpc-stat{min-width:calc(50% - 6px);flex:1 1 calc(50% - 6px)}
+  .hint.long{display:none}
+  .sliderrow .btn{flex:1}
+  .sliderrow input[type=range]{min-width:100%;order:3;flex-basis:100%}
+  .sliderdate{order:4;width:100%;text-align:center}
+}
 </style>
 </head>
 <body>
@@ -106,11 +143,19 @@ tr.mpc-past td{color:var(--mut)}
     <span class="pill policy" id="policyPill"></span>
     <span class="pill live" id="livePill" style="display:none">● Live</span>
   </div>
+  <div class="viewbar">
+    <span class="lbl">Layout</span>
+    <div class="viewtoggle" role="group" aria-label="Layout">
+      <button type="button" id="viewDesktopBtn" aria-pressed="false">Desktop</button>
+      <button type="button" id="viewPhoneBtn" aria-pressed="false">Phone</button>
+    </div>
+  </div>
 </header>
 
 <div class="card">
   <h2>Curve comparison</h2>
-  <p class="hint">Opens on the <b>latest</b> curve (frozen green). Scrub the slider to morph the amber line through history — green stays fixed. <b>Click</b> any point to pin a detail card (cards persist). Pin exactly two legs to see calendar slope at top. Toggle “level line” per pin only when you want a dotted horizontal.</p>
+  <p class="hint long">Opens on the <b>latest</b> curve (frozen green). Scrub the slider to morph the amber line through history — green stays fixed. <b>Click</b> any point to pin a detail card (cards persist). Pin exactly two legs to see calendar slope at top. Toggle “level line” per pin only when you want a dotted horizontal.</p>
+  <p class="hint" style="display:none" id="hintShort">Green = latest · amber = slider date · tap curve to pin · two pins = slope</p>
 
   <div id="slopeBanner" class="slope-banner"></div>
 
@@ -795,6 +840,52 @@ async function poll() {
   } catch (e) { console.warn(e); }
 }
 
+const VIEW_KEY = 'sonia1m_layout';
+const MQ_PHONE = window.matchMedia('(max-width: 720px)');
+
+function getViewPref() {
+  const saved = localStorage.getItem(VIEW_KEY);
+  if (saved === 'phone' || saved === 'desktop') return saved;
+  return MQ_PHONE.matches ? 'phone' : 'desktop';
+}
+
+function applyViewMode(pref) {
+  const phone = pref === 'phone';
+  document.body.classList.toggle('view-phone', phone);
+  const desk = document.getElementById('viewDesktopBtn');
+  const mob = document.getElementById('viewPhoneBtn');
+  const shortHint = document.getElementById('hintShort');
+  if (desk) {
+    desk.classList.toggle('active', !phone);
+    desk.setAttribute('aria-pressed', String(!phone));
+  }
+  if (mob) {
+    mob.classList.toggle('active', phone);
+    mob.setAttribute('aria-pressed', String(phone));
+  }
+  if (shortHint) shortHint.style.display = phone ? 'block' : 'none';
+  requestAnimationFrame(() => {
+    if (mainChart) mainChart.resize();
+    if (mpcChart) mpcChart.resize();
+  });
+}
+
+function setViewMode(pref) {
+  localStorage.setItem(VIEW_KEY, pref);
+  applyViewMode(pref);
+}
+
+document.getElementById('viewDesktopBtn')?.addEventListener('click', () => setViewMode('desktop'));
+document.getElementById('viewPhoneBtn')?.addEventListener('click', () => setViewMode('phone'));
+MQ_PHONE.addEventListener('change', () => {
+  if (!localStorage.getItem(VIEW_KEY)) applyViewMode(MQ_PHONE.matches ? 'phone' : 'desktop');
+});
+window.addEventListener('resize', () => {
+  if (mainChart) mainChart.resize();
+  if (mpcChart) mpcChart.resize();
+});
+
+applyViewMode(getViewPref());
 renderAll(null, true);
 if (isLiveMode()) {
   setInterval(poll, LIVE_POLL_MS);
