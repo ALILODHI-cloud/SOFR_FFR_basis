@@ -14,5 +14,7 @@ Thumbs.db
 gh_auth.log
 .stir_devtunnel_id
 .stir_devtunnel_url
+.sonia_1m_devtunnel_id
+.sonia_1m_devtunnel_url
 /tmp/stir-*.log
 devtunnel
