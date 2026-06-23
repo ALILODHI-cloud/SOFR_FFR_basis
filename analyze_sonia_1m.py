@@ -78,6 +78,73 @@ def discover_ju_chain() -> list[str]:
     return syms
 
 
+def _compute_curve_evolution(
+    wide: pd.DataFrame, contracts: list[dict], bank: float
+) -> dict:
+    """Longest date range where a stable set of contracts all have EOD."""
+    keys_all = [c["key"] for c in contracts]
+    label_map = {c["key"]: c for c in contracts}
+
+    # Prefer core curve through Feb-28 if it yields more sessions than all 24.
+    core_keys = [k for k in keys_all if k <= "2028-02"]
+    full_common = wide[keys_all].dropna(how="any")
+    core_common = wide[core_keys].dropna(how="any")
+
+    if len(core_common) >= len(full_common):
+        use_keys, use_df = core_keys, core_common
+        note = (
+            f"Longest common history for {len(core_keys)} contracts "
+            f"(Jun-26 → Feb-28). Back 3 contracts list later on Barchart."
+        )
+    else:
+        use_keys, use_df = keys_all, full_common
+        note = f"Common history for all {len(keys_all)} listed contracts."
+
+    history: list[dict] = []
+    for dt, row in use_df.iterrows():
+        pts = []
+        for k in use_keys:
+            rate = float(row[k])
+            pts.append({
+                "key": k,
+                "label": label_map[k]["label"],
+                "symbol": label_map[k]["symbol"],
+                "implied_rate_pct": round(rate, 4),
+                "vs_bank_bp": round((rate - bank) * 100, 1),
+            })
+        history.append({"date": str(dt.date()), "points": pts})
+
+    # Key tenor legs vs bank over same window
+    watch = ["2026-12", "2027-06", "2027-12"]
+    legs: dict = {}
+    for k in watch:
+        if k not in use_df.columns:
+            continue
+        s = use_df[k]
+        legs[k] = {
+            "label": label_map[k]["label"],
+            "rows": [
+                {
+                    "date": str(d.date()),
+                    "implied_rate_pct": round(float(v), 4),
+                    "vs_bank_bp": round((float(v) - bank) * 100, 1),
+                }
+                for d, v in s.items()
+            ],
+        }
+
+    return {
+        "n_contracts": len(use_keys),
+        "contract_keys": use_keys,
+        "n_sessions": int(len(use_df)),
+        "start": str(use_df.index.min().date()),
+        "end": str(use_df.index.max().date()),
+        "note": note,
+        "history": history,
+        "watch_legs": legs,
+    }
+
+
 def build_payload() -> dict:
     symbols = discover_ju_chain()
     print(f"Fetching EOD for {len(symbols)} contracts…")
@@ -122,6 +189,8 @@ def build_payload() -> dict:
                 rec[col] = round(float(v), 4)
         records.append(rec)
 
+    evolution = _compute_curve_evolution(wide, contracts, BANK_RATE_PCT)
+
     return {
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "source": "Barchart EOD settles",
@@ -139,6 +208,7 @@ def build_payload() -> dict:
             "start": str(wide.index.min().date()),
             "end": str(wide.index.max().date()),
         },
+        "curve_evolution": evolution,
     }
 
 

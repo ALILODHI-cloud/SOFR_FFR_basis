@@ -33,6 +33,12 @@ h1{margin:4px 0;font-size:clamp(20px,4vw,28px)}
 .card h2{font-size:15px;margin:0 0 4px}
 .hint{color:var(--mut);font-size:12px;margin:0 0 10px;line-height:1.45}
 .chartbox{position:relative;height:420px}
+.chartbox.sm{height:300px}
+.sectitle{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin:22px 4px 10px}
+.sliderrow{display:flex;align-items:center;gap:12px;margin:12px 0}
+.sliderrow input[type=range]{flex:1;accent-color:var(--acc)}
+.sliderdate{font-size:13px;color:var(--ink);min-width:108px;font-variant-numeric:tabular-nums}
+.playbtn{background:#1b2536;border:1px solid var(--line);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{padding:7px 8px;border-bottom:1px solid var(--line)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
@@ -61,6 +67,25 @@ th{color:var(--mut)}
   <div class="chartbox"><canvas id="curveChart"></canvas></div>
 </div>
 
+<div class="sectitle">Curve evolution · longest common history</div>
+
+<div class="card">
+  <h2>Historical curve shape</h2>
+  <p class="hint" id="evoHint"></p>
+  <div class="sliderrow">
+    <button type="button" class="playbtn" id="playBtn">▶ Play</button>
+    <input type="range" id="dateSlider" min="0" max="0" value="0"/>
+    <span class="sliderdate" id="sliderDate"></span>
+  </div>
+  <div class="chartbox"><canvas id="evoChart"></canvas></div>
+</div>
+
+<div class="card">
+  <h2>Key tenors vs Bank Rate over time (bp)</h2>
+  <p class="hint">Dec-26, Jun-27, Dec-27 implied change vs 3.75% on the same common sample.</p>
+  <div class="chartbox sm"><canvas id="legsChart"></canvas></div>
+</div>
+
 <div class="card">
   <h2>All contracts</h2>
   <div class="tblwrap"><table id="tbl"><thead><tr>
@@ -74,7 +99,9 @@ th{color:var(--mut)}
 const LIVE_POLL_MS = __LIVE_POLL_MS__;
 const EMBEDDED = __DATA_JSON__;
 let DATA = EMBEDDED;
-let chart;
+let chart, evoChart, legsChart;
+let evoIdx = 0;
+let playTimer = null;
 
 function isLiveMode() {
   return location.protocol.startsWith('http');
@@ -222,9 +249,146 @@ function renderChart() {
   });
 }
 
+function renderEvolution() {
+  const evo = DATA.curve_evolution;
+  if (!evo || !evo.history?.length) {
+    document.getElementById('evoHint').textContent = 'No common history available.';
+    return;
+  }
+
+  document.getElementById('evoHint').textContent =
+    `${evo.note} · ${evo.n_sessions} sessions · ${evo.start} → ${evo.end}`;
+
+  const slider = document.getElementById('dateSlider');
+  slider.max = evo.history.length - 1;
+  evoIdx = evo.history.length - 1;
+  slider.value = evoIdx;
+  document.getElementById('sliderDate').textContent = evo.history[evoIdx].date;
+
+  const br = DATA.bank_rate_pct;
+  const drawSnap = (idx) => {
+    const snap = evo.history[idx];
+    const pts = snap.points;
+    if (evoChart) evoChart.destroy();
+    evoChart = new Chart(document.getElementById('evoChart'), {
+      type: 'line',
+      data: {
+        labels: pts.map(p => p.label),
+        datasets: [{
+          label: `Curve ${snap.date}`,
+          data: pts.map(p => p.implied_rate_pct),
+          borderColor: '#39d98a',
+          backgroundColor: 'rgba(57,217,138,0.12)',
+          fill: true,
+          tension: 0.28,
+          pointRadius: 5,
+          pointHoverRadius: 8,
+        }, {
+          label: 'Bank Rate',
+          data: pts.map(() => br),
+          borderColor: '#4aa8ff',
+          borderDash: [6, 4],
+          pointRadius: 0,
+          borderWidth: 2,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'nearest', intersect: true },
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#93a1b5', font: { size: 11 } } },
+          tooltip: {
+            displayColors: false,
+            filter: item => item.datasetIndex === 0,
+            callbacks: {
+              title: items => {
+                const p = pts[items[0].dataIndex];
+                return `${p.label} · ${p.symbol} · ${snap.date}`;
+              },
+              label: () => '',
+              afterBody: items => {
+                const p = pts[items[0].dataIndex];
+                return [
+                  `Implied: ${p.implied_rate_pct.toFixed(3)}%`,
+                  `vs Bank ${br}%: ${fmtBp(p.vs_bank_bp)}`,
+                  `≈ ${(p.vs_bank_bp/25 >= 0 ? '+' : '')}${(p.vs_bank_bp/25).toFixed(2)} hikes`,
+                ];
+              },
+            },
+          },
+        },
+        scales: {
+          y: { title: { display: true, text: 'Implied rate (%)', color: '#93a1b5' }, ticks: { color: '#93a1b5' } },
+          x: { ticks: { maxRotation: 45, color: '#93a1b5', maxTicksLimit: 21 } },
+        },
+      },
+    });
+  };
+
+  drawSnap(evoIdx);
+  slider.oninput = () => {
+    evoIdx = +slider.value;
+    document.getElementById('sliderDate').textContent = evo.history[evoIdx].date;
+    drawSnap(evoIdx);
+  };
+
+  document.getElementById('playBtn').onclick = () => {
+    if (playTimer) {
+      clearInterval(playTimer);
+      playTimer = null;
+      document.getElementById('playBtn').textContent = '▶ Play';
+      return;
+    }
+    evoIdx = 0;
+    document.getElementById('playBtn').textContent = '⏸ Pause';
+    playTimer = setInterval(() => {
+      if (evoIdx >= evo.history.length) {
+        clearInterval(playTimer);
+        playTimer = null;
+        document.getElementById('playBtn').textContent = '▶ Play';
+        return;
+      }
+      slider.value = evoIdx;
+      document.getElementById('sliderDate').textContent = evo.history[evoIdx].date;
+      drawSnap(evoIdx);
+      evoIdx++;
+    }, 150);
+  };
+
+  const legs = evo.watch_legs || {};
+  const colors = {'2026-12':'#ffb84a','2027-06':'#39d98a','2027-12':'#4aa8ff'};
+  const datasets = Object.entries(legs).map(([k, leg]) => ({
+    label: leg.label,
+    data: leg.rows.map(r => r.vs_bank_bp),
+    borderColor: colors[k] || '#ccc',
+    pointRadius: 0,
+    borderWidth: 2,
+    tension: 0.15,
+  }));
+  const dates = legs['2026-12']?.rows.map(r => r.date) || [];
+  if (legsChart) legsChart.destroy();
+  legsChart = new Chart(document.getElementById('legsChart'), {
+    type: 'line',
+    data: { labels: dates, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#93a1b5' } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtBp(ctx.parsed.y)}` } },
+      },
+      scales: {
+        y: { title: { display: true, text: 'vs Bank Rate (bp)', color: '#93a1b5' } },
+        x: { ticks: { maxTicksLimit: 8, color: '#93a1b5' } },
+      },
+    },
+  });
+}
+
 function renderAll(status) {
   renderHeader(status);
   renderChart();
+  renderEvolution();
   renderTable();
   document.getElementById('foot').textContent =
     'ICE 1M SONIA futures (JU*), Barchart EOD. Hover curve points for implied rate and bp vs Bank Rate. Not investment advice.';
