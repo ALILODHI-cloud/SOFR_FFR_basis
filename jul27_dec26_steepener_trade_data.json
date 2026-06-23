@@ -1,10 +1,14 @@
 {
-  "generated_utc": "2026-06-23 13:32 UTC",
+  "generated_utc": "2026-06-23 14:50 UTC",
   "trade": {
     "id": "jul27_dec26_steepener",
     "label": "Jul27\u2212Dec26 SONIA steepener",
     "position": "Long JUN27 (Jul-27 1M) / Short JUZ26 (Dec-26 1M)",
-    "entry_locked": false
+    "direction": "steepener",
+    "spread_label": "Jul27\u2212Dec26",
+    "entry_locked": false,
+    "gbp_per_bp": 12.5,
+    "detail_page": "trade_jul27_dec26.html"
   },
   "bank_rate_pct": 3.75,
   "bank_rate_as_of": "2026-06-18",
@@ -24,7 +28,7 @@
       "implied_rate_pct": 4.135
     },
     "slope_bp": 16.0,
-    "captured_utc": "2026-06-23 13:32 UTC",
+    "captured_utc": "2026-06-23 14:50 UTC",
     "source": "barchart_live"
   },
   "mark": {
@@ -42,25 +46,29 @@
       "implied_rate_pct": 4.135
     },
     "slope_bp": 16.0,
-    "updated_utc": "2026-06-23 13:32 UTC"
+    "updated_utc": "2026-06-23 14:50 UTC"
   },
   "pnl": {
-    "slope_bp": 0.0,
-    "gbp": 0.0,
-    "short_leg_bp": 0.0,
-    "long_leg_bp": 0.0
+    "slope_bp": -0.0,
+    "gbp": -0.0,
+    "quoted_long_leg_bp": 0.0,
+    "quoted_short_leg_bp": 0.0
   },
   "trade_path": [
     {
       "date": "2026-06-23",
-      "short_rate": 3.975,
-      "long_rate": 4.135,
+      "quoted_long_rate": 4.135,
+      "quoted_short_rate": 3.975,
       "slope_bp": 16.0,
-      "dslope_bp": 0.0,
-      "cum_pnl_gbp": 0.0,
-      "daily_pnl_gbp": 0.0
+      "dslope_bp": -0.0,
+      "cum_pnl_gbp": -0.0,
+      "daily_pnl_gbp": -0.0
     }
   ],
   "regime_attribution": [],
-  "market_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_15/body.md"
+  "market_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_15/body.md",
+  "leg_labels": {
+    "quoted_long": "Jul-27",
+    "quoted_short": "Dec-26"
+  }
 }

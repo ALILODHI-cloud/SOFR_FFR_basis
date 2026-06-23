@@ -1,0 +1,74 @@
+{
+  "generated_utc": "2026-06-23 14:50 UTC",
+  "trade": {
+    "id": "jul27_dec27_flattener",
+    "label": "Jul27\u2212Dec27 SONIA flattener",
+    "position": "Long JUZ27 (Dec-27 1M) / Short JUN27 (Jul-27 1M)",
+    "direction": "flattener",
+    "spread_label": "Jul27\u2212Dec27",
+    "entry_locked": false,
+    "gbp_per_bp": 12.5,
+    "detail_page": "trade_jul27_dec27.html"
+  },
+  "bank_rate_pct": 3.75,
+  "bank_rate_as_of": "2026-06-18",
+  "entry": {
+    "date": "2026-06-23",
+    "label": "UK market open \u00b7 23 Jun 2026",
+    "short": {
+      "symbol": "JUN27",
+      "date": "2026-06-22",
+      "price": 95.865,
+      "implied_rate_pct": 4.135
+    },
+    "long": {
+      "symbol": "JUZ27",
+      "date": "2026-06-22",
+      "price": 95.925,
+      "implied_rate_pct": 4.075
+    },
+    "slope_bp": 6.0,
+    "captured_utc": "2026-06-23 14:50 UTC",
+    "source": "barchart_live"
+  },
+  "mark": {
+    "date": "2026-06-23",
+    "short": {
+      "symbol": "JUN27",
+      "date": "2026-06-22",
+      "price": 95.865,
+      "implied_rate_pct": 4.135
+    },
+    "long": {
+      "symbol": "JUZ27",
+      "date": "2026-06-22",
+      "price": 95.925,
+      "implied_rate_pct": 4.075
+    },
+    "slope_bp": 6.0,
+    "updated_utc": "2026-06-23 14:50 UTC"
+  },
+  "pnl": {
+    "slope_bp": 0.0,
+    "gbp": 0.0,
+    "quoted_long_leg_bp": 0.0,
+    "quoted_short_leg_bp": 0.0
+  },
+  "trade_path": [
+    {
+      "date": "2026-06-23",
+      "quoted_long_rate": 4.135,
+      "quoted_short_rate": 4.075,
+      "slope_bp": 6.0,
+      "dslope_bp": 0.0,
+      "cum_pnl_gbp": 0.0,
+      "daily_pnl_gbp": 0.0
+    }
+  ],
+  "regime_attribution": [],
+  "market_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_13/body.md",
+  "leg_labels": {
+    "quoted_long": "Jul-27",
+    "quoted_short": "Dec-27"
+  }
+}
