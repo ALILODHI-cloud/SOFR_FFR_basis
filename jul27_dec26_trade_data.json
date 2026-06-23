@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-23 13:32 UTC",
+  "generated_utc": "2026-06-23 13:46 UTC",
   "trade": {
     "id": "jul27_dec26_steepener",
     "label": "Jul27\u2212Dec26 SONIA steepener",
@@ -24,7 +24,7 @@
       "implied_rate_pct": 4.135
     },
     "slope_bp": 16.0,
-    "captured_utc": "2026-06-23 13:32 UTC",
+    "captured_utc": "2026-06-23 13:46 UTC",
     "source": "barchart_live"
   },
   "mark": {
@@ -42,7 +42,7 @@
       "implied_rate_pct": 4.135
     },
     "slope_bp": 16.0,
-    "updated_utc": "2026-06-23 13:32 UTC"
+    "updated_utc": "2026-06-23 13:46 UTC"
   },
   "pnl": {
     "slope_bp": 0.0,
