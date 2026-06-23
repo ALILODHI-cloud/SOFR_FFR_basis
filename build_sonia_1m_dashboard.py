@@ -173,7 +173,11 @@ const NO_ANIM = {
 };
 
 function isLiveMode() {
-  return location.protocol.startsWith('http');
+  const h = location.hostname;
+  if (h === 'localhost' || h === '127.0.0.1') return true;
+  if (h.endsWith('.devtunnels.ms')) return true;
+  if (h.endsWith('.trycloudflare.com')) return true;
+  return false;
 }
 
 async function fetchData() {
