@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 import pandas as pd
 
@@ -28,6 +28,33 @@ MONTH_LABEL = {
     1: "Jan", 2: "Feb", 3: "Mar", 4: "Apr", 5: "May", 6: "Jun",
     7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec",
 }
+
+# BoE MPC announcement dates (Thursday decisions).
+MPC_MEETINGS = [
+  {"date": "2026-02-05", "label": "Feb MPC"},
+  {"date": "2026-03-19", "label": "Mar MPC"},
+  {"date": "2026-04-30", "label": "Apr MPC"},
+  {"date": "2026-06-18", "label": "Jun MPC"},
+  {"date": "2026-07-30", "label": "Jul MPC"},
+  {"date": "2026-09-17", "label": "Sep MPC"},
+  {"date": "2026-11-05", "label": "Nov MPC"},
+  {"date": "2026-12-17", "label": "Dec MPC"},
+  {"date": "2027-02-04", "label": "Feb MPC"},
+  {"date": "2027-03-18", "label": "Mar MPC"},
+  {"date": "2027-04-29", "label": "Apr MPC"},
+  {"date": "2027-06-17", "label": "Jun MPC"},
+  {"date": "2027-07-29", "label": "Jul MPC"},
+  {"date": "2027-09-16", "label": "Sep MPC"},
+  {"date": "2027-11-04", "label": "Nov MPC"},
+  {"date": "2027-12-16", "label": "Dec MPC"},
+]
+
+MPC_PRICING_NOTE = (
+  "Approximate meeting path from ICE 1M SONIA futures (not BoE-dated OIS / WIRP). "
+  "Each meeting maps to the next month's contract as a post-decision rate proxy. "
+  "Probabilities assume 25bp steps (FedWatch-style). Standard 1M futures can span "
+  "multiple meetings — use Bloomberg WIRP for precise per-meeting OIS pricing."
+)
 
 
 def symbol_to_meta(symbol: str) -> dict | None:
@@ -76,6 +103,89 @@ def discover_ju_chain() -> list[str]:
     syms = sorted(found, key=lambda s: symbol_to_meta(s)["sort_key"] if symbol_to_meta(s) else (9999, 99))
     print(f"Discovered {len(syms)} {PREFIX}* 1M SONIA contracts")
     return syms
+
+
+def _ref_contract_key(meeting_date: date) -> str:
+    """Month after MPC as post-meeting policy proxy (≈30-day window)."""
+    y, m = meeting_date.year, meeting_date.month
+    if m == 12:
+        return f"{y + 1}-01"
+    return f"{y}-{m + 1:02d}"
+
+
+def _meeting_probs_25bp(delta_bp: float) -> dict[str, float]:
+    cut = max(0.0, min(1.0, -delta_bp / 25.0))
+    hike = max(0.0, min(1.0, delta_bp / 25.0))
+    hold = max(0.0, 1.0 - cut - hike)
+    return {
+        "cut_pct": round(cut * 100, 1),
+        "hold_pct": round(hold * 100, 1),
+        "hike_pct": round(hike * 100, 1),
+    }
+
+
+def compute_mpc_meeting_pricing(
+    contracts: list[dict],
+    bank_rate_pct: float,
+    as_of: str | None = None,
+) -> dict:
+    """Map 1M SONIA strip to BoE MPC calendar with meeting-level probabilities."""
+    cmap = {c["key"]: c for c in contracts}
+    ref_date = date.fromisoformat(as_of) if as_of else date.today()
+    latest = max(date.fromisoformat(c["latest_date"]) for c in contracts)
+
+    rows: list[dict] = []
+    prev_implied: float | None = None
+    marked_next = False
+
+    for mtg in MPC_MEETINGS:
+        mdate = date.fromisoformat(mtg["date"])
+        if mdate.year > latest.year + 1:
+            break
+        ref_key = _ref_contract_key(mdate)
+        c = cmap.get(ref_key)
+        if not c:
+            continue
+
+        implied = float(c["implied_rate_pct"])
+        cumulative_bp = round((implied - bank_rate_pct) * 100, 1)
+        anchor = bank_rate_pct if prev_implied is None else prev_implied
+        incremental_bp = round((implied - anchor) * 100, 1)
+        prev_implied = implied
+
+        if mdate <= ref_date:
+            status = "past"
+        elif not marked_next:
+            status = "next"
+            marked_next = True
+        else:
+            status = "upcoming"
+
+        rows.append({
+            "meeting_date": mtg["date"],
+            "meeting_label": mtg["label"],
+            "status": status,
+            "ref_contract_key": ref_key,
+            "ref_contract_label": c["label"],
+            "ref_symbol": c["symbol"],
+            "implied_rate_pct": round(implied, 4),
+            "cumulative_vs_bank_bp": cumulative_bp,
+            "incremental_bp": incremental_bp,
+            **_meeting_probs_25bp(incremental_bp),
+        })
+
+    total_easing_bp = rows[-1]["cumulative_vs_bank_bp"] if rows else 0.0
+    upcoming = [r for r in rows if r["status"] != "past"]
+    next_mtg = upcoming[0] if upcoming else None
+
+    return {
+        "note": MPC_PRICING_NOTE,
+        "as_of": as_of or str(ref_date),
+        "bank_rate_pct": bank_rate_pct,
+        "total_easing_priced_bp": total_easing_bp,
+        "next_meeting": next_mtg,
+        "meetings": rows,
+    }
 
 
 def _compute_curve_evolution(
@@ -209,6 +319,9 @@ def build_payload() -> dict:
             "end": str(wide.index.max().date()),
         },
         "curve_evolution": evolution,
+        "mpc_meeting_pricing": compute_mpc_meeting_pricing(
+            contracts, BANK_RATE_PCT, BANK_RATE_AS_OF
+        ),
     }
 
 

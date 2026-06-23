@@ -4,9 +4,16 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from analyze_sonia_1m import compute_mpc_meeting_pricing
+
 ROOT = Path(__file__).resolve().parent
 with (ROOT / "sonia_1m_data.json").open(encoding="utf-8") as f:
     data = json.load(f)
+
+if "mpc_meeting_pricing" not in data:
+    data["mpc_meeting_pricing"] = compute_mpc_meeting_pricing(
+        data["contracts"], data["bank_rate_pct"], data.get("bank_rate_as_of")
+    )
 
 DATA_JSON = json.dumps(data)
 LIVE_POLL_MS = 60_000
@@ -59,6 +66,18 @@ th,td{padding:7px 8px;border-bottom:1px solid var(--line)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 th{color:var(--mut)}
 .foot{color:var(--mut);font-size:12px;margin-top:16px;line-height:1.6}
+.mpc-summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.mpc-stat{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:140px}
+.mpc-stat .k{font-size:11px;color:var(--mut)}
+.mpc-stat .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.mpc-chartbox{position:relative;height:220px;margin-bottom:12px}
+.probbar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#1b2536;min-width:90px}
+.probbar span{display:block;height:100%}
+.prob-cut{background:#39d98a}
+.prob-hold{background:#64748b}
+.prob-hike{background:#f87171}
+tr.mpc-next td{background:rgba(57,217,138,0.06)}
+tr.mpc-past td{color:var(--mut)}
 </style>
 </head>
 <body>
@@ -95,6 +114,16 @@ th{color:var(--mut)}
 </div>
 
 <div class="card">
+  <h2>BoE MPC meeting pricing (from 1M SONIA strip)</h2>
+  <p class="hint" id="mpcNote"></p>
+  <div class="mpc-summary" id="mpcSummary"></div>
+  <div class="mpc-chartbox"><canvas id="mpcChart"></canvas></div>
+  <div class="tblwrap"><table id="mpcTbl"><thead><tr>
+    <th>Meeting</th><th>Ref 1M</th><th>Implied %</th><th>Cum vs Bank</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
+  </tr></thead><tbody></tbody></table></div>
+</div>
+
+<div class="card">
   <h2>All contracts (latest)</h2>
   <div class="tblwrap"><table id="tbl"><thead><tr>
     <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank</th><th>As of</th>
@@ -108,6 +137,7 @@ const LIVE_POLL_MS = __LIVE_POLL_MS__;
 const EMBEDDED = __DATA_JSON__;
 let DATA = EMBEDDED;
 let mainChart = null;
+let mpcChart = null;
 let evoIdx = 0;
 let playTimer = null;
 let keys = [];
@@ -537,6 +567,93 @@ function renderHeader(status) {
   if (isLiveMode()) document.getElementById('livePill').style.display = 'inline-block';
 }
 
+function renderMpcPanel() {
+  const mpc = DATA.mpc_meeting_pricing;
+  if (!mpc?.meetings?.length) return;
+
+  document.getElementById('mpcNote').textContent = mpc.note || '';
+
+  const sum = document.getElementById('mpcSummary');
+  const nxt = mpc.next_meeting;
+  sum.innerHTML = `
+    <div class="mpc-stat"><div class="k">Bank Rate</div><div class="v">${mpc.bank_rate_pct.toFixed(2)}%</div></div>
+    <div class="mpc-stat"><div class="k">Total easing priced</div><div class="v">${fmtBp(mpc.total_easing_priced_bp)}</div></div>
+    ${nxt ? `<div class="mpc-stat"><div class="k">Next: ${nxt.meeting_label}</div><div class="v">${fmtBp(nxt.incremental_bp)}</div><div class="k" style="margin-top:4px">${nxt.cut_pct}% cut · ${nxt.hold_pct}% hold · ${nxt.hike_pct}% hike</div></div>` : ''}`;
+
+  const tbody = document.querySelector('#mpcTbl tbody');
+  tbody.innerHTML = '';
+  mpc.meetings.forEach(m => {
+    const tr = document.createElement('tr');
+    if (m.status === 'next') tr.className = 'mpc-next';
+    if (m.status === 'past') tr.className = 'mpc-past';
+    tr.innerHTML = `
+      <td>${m.meeting_date.slice(5)} · ${m.meeting_label}</td>
+      <td>${m.ref_contract_label} <span style="color:var(--mut)">${m.ref_symbol}</span></td>
+      <td class="num">${m.implied_rate_pct.toFixed(3)}%</td>
+      <td class="num">${fmtBp(m.cumulative_vs_bank_bp)}</td>
+      <td class="num">${fmtBp(m.incremental_bp)}</td>
+      <td class="num">${m.cut_pct}%</td>
+      <td class="num">${m.hold_pct}%</td>
+      <td class="num">${m.hike_pct}%</td>
+      <td><div class="probbar" title="cut / hold / hike">
+        <span class="prob-cut" style="width:${m.cut_pct}%"></span>
+        <span class="prob-hold" style="width:${m.hold_pct}%"></span>
+        <span class="prob-hike" style="width:${m.hike_pct}%"></span>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+
+  const upcoming = mpc.meetings.filter(m => m.status !== 'past');
+  const labels = upcoming.map(m => m.meeting_date.slice(5));
+  const cum = upcoming.map(m => m.cumulative_vs_bank_bp);
+  const inc = upcoming.map(m => m.incremental_bp);
+  const ctx = document.getElementById('mpcChart');
+  if (mpcChart) mpcChart.destroy();
+  mpcChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Cumulative vs Bank (bp)',
+          data: cum,
+          type: 'line',
+          borderColor: '#4aa8ff',
+          backgroundColor: 'rgba(74,168,255,0.1)',
+          borderWidth: 2,
+          pointRadius: 4,
+          yAxisID: 'y',
+          order: 0,
+        },
+        {
+          label: 'Δ at meeting (bp)',
+          data: inc,
+          backgroundColor: inc.map(v => v < 0 ? 'rgba(57,217,138,0.75)' : v > 0 ? 'rgba(248,113,113,0.75)' : 'rgba(100,116,139,0.75)'),
+          borderWidth: 0,
+          yAxisID: 'y',
+          order: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: NO_ANIM,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#93a1b5', usePointStyle: true } },
+      },
+      scales: {
+        y: {
+          title: { display: true, text: 'Basis points', color: '#93a1b5' },
+          ticks: { color: '#93a1b5', callback: v => (v > 0 ? '+' : '') + v },
+          grid: { color: '#243043' },
+        },
+        x: { ticks: { color: '#93a1b5' }, grid: { color: '#243043' } },
+      },
+    },
+  });
+}
+
 function renderTable() {
   const tbody = document.querySelector('#tbl tbody');
   tbody.innerHTML = '';
@@ -563,6 +680,7 @@ function renderAll(status, rebuildChart = false) {
     applySlider(true);
   }
   renderTable();
+  renderMpcPanel();
 }
 
 async function poll() {
