@@ -78,6 +78,21 @@ th{color:var(--mut)}
 .prob-hike{background:#f87171}
 tr.mpc-next td{background:rgba(57,217,138,0.06)}
 tr.mpc-past td{color:var(--mut)}
+.chg-wrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:10px}
+#chgTbl{font-size:11px;white-space:nowrap}
+#chgTbl th,#chgTbl td{padding:5px 7px}
+#chgTbl thead th{position:sticky;top:0;background:#1b2536;z-index:2;box-shadow:0 1px 0 var(--line)}
+#chgTbl .sticky-col{position:sticky;left:0;background:var(--card);z-index:1;font-weight:600}
+#chgTbl thead .sticky-col{z-index:3;background:#1b2536}
+#chgTbl tr.row-hi td{background:rgba(255,184,74,0.08)}
+#chgTbl tr.row-hi .sticky-col{background:#1a2233}
+#chgTbl td.chg-up{color:#f87171}
+#chgTbl td.chg-up-strong{color:#fca5a5;font-weight:700}
+#chgTbl td.chg-dn{color:var(--acc)}
+#chgTbl td.chg-dn-strong{color:#6ee7a8;font-weight:700}
+#chgTbl td.chg-flat{color:var(--mut)}
+#chgTbl th.slope-col{border-left:1px solid var(--line);color:var(--hist)}
+#chgTbl td.slope-col{border-left:1px solid var(--line);font-weight:600}
 </style>
 </head>
 <body>
@@ -128,6 +143,12 @@ tr.mpc-past td{color:var(--mut)}
   <div class="tblwrap"><table id="tbl"><thead><tr>
     <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank</th><th>As of</th>
   </tr></thead><tbody></tbody></table></div>
+</div>
+
+<div class="card">
+  <h2>Daily changes (bp) · all contracts</h2>
+  <p class="hint" id="chgHint">Session-over-session Δ in implied rate (bp). Green = rate down (cuts priced in); red = rate up. Weekends omitted — each row is vs the prior listed session. Highlighted row = slider date on the evolution chart.</p>
+  <div class="chg-wrap"><table id="chgTbl"><thead><tr></tr></thead><tbody></tbody></table></div>
 </div>
 
 <p class="foot" id="foot"></p>
@@ -389,6 +410,7 @@ function applySlider(updateSliderUi = true) {
   mainChart.update('none');
   updatePinTray();
   updateSlopeBanner();
+  renderChgTable();
 }
 
 function buildMainChart() {
@@ -664,6 +686,83 @@ function renderTable() {
   });
 }
 
+function chgCellClass(bp) {
+  if (bp == null || Number.isNaN(bp)) return 'chg-flat';
+  if (bp >= 8) return 'chg-up-strong';
+  if (bp >= 0.5) return 'chg-up';
+  if (bp <= -8) return 'chg-dn-strong';
+  if (bp <= -0.5) return 'chg-dn';
+  return 'chg-flat';
+}
+
+function fmtChgBp(bp) {
+  if (bp == null || Number.isNaN(bp)) return '—';
+  if (Math.abs(bp) < 0.05) return '0.0';
+  return (bp > 0 ? '+' : '') + bp.toFixed(1);
+}
+
+function buildDailyChgRows() {
+  const ts = DATA.timeseries;
+  if (!ts?.rows?.length) return null;
+  const cols = ts.columns?.length
+    ? ts.columns
+    : [...DATA.contracts].sort((a, b) => a.delivery_ym.localeCompare(b.delivery_ym)).map(c => c.key);
+  const labelMap = Object.fromEntries(DATA.contracts.map(c => [c.key, c.label]));
+  const rows = [];
+  for (let i = 1; i < ts.rows.length; i++) {
+    const prev = ts.rows[i - 1];
+    const cur = ts.rows[i];
+    const rec = { date: cur.date, prevDate: prev.date, vals: {} };
+    cols.forEach(k => {
+      if (cur[k] != null && prev[k] != null) {
+        rec.vals[k] = Math.round((cur[k] - prev[k]) * 1000) / 10;
+      }
+    });
+    if (cur['2026-12'] != null && prev['2026-12'] != null && cur['2027-12'] != null && prev['2027-12'] != null) {
+      const slopePrev = (prev['2027-12'] - prev['2026-12']) * 100;
+      const slopeCur = (cur['2027-12'] - cur['2026-12']) * 100;
+      rec.slopeChg = Math.round((slopeCur - slopePrev) * 10) / 10;
+    }
+    rows.push(rec);
+  }
+  return { cols, labelMap, rows: rows.reverse() };
+}
+
+function renderChgTable() {
+  const pack = buildDailyChgRows();
+  const thead = document.querySelector('#chgTbl thead tr');
+  const tbody = document.querySelector('#chgTbl tbody');
+  const hint = document.getElementById('chgHint');
+  if (!pack) {
+    thead.innerHTML = '';
+    tbody.innerHTML = '<tr><td colspan="99" style="color:var(--mut)">No timeseries in data.</td></tr>';
+    return;
+  }
+
+  const sliderDate = evo().history?.[evoIdx]?.date || DATA.timeseries?.end || '';
+  hint.textContent =
+    `Session-over-session Δ (bp) · ${pack.rows.length} sessions · ${pack.cols.length} contracts · ${DATA.timeseries.start} → ${DATA.timeseries.end}. Green = rate down; red = rate up. Highlight = ${sliderDate || 'latest'}.`;
+
+  thead.innerHTML =
+    '<th class="sticky-col">Date</th>' +
+    pack.cols.map(k => `<th class="num" title="${k}">${pack.labelMap[k] || k}</th>`).join('') +
+    '<th class="num slope-col" title="Δ(Dec27−Dec26 spread)">Δ slope</th>';
+
+  tbody.innerHTML = '';
+  pack.rows.forEach(row => {
+    const tr = document.createElement('tr');
+    if (row.date === sliderDate) tr.className = 'row-hi';
+    let html = `<td class="sticky-col" title="vs ${row.prevDate}">${row.date}</td>`;
+    pack.cols.forEach(k => {
+      const bp = row.vals[k];
+      html += `<td class="num ${chgCellClass(bp)}">${fmtChgBp(bp)}</td>`;
+    });
+    html += `<td class="num slope-col ${chgCellClass(row.slopeChg)}">${fmtChgBp(row.slopeChg)}</td>`;
+    tr.innerHTML = html;
+    tbody.appendChild(tr);
+  });
+}
+
 function renderAll(status, rebuildChart = false) {
   const savedPins = [...pins];
   const savedIdx = evoIdx;
@@ -681,6 +780,7 @@ function renderAll(status, rebuildChart = false) {
   }
   renderTable();
   renderMpcPanel();
+  renderChgTable();
 }
 
 async function poll() {
