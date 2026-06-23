@@ -44,6 +44,32 @@ python serve_sonia_dashboard.py   # http://127.0.0.1:8765/sonia_dashboard.html
 
 Do **not** use `*.trycloudflare.com` links — they expire when the cloud agent stops.
 
+### 1M SONIA curve dashboard — permanent link + live refresh
+
+**Permanent URL (static, auto-refreshed weekdays):**  
+https://alilodhi-cloud.github.io/SOFR_FFR_basis/sonia_1m_dashboard.html
+
+**One-time setup (you do this once):**
+1. Merge the `cursor/sonia-1m-live-dashboard-3cf3` branch to `main`
+2. Open **https://github.com/ALILODHI-cloud/SOFR_FFR_basis/settings/pages**
+3. Set **Source → GitHub Actions**
+
+GitHub Actions fetches all 24 1M SONIA contracts from Barchart twice on weekdays (~10:00 and ~18:30 London) and redeploys. Trigger manually: **Actions → 1M SONIA curve — fetch, build, deploy → Run workflow**.
+
+**Live server (auto-refresh + MPC pricing + daily Δ table):**
+```bash
+python3 analyze_sonia_1m.py
+python3 build_sonia_1m_dashboard.py
+./scripts/start_sonia_1m_live.sh    # Dev Tunnel if logged in, else Cloudflare
+```
+
+Stable Dev Tunnel URL (same link across restarts, while this machine is on):
+```bash
+./devtunnel user login -g -d    # one-time
+./scripts/start_sonia_1m_devtunnel.sh
+# URL saved to .sonia_1m_devtunnel_url
+```
+
 ## Key findings
 - 99 months (Apr-2018 → Jun-2026). Mean ≈ +0.2bp, median ≈ +0.5bp, std ≈ 4.2bp.
 - **−1bp sits around the ~30th percentile** — ~70% of months printed above it.
