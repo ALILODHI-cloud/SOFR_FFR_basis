@@ -1,4 +1,4 @@
-"""Build interactive 1M SONIA curve dashboard."""
+"""Build interactive 1M SONIA curve dashboard (frozen reference + evolution overlay)."""
 from __future__ import annotations
 
 import json
@@ -18,78 +18,86 @@ HTML = r"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>1M SONIA Curve Live</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 <style>
-:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--policy:#4aa8ff}
+:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--hist:#ffb84a;--policy:#4aa8ff;--pin:#c084fc}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
-.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 48px}
+.wrap{max-width:1200px;margin:0 auto;padding:16px 16px 48px}
 header{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:16px}
 h1{margin:4px 0;font-size:clamp(20px,4vw,28px)}
 .sub{color:var(--mut);font-size:14px;line-height:1.5}
 .pill{display:inline-block;background:#1b2536;border:1px solid var(--line);padding:5px 10px;border-radius:20px;font-size:12px;color:var(--mut);margin:4px 6px 0 0}
 .pill.live{border-color:var(--acc);color:var(--acc)}
 .pill.policy{border-color:var(--policy);color:var(--policy)}
+.pill.frozen{border-color:var(--acc);color:var(--acc)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
 .card h2{font-size:15px;margin:0 0 4px}
 .hint{color:var(--mut);font-size:12px;margin:0 0 10px;line-height:1.45}
-.chartbox{position:relative;height:420px}
-.chartbox.sm{height:300px}
-.sectitle{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--mut);margin:22px 4px 10px}
-.sliderrow{display:flex;align-items:center;gap:12px;margin:12px 0}
-.sliderrow input[type=range]{flex:1;accent-color:var(--acc)}
-.sliderdate{font-size:13px;color:var(--ink);min-width:108px;font-variant-numeric:tabular-nums}
-.playbtn{background:#1b2536;border:1px solid var(--line);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px}
+.slope-banner{background:#1b2536;border:1px solid var(--hist);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:14px;line-height:1.5;display:none}
+.slope-banner.show{display:block}
+.slope-banner strong{color:var(--hist)}
+.chart-wrap{display:flex;gap:12px;align-items:stretch}
+.chartbox{position:relative;flex:1;min-width:0;height:480px}
+#pinTray{width:240px;max-height:480px;overflow-y:auto;flex-shrink:0}
+#pinTray:empty::before{content:'Click curve points to pin contracts here. Pins stay on screen while you scrub time.';color:var(--mut);font-size:11px;display:block;padding:8px;line-height:1.45}
+.pin-card{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;font-size:11px;line-height:1.5}
+.pin-card.pinned{border-color:var(--pin)}
+.pin-card .title{font-weight:700;font-size:12px;color:var(--ink)}
+.pin-card .sym{color:var(--mut)}
+.pin-card .row{display:flex;justify-content:space-between;gap:8px;margin-top:4px}
+.pin-card label{display:flex;align-items:center;gap:6px;margin-top:8px;color:var(--mut);cursor:pointer}
+.pin-card button{margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--mut);border-radius:6px;padding:3px 8px;font-size:10px;cursor:pointer}
+.sliderrow{display:flex;align-items:center;gap:12px;margin:14px 0 8px;flex-wrap:wrap}
+.sliderrow input[type=range]{flex:1;min-width:120px;accent-color:var(--hist)}
+.sliderdate{font-size:13px;color:var(--ink);min-width:100px;font-variant-numeric:tabular-nums}
+.btn{background:#1b2536;border:1px solid var(--line);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:12px}
+.btn:hover{border-color:var(--acc)}
+.tblwrap{max-height:320px;overflow:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{padding:7px 8px;border-bottom:1px solid var(--line)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 th{color:var(--mut)}
-.tblwrap{max-height:360px;overflow:auto}
 .foot{color:var(--mut);font-size:12px;margin-top:16px;line-height:1.6}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-  <h1>1M SONIA forward curve</h1>
+  <h1>1M SONIA curve · frozen reference + time travel</h1>
   <div class="sub" id="asof"></div>
   <div>
-    <span class="pill">Barchart EOD · ICE JU*</span>
+    <span class="pill frozen">■ Frozen = latest curve</span>
+    <span class="pill" style="border-color:var(--hist);color:var(--hist)">■ Amber = historical (slider)</span>
     <span class="pill policy" id="policyPill"></span>
-    <span class="pill" id="countPill"></span>
     <span class="pill live" id="livePill" style="display:none">● Live</span>
-    <span class="pill" id="refreshPill" style="display:none"></span>
   </div>
 </header>
 
 <div class="card">
-  <h2>Implied SONIA rate by delivery month</h2>
-  <p class="hint">Hover any point for implied rate and change vs Bank Rate (3.75%). Positive bp = market prices SONIA above policy.</p>
-  <div class="chartbox"><canvas id="curveChart"></canvas></div>
-</div>
+  <h2>Curve comparison</h2>
+  <p class="hint">Opens on the <b>latest</b> curve (frozen green). Scrub the slider to morph the amber line through history — green stays fixed. <b>Click</b> any point to pin a detail card (cards persist). Pin exactly two legs to see calendar slope at top. Toggle “level line” per pin only when you want a dotted horizontal.</p>
 
-<div class="sectitle">Curve evolution · longest common history</div>
+  <div id="slopeBanner" class="slope-banner"></div>
 
-<div class="card">
-  <h2>Historical curve shape</h2>
-  <p class="hint" id="evoHint"></p>
+  <div class="chart-wrap">
+    <div class="chartbox"><canvas id="mainChart"></canvas></div>
+    <div id="pinTray"></div>
+  </div>
+
   <div class="sliderrow">
-    <button type="button" class="playbtn" id="playBtn">▶ Play</button>
+    <button type="button" class="btn" id="playBtn">▶ Play</button>
+    <button type="button" class="btn" id="toLatestBtn">Latest</button>
     <input type="range" id="dateSlider" min="0" max="0" value="0"/>
     <span class="sliderdate" id="sliderDate"></span>
   </div>
-  <div class="chartbox"><canvas id="evoChart"></canvas></div>
+  <p class="hint" id="evoHint"></p>
 </div>
 
 <div class="card">
-  <h2>Key tenors vs Bank Rate over time (bp)</h2>
-  <p class="hint">Dec-26, Jun-27, Dec-27 implied change vs 3.75% on the same common sample.</p>
-  <div class="chartbox sm"><canvas id="legsChart"></canvas></div>
-</div>
-
-<div class="card">
-  <h2>All contracts</h2>
+  <h2>All contracts (latest)</h2>
   <div class="tblwrap"><table id="tbl"><thead><tr>
-    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank (bp)</th><th>≈ hikes (25bp)</th><th>As of</th>
+    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank</th><th>As of</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
@@ -99,9 +107,19 @@ th{color:var(--mut)}
 const LIVE_POLL_MS = __LIVE_POLL_MS__;
 const EMBEDDED = __DATA_JSON__;
 let DATA = EMBEDDED;
-let chart, evoChart, legsChart;
+let mainChart = null;
 let evoIdx = 0;
 let playTimer = null;
+let keys = [];
+let frozenPts = [];
+let pins = []; // {key, label, symbol, showLevelLine, color}
+
+const PIN_COLORS = ['#c084fc','#f472b6','#22d3ee','#fb923c','#a3e635','#facc15'];
+
+const NO_ANIM = {
+  duration: 0,
+  easing: 'linear',
+};
 
 function isLiveMode() {
   return location.protocol.startsWith('http');
@@ -122,113 +140,329 @@ async function fetchStatus() {
   } catch { return null; }
 }
 
-function sortedContracts() {
-  return [...DATA.contracts].sort((a,b) => a.delivery_ym.localeCompare(b.delivery_ym));
-}
-
 function fmtBp(v) {
-  return (v >= 0 ? '+' : '') + v.toFixed(1) + ' bp';
+  if (v == null || Number.isNaN(v)) return '—';
+  return (v >= 0 ? '+' : '') + Number(v).toFixed(1) + ' bp';
 }
 
-function renderHeader(status) {
-  const br = DATA.bank_rate_pct;
-  document.getElementById('asof').textContent =
-    `Data ${DATA.generated_utc} · ${DATA.n_contracts} contracts · history through ${DATA.timeseries?.end || '—'}` +
-    (status?.last_refresh_utc ? ` · server refresh ${status.last_refresh_utc}` : '');
-  document.getElementById('policyPill').textContent = `BoE Bank Rate ${br}%`;
-  document.getElementById('countPill').textContent = `${DATA.n_contracts} JU* contracts`;
-  if (isLiveMode()) {
-    document.getElementById('livePill').style.display = 'inline-block';
-    const rp = document.getElementById('refreshPill');
-    if (status?.refreshing) {
-      rp.style.display = 'inline-block';
-      rp.textContent = '↻ Updating Barchart…';
-    } else if (status?.next_refresh_utc) {
-      rp.style.display = 'inline-block';
-      rp.textContent = `Next fetch ~${status.next_refresh_utc}`;
+function evo() {
+  return DATA.curve_evolution || { history: [], contract_keys: [] };
+}
+
+function initKeysAndFrozen() {
+  const e = evo();
+  keys = e.contract_keys?.length ? [...e.contract_keys] : DATA.contracts.map(c => c.key).sort();
+  const cmap = Object.fromEntries(DATA.contracts.map(c => [c.key, c]));
+  frozenPts = keys.map(k => {
+    const c = cmap[k];
+    if (!c) return null;
+    return {
+      key: k,
+      label: c.label,
+      symbol: c.symbol,
+      implied_rate_pct: c.implied_rate_pct,
+      vs_bank_bp: c.vs_bank_bp,
+    };
+  }).filter(Boolean);
+}
+
+function histMap(idx) {
+  const snap = evo().history[idx];
+  if (!snap) return {};
+  return Object.fromEntries(snap.points.map(p => [p.key, p]));
+}
+
+function histRates(idx) {
+  const m = histMap(idx);
+  return keys.map(k => m[k]?.implied_rate_pct ?? null);
+}
+
+function yAxisBounds() {
+  const vals = frozenPts.map(p => p.implied_rate_pct);
+  for (const snap of evo().history || []) {
+    for (const p of snap.points || []) {
+      if (keys.includes(p.key) && p.implied_rate_pct != null) vals.push(p.implied_rate_pct);
     }
   }
+  vals.push(DATA.bank_rate_pct);
+  const lo = Math.min(...vals);
+  const hi = Math.max(...vals);
+  const pad = Math.max(0.08, (hi - lo) * 0.12);
+  return { min: lo - pad, max: hi + pad };
 }
 
-function renderTable() {
-  const tbody = document.querySelector('#tbl tbody');
-  tbody.innerHTML = '';
-  sortedContracts().forEach(c => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${c.label}</td><td>${c.symbol}</td>
-      <td class="num">${c.implied_rate_pct.toFixed(3)}%</td>
-      <td class="num">${fmtBp(c.vs_bank_bp)}</td>
-      <td class="num">${c.vs_bank_hikes_25bp >= 0 ? '+' : ''}${c.vs_bank_hikes_25bp.toFixed(2)}</td>
-      <td>${c.latest_date}</td>`;
-    tbody.appendChild(tr);
+function buildAnnotations() {
+  const ann = {};
+  pins.forEach((pin, i) => {
+    const fp = frozenPts.find(p => p.key === pin.key);
+    if (!fp) return;
+    const xi = keys.indexOf(pin.key);
+    if (xi < 0) return;
+    ann['pin_' + i] = {
+      type: 'label',
+      xValue: xi,
+      yValue: fp.implied_rate_pct,
+      xAdjust: 0,
+      yAdjust: -14,
+      backgroundColor: 'rgba(19,26,38,0.92)',
+      borderColor: pin.color || '#c084fc',
+      borderWidth: 1,
+      borderRadius: 6,
+      color: pin.color || '#c084fc',
+      font: { size: 10, weight: 'bold' },
+      content: `${pin.label} ${fp.implied_rate_pct.toFixed(3)}%`,
+      padding: 4,
+    };
+    if (!pin.showLevelLine) return;
+    ann['hline_' + i] = {
+      type: 'line',
+      yMin: fp.implied_rate_pct,
+      yMax: fp.implied_rate_pct,
+      borderColor: pin.color || '#ffb84a',
+      borderDash: [5, 5],
+      borderWidth: 1.5,
+      label: {
+        display: true,
+        content: `${pin.label} level`,
+        position: 'end',
+        color: pin.color || '#ffb84a',
+        font: { size: 10 },
+        backgroundColor: 'rgba(19,26,38,0.85)',
+      },
+    };
+  });
+  return ann;
+}
+
+function pointRadiusForKey(key) {
+  const pin = pins.find(p => p.key === key);
+  return pin ? 9 : 5;
+}
+
+function pointColors(datasetIndex) {
+  const base = datasetIndex === 0 ? '#39d98a' : '#ffb84a';
+  return keys.map(k => {
+    const pin = pins.find(p => p.key === k);
+    return pin ? (pin.color || '#c084fc') : base;
   });
 }
 
-function renderChart() {
-  const list = sortedContracts();
-  const labels = list.map(c => c.label);
-  const rates = list.map(c => c.implied_rate_pct);
-  const br = DATA.bank_rate_pct;
+function updateSlopeBanner() {
+  const el = document.getElementById('slopeBanner');
+  if (pins.length !== 2) {
+    el.classList.remove('show');
+    el.innerHTML = '';
+    return;
+  }
+  const sorted = [...pins].sort((a, b) => a.key.localeCompare(b.key));
+  const [front, back] = sorted;
+  const hm = histMap(evoIdx);
+  const fm = Object.fromEntries(frozenPts.map(p => [p.key, p]));
+  const hFront = hm[front.key]?.implied_rate_pct;
+  const hBack = hm[back.key]?.implied_rate_pct;
+  const fFront = fm[front.key]?.implied_rate_pct;
+  const fBack = fm[back.key]?.implied_rate_pct;
+  if (hFront == null || hBack == null) return;
+  const histSlope = (hBack - hFront) * 100;
+  const frozenSlope = (fBack != null && fFront != null) ? (fBack - fFront) * 100 : null;
+  const delta = frozenSlope != null ? histSlope - frozenSlope : null;
+  const date = evo().history[evoIdx]?.date || '';
+  el.innerHTML = `<strong>${back.label} − ${front.label}</strong> on <strong>${date}</strong>: ` +
+    `<strong>${fmtBp(histSlope)}</strong> (amber curve)` +
+    (frozenSlope != null ? ` · frozen was ${fmtBp(frozenSlope)} · Δ ${fmtBp(delta)}` : '');
+  el.classList.add('show');
+}
 
-  if (chart) chart.destroy();
-  chart = new Chart(document.getElementById('curveChart'), {
+function updatePinTray() {
+  const tray = document.getElementById('pinTray');
+  tray.innerHTML = '';
+  const hm = histMap(evoIdx);
+  const fm = Object.fromEntries(frozenPts.map(p => [p.key, p]));
+  const hdate = evo().history[evoIdx]?.date || '';
+
+  pins.forEach((pin, i) => {
+    const h = hm[pin.key];
+    const f = fm[pin.key];
+    const card = document.createElement('div');
+    card.className = 'pin-card pinned';
+    card.style.borderColor = pin.color || 'var(--pin)';
+    card.innerHTML = `
+      <div class="title">${pin.label}</div>
+      <div class="sym">${pin.symbol}</div>
+      <div class="row"><span>Frozen (latest)</span><span>${f ? f.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
+      <div class="row"><span>Historical</span><span>${h ? h.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
+      <div class="row"><span>vs Bank ${DATA.bank_rate_pct}%</span><span>${h ? fmtBp(h.vs_bank_bp) : '—'}</span></div>
+      <div class="row"><span>Δ vs frozen</span><span>${f && h ? fmtBp((h.implied_rate_pct - f.implied_rate_pct)*100) : '—'}</span></div>
+      <div style="color:var(--mut);margin-top:4px">${hdate}</div>
+      <label><input type="checkbox" data-i="${i}" class="lvlChk" ${pin.showLevelLine?'checked':''}/> Show level line</label>
+      <button type="button" data-i="${i}" class="rmPin">Remove</button>`;
+    tray.appendChild(card);
+  });
+
+  tray.querySelectorAll('.lvlChk').forEach(chk => {
+    chk.onchange = () => {
+      const i = +chk.dataset.i;
+      pins[i].showLevelLine = chk.checked;
+      applySlider(false);
+    };
+  });
+  tray.querySelectorAll('.rmPin').forEach(btn => {
+    btn.onclick = () => {
+      pins.splice(+btn.dataset.i, 1);
+      updatePinTray();
+      updateSlopeBanner();
+      applySlider(false);
+    };
+  });
+}
+
+function addPin(key) {
+  if (pins.some(p => p.key === key)) return;
+  const fp = frozenPts.find(p => p.key === key);
+  if (!fp) return;
+  pins.push({
+    key,
+    label: fp.label,
+    symbol: fp.symbol,
+    showLevelLine: false,
+    color: PIN_COLORS[pins.length % PIN_COLORS.length],
+  });
+  updatePinTray();
+  updateSlopeBanner();
+  applySlider(false);
+}
+
+function applySlider(updateSliderUi = true) {
+  const e = evo();
+  if (!mainChart || !e.history?.length) return;
+  const snap = e.history[evoIdx];
+  if (updateSliderUi) {
+    document.getElementById('dateSlider').value = evoIdx;
+    document.getElementById('sliderDate').textContent = snap.date;
+  }
+
+  mainChart.data.datasets[1].data = histRates(evoIdx);
+  mainChart.data.datasets[1].label = `Historical · ${snap.date}`;
+
+  keys.forEach((k, i) => {
+    const r = pointRadiusForKey(k);
+    const hit = r + 14;
+    mainChart.data.datasets[0].pointRadius[i] = r;
+    mainChart.data.datasets[1].pointRadius[i] = r;
+    mainChart.data.datasets[0].pointHitRadius[i] = hit;
+    mainChart.data.datasets[1].pointHitRadius[i] = hit;
+    mainChart.data.datasets[0].pointBackgroundColor[i] = pointColors(0)[i];
+    mainChart.data.datasets[1].pointBackgroundColor[i] = pointColors(1)[i];
+  });
+
+  mainChart.options.plugins.annotation.annotations = buildAnnotations();
+  mainChart.update('none');
+  updatePinTray();
+  updateSlopeBanner();
+}
+
+function buildMainChart() {
+  const e = evo();
+  const labels = frozenPts.map(p => p.label);
+  const br = DATA.bank_rate_pct;
+  const yb = yAxisBounds();
+  const ctx = document.getElementById('mainChart');
+
+  if (mainChart) mainChart.destroy();
+
+  mainChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels,
-      datasets: [{
-        label: 'Implied 1M SONIA rate',
-        data: rates,
-        borderColor: '#39d98a',
-        backgroundColor: 'rgba(57,217,138,0.12)',
-        fill: true,
-        tension: 0.28,
-        pointRadius: 6,
-        pointHoverRadius: 9,
-        pointBackgroundColor: '#39d98a',
-        pointBorderColor: '#0b0f17',
-        pointBorderWidth: 2,
-      }, {
-        label: 'Bank Rate (policy)',
-        data: labels.map(() => br),
-        borderColor: '#4aa8ff',
-        borderDash: [6, 4],
-        pointRadius: 0,
-        borderWidth: 2,
-        fill: false,
-      }],
+      datasets: [
+        {
+          label: `Frozen · latest`,
+          data: frozenPts.map(p => p.implied_rate_pct),
+          borderColor: '#39d98a',
+          backgroundColor: 'rgba(57,217,138,0.06)',
+          fill: false,
+          tension: 0.28,
+          borderWidth: 3,
+          pointRadius: keys.map(k => pointRadiusForKey(k)),
+          pointHitRadius: keys.map(k => pointRadiusForKey(k) + 14),
+          pointBackgroundColor: pointColors(0),
+          pointBorderColor: '#0b0f17',
+          pointBorderWidth: 2,
+          order: 1,
+        },
+        {
+          label: `Historical`,
+          data: histRates(evoIdx),
+          borderColor: '#ffb84a',
+          backgroundColor: 'rgba(255,184,74,0.08)',
+          fill: false,
+          tension: 0.28,
+          borderWidth: 2,
+          pointRadius: keys.map(k => pointRadiusForKey(k)),
+          pointHitRadius: keys.map(k => pointRadiusForKey(k) + 14),
+          pointBackgroundColor: pointColors(1),
+          pointBorderColor: '#0b0f17',
+          pointBorderWidth: 2,
+          order: 2,
+        },
+        {
+          label: `Bank Rate ${br}%`,
+          data: labels.map(() => br),
+          borderColor: '#4aa8ff',
+          borderDash: [6, 4],
+          pointRadius: 0,
+          borderWidth: 1.5,
+          fill: false,
+          order: 3,
+        },
+      ],
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: { mode: 'nearest', intersect: true },
+      animation: NO_ANIM,
+      transitions: {
+        active: { animation: NO_ANIM },
+        resize: { animation: NO_ANIM },
+      },
+      interaction: { mode: 'nearest', intersect: false, axis: 'x' },
+      onClick: (evt, elements, chart) => {
+        let hits = elements;
+        if (!hits?.length) {
+          hits = chart.getElementsAtEventForMode(evt, 'nearest', { intersect: false }, true);
+        }
+        if (!hits?.length) return;
+        const el = hits.find(h => h.datasetIndex <= 1) || hits[0];
+        if (el.datasetIndex > 1) return;
+        addPin(keys[el.index]);
+      },
       plugins: {
-        legend: { position: 'bottom', labels: { color: '#93a1b5' } },
+        legend: { position: 'bottom', labels: { color: '#93a1b5', usePointStyle: true } },
+        annotation: { annotations: buildAnnotations() },
         tooltip: {
           backgroundColor: '#131a26',
           borderColor: '#243043',
           borderWidth: 1,
-          titleColor: '#e8eef7',
-          bodyColor: '#e8eef7',
-          padding: 12,
-          displayColors: false,
-          filter: item => item.datasetIndex === 0,
           callbacks: {
-            title: items => {
+            afterTitle: items => {
               const i = items[0].dataIndex;
-              const c = list[i];
-              return `${c.label} · ${c.symbol}`;
+              const k = keys[i];
+              return frozenPts.find(p => p.key === k)?.symbol || '';
             },
-            label: () => '',
-            afterBody: items => {
-              const i = items[0].dataIndex;
-              const c = list[i];
-              const lines = [
-                `Implied rate: ${c.implied_rate_pct.toFixed(3)}%`,
-                `Bank Rate: ${br}%`,
-                `Change vs policy: ${fmtBp(c.vs_bank_bp)}`,
-                `≈ ${c.vs_bank_hikes_25bp >= 0 ? '+' : ''}${c.vs_bank_hikes_25bp.toFixed(2)} × 25bp moves`,
-                `EOD: ${c.latest_date}`,
-              ];
+            label: ctx => {
+              const i = ctx.dataIndex;
+              const k = keys[i];
+              const hm = histMap(evoIdx)[k];
+              const fp = frozenPts.find(p => p.key === k);
+              const lines = [`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(3)}%`];
+              if (ctx.datasetIndex === 1 && fp && hm) {
+                lines.push(`Δ vs frozen: ${fmtBp((hm.implied_rate_pct - fp.implied_rate_pct)*100)}`);
+                lines.push(`vs Bank: ${fmtBp(hm.vs_bank_bp)}`);
+              }
+              if (ctx.datasetIndex === 0 && fp) {
+                lines.push(`vs Bank: ${fmtBp(fp.vs_bank_bp)}`);
+              }
+              lines.push('Click to pin');
               return lines;
             },
           },
@@ -236,12 +470,14 @@ function renderChart() {
       },
       scales: {
         y: {
+          min: yb.min,
+          max: yb.max,
           title: { display: true, text: 'Implied rate (%)', color: '#93a1b5' },
           ticks: { callback: v => v.toFixed(2) + '%', color: '#93a1b5' },
           grid: { color: '#243043' },
         },
         x: {
-          ticks: { maxRotation: 45, color: '#93a1b5', autoSkip: list.length > 20, maxTicksLimit: 24 },
+          ticks: { maxRotation: 45, color: '#93a1b5', maxTicksLimit: 22 },
           grid: { color: '#243043' },
         },
       },
@@ -249,88 +485,27 @@ function renderChart() {
   });
 }
 
-function renderEvolution() {
-  const evo = DATA.curve_evolution;
-  if (!evo || !evo.history?.length) {
-    document.getElementById('evoHint').textContent = 'No common history available.';
-    return;
-  }
-
-  document.getElementById('evoHint').textContent =
-    `${evo.note} · ${evo.n_sessions} sessions · ${evo.start} → ${evo.end}`;
-
+function setupSlider() {
+  const e = evo();
   const slider = document.getElementById('dateSlider');
-  slider.max = evo.history.length - 1;
-  evoIdx = evo.history.length - 1;
+  if (!e.history?.length) return;
+
+  slider.max = e.history.length - 1;
+  evoIdx = e.history.length - 1; // start at latest (overlaps frozen)
   slider.value = evoIdx;
-  document.getElementById('sliderDate').textContent = evo.history[evoIdx].date;
+  document.getElementById('sliderDate').textContent = e.history[evoIdx].date;
+  document.getElementById('evoHint').textContent =
+    `${e.note || ''} · ${e.n_sessions} sessions · ${e.start} → ${e.end}`;
 
-  const br = DATA.bank_rate_pct;
-  const drawSnap = (idx) => {
-    const snap = evo.history[idx];
-    const pts = snap.points;
-    if (evoChart) evoChart.destroy();
-    evoChart = new Chart(document.getElementById('evoChart'), {
-      type: 'line',
-      data: {
-        labels: pts.map(p => p.label),
-        datasets: [{
-          label: `Curve ${snap.date}`,
-          data: pts.map(p => p.implied_rate_pct),
-          borderColor: '#39d98a',
-          backgroundColor: 'rgba(57,217,138,0.12)',
-          fill: true,
-          tension: 0.28,
-          pointRadius: 5,
-          pointHoverRadius: 8,
-        }, {
-          label: 'Bank Rate',
-          data: pts.map(() => br),
-          borderColor: '#4aa8ff',
-          borderDash: [6, 4],
-          pointRadius: 0,
-          borderWidth: 2,
-        }],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'nearest', intersect: true },
-        plugins: {
-          legend: { position: 'bottom', labels: { color: '#93a1b5', font: { size: 11 } } },
-          tooltip: {
-            displayColors: false,
-            filter: item => item.datasetIndex === 0,
-            callbacks: {
-              title: items => {
-                const p = pts[items[0].dataIndex];
-                return `${p.label} · ${p.symbol} · ${snap.date}`;
-              },
-              label: () => '',
-              afterBody: items => {
-                const p = pts[items[0].dataIndex];
-                return [
-                  `Implied: ${p.implied_rate_pct.toFixed(3)}%`,
-                  `vs Bank ${br}%: ${fmtBp(p.vs_bank_bp)}`,
-                  `≈ ${(p.vs_bank_bp/25 >= 0 ? '+' : '')}${(p.vs_bank_bp/25).toFixed(2)} hikes`,
-                ];
-              },
-            },
-          },
-        },
-        scales: {
-          y: { title: { display: true, text: 'Implied rate (%)', color: '#93a1b5' }, ticks: { color: '#93a1b5' } },
-          x: { ticks: { maxRotation: 45, color: '#93a1b5', maxTicksLimit: 21 } },
-        },
-      },
-    });
-  };
-
-  drawSnap(evoIdx);
   slider.oninput = () => {
     evoIdx = +slider.value;
-    document.getElementById('sliderDate').textContent = evo.history[evoIdx].date;
-    drawSnap(evoIdx);
+    applySlider(true);
+  };
+  slider.onchange = slider.oninput;
+
+  document.getElementById('toLatestBtn').onclick = () => {
+    evoIdx = e.history.length - 1;
+    applySlider(true);
   };
 
   document.getElementById('playBtn').onclick = () => {
@@ -343,72 +518,64 @@ function renderEvolution() {
     evoIdx = 0;
     document.getElementById('playBtn').textContent = '⏸ Pause';
     playTimer = setInterval(() => {
-      if (evoIdx >= evo.history.length) {
+      if (evoIdx >= e.history.length - 1) {
         clearInterval(playTimer);
         playTimer = null;
         document.getElementById('playBtn').textContent = '▶ Play';
         return;
       }
-      slider.value = evoIdx;
-      document.getElementById('sliderDate').textContent = evo.history[evoIdx].date;
-      drawSnap(evoIdx);
       evoIdx++;
-    }, 150);
+      applySlider(true);
+    }, 120);
   };
+}
 
-  const legs = evo.watch_legs || {};
-  const colors = {'2026-12':'#ffb84a','2027-06':'#39d98a','2027-12':'#4aa8ff'};
-  const datasets = Object.entries(legs).map(([k, leg]) => ({
-    label: leg.label,
-    data: leg.rows.map(r => r.vs_bank_bp),
-    borderColor: colors[k] || '#ccc',
-    pointRadius: 0,
-    borderWidth: 2,
-    tension: 0.15,
-  }));
-  const dates = legs['2026-12']?.rows.map(r => r.date) || [];
-  if (legsChart) legsChart.destroy();
-  legsChart = new Chart(document.getElementById('legsChart'), {
-    type: 'line',
-    data: { labels: dates, datasets },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom', labels: { color: '#93a1b5' } },
-        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtBp(ctx.parsed.y)}` } },
-      },
-      scales: {
-        y: { title: { display: true, text: 'vs Bank Rate (bp)', color: '#93a1b5' } },
-        x: { ticks: { maxTicksLimit: 8, color: '#93a1b5' } },
-      },
-    },
+function renderHeader(status) {
+  document.getElementById('asof').textContent =
+    `Data ${DATA.generated_utc}` + (status?.last_refresh_utc ? ` · refresh ${status.last_refresh_utc}` : '');
+  document.getElementById('policyPill').textContent = `BoE ${DATA.bank_rate_pct}%`;
+  if (isLiveMode()) document.getElementById('livePill').style.display = 'inline-block';
+}
+
+function renderTable() {
+  const tbody = document.querySelector('#tbl tbody');
+  tbody.innerHTML = '';
+  [...DATA.contracts].sort((a,b) => a.delivery_ym.localeCompare(b.delivery_ym)).forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${c.label}</td><td>${c.symbol}</td><td class="num">${c.implied_rate_pct.toFixed(3)}%</td><td class="num">${fmtBp(c.vs_bank_bp)}</td><td>${c.latest_date}</td>`;
+    tbody.appendChild(tr);
   });
 }
 
-function renderAll(status) {
+function renderAll(status, rebuildChart = false) {
+  const savedPins = [...pins];
+  const savedIdx = evoIdx;
   renderHeader(status);
-  renderChart();
-  renderEvolution();
+  initKeysAndFrozen();
+  if (rebuildChart || !mainChart) {
+    pins = savedPins.filter(p => keys.includes(p.key));
+    buildMainChart();
+    setupSlider();
+    evoIdx = Math.min(savedIdx, (evo().history?.length || 1) - 1);
+    applySlider(true);
+  } else {
+    mainChart.data.datasets[0].data = frozenPts.map(p => p.implied_rate_pct);
+    applySlider(true);
+  }
   renderTable();
-  document.getElementById('foot').textContent =
-    'ICE 1M SONIA futures (JU*), Barchart EOD. Hover curve points for implied rate and bp vs Bank Rate. Not investment advice.';
 }
 
 async function poll() {
   try {
     const [d, s] = await Promise.all([fetchData(), fetchStatus()]);
     DATA = d;
-    renderAll(s);
+    renderAll(s, false);
   } catch (e) { console.warn(e); }
 }
 
-renderAll(null);
+renderAll(null, true);
 if (isLiveMode()) {
   setInterval(poll, LIVE_POLL_MS);
-  setInterval(async () => {
-    const s = await fetchStatus();
-    renderHeader(s);
-  }, 15000);
 }
 </script>
 </body>
