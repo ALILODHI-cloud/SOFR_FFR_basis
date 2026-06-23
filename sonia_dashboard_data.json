@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-23 10:45 UTC",
+  "generated_utc": "2026-06-23 11:54 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
