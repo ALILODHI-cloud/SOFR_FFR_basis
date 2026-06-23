@@ -8,8 +8,11 @@ from __future__ import annotations
 import json
 import re
 from datetime import date, datetime, timezone
+from pathlib import Path
 
 import pandas as pd
+
+ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import _parse_barchart_hist, fetch_barchart_batch
@@ -327,8 +330,8 @@ def build_payload() -> dict:
 
 def main() -> None:
     payload = build_payload()
-    out = "/workspace/sonia_1m_data.json"
-    with open(out, "w") as f:
+    out = ROOT / "sonia_1m_data.json"
+    with out.open("w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2)
     print(f"Wrote {out} ({payload['n_contracts']} contracts)")
 

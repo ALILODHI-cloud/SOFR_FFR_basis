@@ -40,7 +40,7 @@ jobs:
 
       - name: Fetch Barchart + rebuild dashboard
         run: |
-          python analyze_sonia.py
+          python analyze_sonia.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
           python build_sonia_dashboard.py
           cp sonia_dashboard.html docs/index.html
           cp sonia_dashboard.html docs/sonia_dashboard.html
