@@ -7,6 +7,13 @@
   "short_symbol": "JUZ26",
   "long_key": "2027-07",
   "short_key": "2026-12",
+  "quoted_spread": {
+    "label": "Jul27\u2212Dec26",
+    "long_key": "2027-07",
+    "short_key": "2026-12",
+    "long_label": "Jul-27",
+    "short_label": "Dec-26"
+  },
   "entry_date": "2026-06-23",
   "entry_label": "UK market open \u00b7 23 Jun 2026",
   "entry_source": "barchart",
@@ -14,6 +21,8 @@
   "gbp_per_bp": 12.5,
   "face_value_gbp": 500000,
   "contracts_per_leg": 1,
+  "detail_page": "trade_jul27_dec26.html",
+  "market_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_15/body.md",
   "notes": "Entry captured from Barchart when available; reconciles to EOD settle when posted.",
   "entry": {
     "date": "2026-06-23",

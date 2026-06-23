@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#0b0f17"/>
 <title>Supra · Markets Portal</title>
 <style>
-:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--warn:#ffb84a;--bad:#ff6b6b}
+:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--warn:#ffb84a;--bad:#ff6b6b;--good:#39d98a}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
 .wrap{max-width:960px;margin:0 auto;padding:20px 16px 64px}
@@ -23,6 +23,7 @@ h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
 .card.featured{border-color:rgba(57,217,138,.35);background:linear-gradient(165deg,var(--card),rgba(57,217,138,.05))}
 .pill{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--mut);margin-top:10px}
 .pill.live{border-color:var(--acc);color:var(--acc)}
+.good{color:var(--good)}.bad{color:var(--bad)}
 </style>
 </head>
 <body>
@@ -34,9 +35,21 @@ h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
 </header>
 <div class="grid cols-2">
   <a class="card featured" href="trade_tracker.html">
-    <h2>Jul27−Dec26 steepener · live P&amp;L</h2>
-    <p>Long JUN27 / short JUZ26. Entry 23 Jun 2026 UK open. Daily Barchart mark &amp; regime attribution.</p>
+    <h2>All live trades</h2>
+    <p>Jul27−Dec26 steepener &amp; Jul27−Dec27 flattener · daily P&amp;L &amp; regime attribution.</p>
     <span class="pill live">● Trade tracker</span>
+  </a>
+  <a class="card featured" href="trade_jul27_dec26.html">
+    <h2>Jul27−Dec26 SONIA steepener · live P&amp;L</h2>
+    <p>Long JUN27 (Jul-27 1M) / Short JUZ26 (Dec-26 1M)</p>
+    <span class="pill live">● steepener</span>
+    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="">+£0</span> · mark +16.0 bp</span>
+  </a>
+  <a class="card featured" href="trade_jul27_dec27.html">
+    <h2>Jul27−Dec27 SONIA flattener · live P&amp;L</h2>
+    <p>Long JUZ27 (Dec-27 1M) / Short JUN27 (Jul-27 1M)</p>
+    <span class="pill live">● flattener</span>
+    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="">+£0</span> · mark +6.0 bp</span>
   </a>
   <a class="card" href="sonia_1m_dashboard.html">
     <h2>1M SONIA curve live</h2>
