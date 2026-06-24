@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-24 12:18 UTC",
+  "generated_utc": "2026-06-24 12:37 UTC",
   "trade": {
     "id": "jun27_outright_long",
     "type": "outright",
@@ -40,11 +40,11 @@
       "implied_rate_pct": 4.09
     },
     "slope_bp": null,
-    "updated_utc": "2026-06-24 12:18 UTC"
+    "updated_utc": "2026-06-24 12:37 UTC"
   },
   "pnl": {
-    "slope_bp": 0.0,
-    "gbp": 0.0,
+    "slope_bp": -0.0,
+    "gbp": -0.0,
     "to_stop_bp": 7.0,
     "to_tp_bp": -14.0
   },
@@ -52,9 +52,9 @@
     {
       "date": "2026-06-23",
       "rate_pct": 4.09,
-      "pnl_bp": 0.0,
-      "cum_pnl_gbp": 0.0,
-      "daily_pnl_gbp": 0.0
+      "pnl_bp": -0.0,
+      "cum_pnl_gbp": -0.0,
+      "daily_pnl_gbp": -0.0
     }
   ],
   "regime_attribution": [],
@@ -62,5 +62,22 @@
   "leg_labels": {
     "quoted_long": "Jun-27",
     "quoted_short": ""
+  },
+  "live_proxy": {
+    "source": "3M SONIA (J8*) \u00b7 change applied to 1M entry",
+    "note": "Indicative only. Official P&L uses 1M EOD (JU*). 3M levels differ from 1M; leg deltas ~0.99 corr (Jun-27).",
+    "entry_3m_date": "2026-06-22",
+    "latest_3m_date": "2026-06-22",
+    "legs": {
+      "2027-06": {
+        "entry_3m_rate_pct": 4.16,
+        "latest_3m_rate_pct": 4.16,
+        "proxy_1m_rate_pct": 4.09,
+        "delta_3m_bp": 0.0
+      }
+    },
+    "mark_rate_pct": 4.09,
+    "pnl_bp": 0.0,
+    "pnl_gbp": 0.0
   }
 }

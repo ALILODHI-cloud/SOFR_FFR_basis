@@ -19,6 +19,7 @@ from analyze_sonia import (
 ROOT = Path(__file__).resolve().parent
 TRADES_DIR = ROOT / "trades"
 SONIA_1M = ROOT / "sonia_1m_data.json"
+STIR_3M = ROOT / "stir_curves_data.json"
 
 
 def utc_now() -> str:
@@ -95,6 +96,96 @@ def fetch_leg(symbol: str) -> tuple[pd.DataFrame, dict]:
         if snap is None:
             raise
         return pd.DataFrame(), snap
+
+
+def series_3m_sonia() -> pd.DataFrame | None:
+    if not STIR_3M.exists():
+        return None
+    with STIR_3M.open(encoding="utf-8") as f:
+        data = json.load(f)
+    rows = data.get("timeseries", {}).get("sonia_3m", {}).get("rows", [])
+    if not rows:
+        return None
+    df = pd.DataFrame(rows).set_index("date")
+    df.index = pd.to_datetime(df.index)
+    return df.astype(float).sort_index()
+
+
+def rate_on_or_before(series: pd.Series, dt: pd.Timestamp) -> tuple[pd.Timestamp, float] | None:
+    sub = series.loc[:dt].dropna()
+    if sub.empty:
+        return None
+    ts = sub.index[-1]
+    return ts, float(sub.iloc[-1])
+
+
+def build_live_proxy(
+    cfg: dict,
+    entry_date: pd.Timestamp,
+    entry_1m: dict[str, float],
+    q_long_key: str,
+    q_short_key: str | None,
+    direction: str,
+    gbp: float,
+    trade_type: str,
+) -> dict | None:
+    """Indicative intraday mark via 3M SONIA Δ applied to 1M entry (same delivery months)."""
+    if not cfg.get("live_proxy", {}).get("enabled", True):
+        return None
+    s3 = series_3m_sonia()
+    if s3 is None:
+        return None
+
+    latest_dt = s3.index[-1]
+    legs: dict[str, dict] = {}
+    entry_3m_ref: pd.Timestamp | None = None
+    for key in entry_1m:
+        if key not in s3.columns:
+            continue
+        e = rate_on_or_before(s3[key], entry_date)
+        if e is None:
+            continue
+        entry_3m_dt, entry_3m = e
+        entry_3m_ref = entry_3m_dt
+        latest_3m = float(s3[key].iloc[-1])
+        proxy = float(entry_1m[key]) + (latest_3m - entry_3m)
+        legs[key] = {
+            "entry_3m_rate_pct": round(entry_3m, 4),
+            "latest_3m_rate_pct": round(latest_3m, 4),
+            "proxy_1m_rate_pct": round(proxy, 4),
+            "delta_3m_bp": round((latest_3m - entry_3m) * 100, 2),
+        }
+
+    if not legs:
+        return None
+
+    out: dict = {
+        "source": "3M SONIA (J8*) · change applied to 1M entry",
+        "note": "Indicative only. Official P&L uses 1M EOD (JU*). 3M levels differ from 1M; leg deltas ~0.99 corr (Jun-27).",
+        "entry_3m_date": str(entry_3m_ref.date()) if entry_3m_ref is not None else str(entry_date.date()),
+        "latest_3m_date": str(latest_dt.date()),
+        "legs": legs,
+    }
+
+    if trade_type == "outright":
+        key = next(iter(entry_1m))
+        proxy_rate = legs[key]["proxy_1m_rate_pct"]
+        pnl_bp = pnl_outright_bp(float(entry_1m[key]), proxy_rate, direction)
+        out["mark_rate_pct"] = proxy_rate
+        out["pnl_bp"] = round(pnl_bp, 2)
+        out["pnl_gbp"] = round(pnl_bp * gbp, 2)
+    else:
+        if q_long_key not in legs or (q_short_key and q_short_key not in legs):
+            return out
+        entry_slope = quoted_slope_bp(entry_1m, q_long_key, q_short_key or q_long_key)
+        proxy_rates = {k: legs[k]["proxy_1m_rate_pct"] for k in legs}
+        proxy_slope = quoted_slope_bp(proxy_rates, q_long_key, q_short_key or q_long_key)
+        pnl_bp = pnl_slope_bp(entry_slope, proxy_slope, direction)
+        out["mark_slope_bp"] = round(proxy_slope, 2)
+        out["pnl_bp"] = round(pnl_bp, 2)
+        out["pnl_gbp"] = round(pnl_bp * gbp, 2)
+
+    return out
 
 
 def series_from_sonia(keys: list[str]) -> pd.DataFrame | None:
@@ -284,6 +375,9 @@ def analyze_outright(cfg_path: Path) -> dict:
     path = build_outright_path(tail, entry_rate, gbp, direction)
     stop = levels.get("stop_rate_pct")
     tp = levels.get("take_profit_rate_pct")
+    live_proxy = build_live_proxy(
+        cfg, entry_date, {key: entry_rate}, key, None, direction, gbp, "outright"
+    )
 
     return {
         "generated_utc": utc_now(),
@@ -325,6 +419,7 @@ def analyze_outright(cfg_path: Path) -> dict:
         "regime_attribution": [],
         "market_note_url": cfg.get("market_note_url", ""),
         "leg_labels": {"quoted_long": cfg.get("contract_label", symbol), "quoted_short": ""},
+        "live_proxy": live_proxy,
     }
 
 
@@ -379,6 +474,14 @@ def analyze_spread(cfg_path: Path) -> dict:
 
     stop = levels.get("stop_slope_bp")
     tp = levels.get("take_profit_slope_bp")
+    leg_by_key = {cfg["long_key"]: entry["long"], cfg["short_key"]: entry["short"]}
+    entry_1m_rates = {
+        q_long_key: float(leg_by_key[q_long_key]["implied_rate_pct"]),
+        q_short_key: float(leg_by_key[q_short_key]["implied_rate_pct"]),
+    }
+    live_proxy = build_live_proxy(
+        cfg, entry_date, entry_1m_rates, q_long_key, q_short_key, direction, gbp, "spread"
+    )
 
     return {
         "generated_utc": utc_now(),
@@ -419,6 +522,7 @@ def analyze_spread(cfg_path: Path) -> dict:
             "quoted_long": qs.get("long_label", q_long_key),
             "quoted_short": qs.get("short_label", q_short_key),
         },
+        "live_proxy": live_proxy,
     }
 
 

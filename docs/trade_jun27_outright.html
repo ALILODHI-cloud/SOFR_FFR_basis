@@ -47,6 +47,11 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
   <div id="pills"></div>
 </header>
 <div class="grid stats" id="stats"></div>
+<div class="card" id="proxyCard" style="display:none">
+  <h2>Live proxy (3M SONIA)</h2>
+  <p class="sub" id="proxyNote" style="margin:0 0 10px"></p>
+  <div class="grid stats" id="proxyStats"></div>
+</div>
 <div class="card" id="levelsCard"><h2>Entry · stop · take profit</h2><div class="grid levels" id="levels"></div></div>
 <div class="card"><h2>Cumulative P&amp;L (£)</h2><div class="chartbox"><canvas id="pnlChart"></canvas></div></div>
 <div class="grid two">
@@ -64,7 +69,7 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
 <p class="foot" id="foot"></p>
 </div>
 <script>
-const D = {"generated_utc": "2026-06-24 12:18 UTC", "trade": {"id": "jun27_outright_long", "type": "outright", "label": "Long JUM27 (Jun-27 SONIA)", "position": "Long JUM27 (Jun-27 1M SONIA)", "direction": "long", "spread_label": "Jun-27", "entry_locked": true, "gbp_per_bp": 12.5, "detail_page": "trade_jun27_outright.html"}, "levels": {"entry_rate_pct": 4.09, "stop_rate_pct": 4.16, "take_profit_rate_pct": 3.95}, "bank_rate_pct": 3.75, "bank_rate_as_of": "2026-06-18", "entry": {"date": "2026-06-23", "label": "23 Jun 2026 EOD close", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null}, "mark": {"date": "2026-06-23", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null, "updated_utc": "2026-06-24 12:18 UTC"}, "pnl": {"slope_bp": 0.0, "gbp": 0.0, "to_stop_bp": 7.0, "to_tp_bp": -14.0}, "trade_path": [{"date": "2026-06-23", "rate_pct": 4.09, "pnl_bp": 0.0, "cum_pnl_gbp": 0.0, "daily_pnl_gbp": 0.0}], "regime_attribution": [], "market_note_url": "", "leg_labels": {"quoted_long": "Jun-27", "quoted_short": ""}};
+const D = {"generated_utc": "2026-06-24 12:37 UTC", "trade": {"id": "jun27_outright_long", "type": "outright", "label": "Long JUM27 (Jun-27 SONIA)", "position": "Long JUM27 (Jun-27 1M SONIA)", "direction": "long", "spread_label": "Jun-27", "entry_locked": true, "gbp_per_bp": 12.5, "detail_page": "trade_jun27_outright.html"}, "levels": {"entry_rate_pct": 4.09, "stop_rate_pct": 4.16, "take_profit_rate_pct": 3.95}, "bank_rate_pct": 3.75, "bank_rate_as_of": "2026-06-18", "entry": {"date": "2026-06-23", "label": "23 Jun 2026 EOD close", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null}, "mark": {"date": "2026-06-23", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null, "updated_utc": "2026-06-24 12:37 UTC"}, "pnl": {"slope_bp": -0.0, "gbp": -0.0, "to_stop_bp": 7.0, "to_tp_bp": -14.0}, "trade_path": [{"date": "2026-06-23", "rate_pct": 4.09, "pnl_bp": -0.0, "cum_pnl_gbp": -0.0, "daily_pnl_gbp": -0.0}], "regime_attribution": [], "market_note_url": "", "leg_labels": {"quoted_long": "Jun-27", "quoted_short": ""}, "live_proxy": {"source": "3M SONIA (J8*) \u00b7 change applied to 1M entry", "note": "Indicative only. Official P&L uses 1M EOD (JU*). 3M levels differ from 1M; leg deltas ~0.99 corr (Jun-27).", "entry_3m_date": "2026-06-22", "latest_3m_date": "2026-06-22", "legs": {"2027-06": {"entry_3m_rate_pct": 4.16, "latest_3m_rate_pct": 4.16, "proxy_1m_rate_pct": 4.09, "delta_3m_bp": 0.0}}, "mark_rate_pct": 4.09, "pnl_bp": 0.0, "pnl_gbp": 0.0}};
 const GBP = D.trade.gbp_per_bp || 12.5;
 const isOutright = D.trade.type === 'outright';
 const L = D.levels || {};
@@ -165,6 +170,19 @@ if(isOutright){
   });
 }
 document.getElementById('foot').textContent = D.trade.position + ' · £'+GBP+'/bp · Barchart EOD. Not investment advice.';
+
+const px = D.live_proxy;
+if(px && px.pnl_gbp != null){
+  document.getElementById('proxyCard').style.display='block';
+  document.getElementById('proxyNote').textContent = px.source + ' · 3M as of '+px.latest_3m_date+' (1M entry anchored). '+px.note;
+  const markLbl = isOutright ? fmtPct(px.mark_rate_pct) : fmtBp(px.mark_slope_bp);
+  document.getElementById('proxyStats').innerHTML = [
+    ['Proxy P&amp;L', fmtGbp(px.pnl_gbp), cls(px.pnl_gbp)],
+    ['Proxy mark', markLbl, cls(px.pnl_bp)],
+    ['3M ref date', px.latest_3m_date, 'neu'],
+    ['vs EOD P&amp;L', fmtGbp(px.pnl_gbp - pnl.gbp), cls(px.pnl_gbp - pnl.gbp)],
+  ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat sm '+c+'">'+v+'</div></div>').join('');
+}
 </script>
 </body>
 </html>

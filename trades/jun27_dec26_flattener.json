@@ -23,6 +23,7 @@
   "face_value_gbp": 500000,
   "contracts_per_leg": 1,
   "detail_page": "trade_jun27_dec26.html",
+  "live_proxy": {"enabled": true, "curve": "sonia_3m"},
   "levels": {
     "entry_slope_bp": 13.0,
     "stop_slope_bp": 20.0,

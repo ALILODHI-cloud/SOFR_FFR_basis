@@ -57,6 +57,11 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
   <div id="pills"></div>
 </header>
 <div class="grid stats" id="stats"></div>
+<div class="card" id="proxyCard" style="display:none">
+  <h2>Live proxy (3M SONIA)</h2>
+  <p class="sub" id="proxyNote" style="margin:0 0 10px"></p>
+  <div class="grid stats" id="proxyStats"></div>
+</div>
 <div class="card" id="levelsCard"><h2>Entry · stop · take profit</h2><div class="grid levels" id="levels"></div></div>
 <div class="card"><h2>Cumulative P&amp;L (£)</h2><div class="chartbox"><canvas id="pnlChart"></canvas></div></div>
 <div class="grid two">
@@ -175,6 +180,19 @@ if(isOutright){
   });
 }
 document.getElementById('foot').textContent = D.trade.position + ' · £'+GBP+'/bp · Barchart EOD. Not investment advice.';
+
+const px = D.live_proxy;
+if(px && px.pnl_gbp != null){
+  document.getElementById('proxyCard').style.display='block';
+  document.getElementById('proxyNote').textContent = px.source + ' · 3M as of '+px.latest_3m_date+' (1M entry anchored). '+px.note;
+  const markLbl = isOutright ? fmtPct(px.mark_rate_pct) : fmtBp(px.mark_slope_bp);
+  document.getElementById('proxyStats').innerHTML = [
+    ['Proxy P&amp;L', fmtGbp(px.pnl_gbp), cls(px.pnl_gbp)],
+    ['Proxy mark', markLbl, cls(px.pnl_bp)],
+    ['3M ref date', px.latest_3m_date, 'neu'],
+    ['vs EOD P&amp;L', fmtGbp(px.pnl_gbp - pnl.gbp), cls(px.pnl_gbp - pnl.gbp)],
+  ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat sm '+c+'">'+v+'</div></div>').join('');
+}
 </script>
 </body>
 </html>

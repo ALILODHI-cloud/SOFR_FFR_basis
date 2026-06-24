@@ -15,6 +15,7 @@
   "face_value_gbp": 500000,
   "contracts_per_leg": 1,
   "detail_page": "trade_jun27_outright.html",
+  "live_proxy": {"enabled": true, "curve": "sonia_3m"},
   "levels": {
     "entry_rate_pct": 4.09,
     "stop_rate_pct": 4.16,
