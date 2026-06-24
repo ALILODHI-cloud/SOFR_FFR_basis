@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2026-06-23 13:46 UTC",
+  "generated_utc": "2026-06-24 11:49 UTC",
   "trade": {
     "id": "jul27_dec26_steepener",
     "label": "Jul27\u2212Dec26 SONIA steepener",
     "position": "Long JUN27 (Jul-27 1M) / Short JUZ26 (Dec-26 1M)",
-    "entry_locked": false
+    "entry_locked": true
   },
   "bank_rate_pct": 3.75,
   "bank_rate_as_of": "2026-06-18",
@@ -13,49 +13,49 @@
     "label": "UK market open \u00b7 23 Jun 2026",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-06-22",
-      "price": 96.025,
-      "implied_rate_pct": 3.975
+      "date": "2026-06-23",
+      "price": 96.04,
+      "implied_rate_pct": 3.96
     },
     "long": {
       "symbol": "JUN27",
-      "date": "2026-06-22",
-      "price": 95.865,
-      "implied_rate_pct": 4.135
+      "date": "2026-06-23",
+      "price": 95.915,
+      "implied_rate_pct": 4.085
     },
-    "slope_bp": 16.0,
-    "captured_utc": "2026-06-23 13:46 UTC",
-    "source": "barchart_live"
+    "slope_bp": 12.5,
+    "captured_utc": "2026-06-24 11:49 UTC",
+    "source": "barchart_eod"
   },
   "mark": {
     "date": "2026-06-23",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-06-22",
-      "price": 96.025,
-      "implied_rate_pct": 3.975
+      "date": "2026-06-23",
+      "price": 96.04,
+      "implied_rate_pct": 3.96
     },
     "long": {
       "symbol": "JUN27",
-      "date": "2026-06-22",
-      "price": 95.865,
-      "implied_rate_pct": 4.135
+      "date": "2026-06-23",
+      "price": 95.915,
+      "implied_rate_pct": 4.085
     },
-    "slope_bp": 16.0,
-    "updated_utc": "2026-06-23 13:46 UTC"
+    "slope_bp": 12.5,
+    "updated_utc": "2026-06-24 11:49 UTC"
   },
   "pnl": {
     "slope_bp": 0.0,
     "gbp": 0.0,
-    "short_leg_bp": 0.0,
-    "long_leg_bp": 0.0
+    "short_leg_bp": -0.0,
+    "long_leg_bp": -0.0
   },
   "trade_path": [
     {
       "date": "2026-06-23",
-      "short_rate": 3.975,
-      "long_rate": 4.135,
-      "slope_bp": 16.0,
+      "short_rate": 3.96,
+      "long_rate": 4.085,
+      "slope_bp": 12.5,
       "dslope_bp": 0.0,
       "cum_pnl_gbp": 0.0,
       "daily_pnl_gbp": 0.0

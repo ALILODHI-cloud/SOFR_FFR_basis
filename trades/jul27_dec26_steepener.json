@@ -10,7 +10,7 @@
   "entry_date": "2026-06-23",
   "entry_label": "UK market open \u00b7 23 Jun 2026",
   "entry_source": "barchart",
-  "entry_locked": false,
+  "entry_locked": true,
   "gbp_per_bp": 12.5,
   "face_value_gbp": 500000,
   "contracts_per_leg": 1,
@@ -20,18 +20,18 @@
     "label": "UK market open \u00b7 23 Jun 2026",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-06-22",
-      "price": 96.025,
-      "implied_rate_pct": 3.975
+      "date": "2026-06-23",
+      "price": 96.04,
+      "implied_rate_pct": 3.96
     },
     "long": {
       "symbol": "JUN27",
-      "date": "2026-06-22",
-      "price": 95.865,
-      "implied_rate_pct": 4.135
+      "date": "2026-06-23",
+      "price": 95.915,
+      "implied_rate_pct": 4.085
     },
-    "slope_bp": 16.0,
-    "captured_utc": "2026-06-23 13:46 UTC",
-    "source": "barchart_live"
+    "slope_bp": 12.5,
+    "captured_utc": "2026-06-24 11:49 UTC",
+    "source": "barchart_eod"
   }
 }
