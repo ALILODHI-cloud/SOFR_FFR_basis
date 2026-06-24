@@ -3,71 +3,34 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<meta name="theme-color" content="#0b0f17"/>
 <title>Supra · Markets Portal</title>
 <style>
-:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--warn:#ffb84a;--bad:#ff6b6b;--good:#39d98a}
-*{box-sizing:border-box}
+:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
 .wrap{max-width:960px;margin:0 auto;padding:20px 16px 64px}
 header{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:20px}
-.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
-h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
-.sub{color:var(--mut);font-size:14px;line-height:1.5}
-.grid{display:grid;gap:14px}
-@media(min-width:700px){.grid.cols-2{grid-template-columns:1fr 1fr}}
-.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:inherit;transition:border-color .15s}
-.card:hover{border-color:var(--acc)}
-.card h2{margin:0 0 6px;font-size:16px}
-.card p{margin:0;color:var(--mut);font-size:13px;line-height:1.45}
-.card.featured{border-color:rgba(57,217,138,.35);background:linear-gradient(165deg,var(--card),rgba(57,217,138,.05))}
-.pill{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--mut);margin-top:10px}
-.pill.live{border-color:var(--acc);color:var(--acc)}
-.good{color:var(--good)}.bad{color:var(--bad)}
+.grid{display:grid;gap:14px}@media(min-width:700px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:inherit}
+.card.featured{border-color:rgba(57,217,138,.35)}
+.pill.live{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--acc);color:var(--acc);margin-top:10px}
 </style>
 </head>
-<body>
-<div class="wrap">
-<header>
-  <div class="eyebrow">Supra Fund Management</div>
-  <h1>Markets portal</h1>
-  <div class="sub">Live dashboards &amp; trade trackers · Barchart EOD · auto-refresh weekdays</div>
-</header>
+<body><div class="wrap">
+<header><h1>Markets portal</h1><p>Live dashboards &amp; trade trackers</p></header>
 <div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html">
-    <h2>All live trades</h2>
-    <p>Jul27−Dec26 steepener &amp; Jul27−Dec27 flattener · daily P&amp;L &amp; regime attribution.</p>
-    <span class="pill live">● Trade tracker</span>
-  </a>
-  <a class="card featured" href="trade_jul27_dec26.html">
-    <h2>Jul27−Dec26 SONIA steepener · live P&amp;L</h2>
-    <p>Long JUN27 (Jul-27 1M) / Short JUZ26 (Dec-26 1M)</p>
-    <span class="pill live">● steepener</span>
-    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="">+£0</span> · mark +16.0 bp</span>
-  </a>
-  <a class="card featured" href="trade_jul27_dec27.html">
-    <h2>Jul27−Dec27 SONIA flattener · live P&amp;L</h2>
-    <p>Long JUZ27 (Dec-27 1M) / Short JUN27 (Jul-27 1M)</p>
+  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 outright + Jun27−Dec26 flattener · 23 Jun EOD entry</p></a>
+  <a class="card featured" href="trade_jun27_dec26.html">
+    <h2>Jun27−Dec26 SONIA flattener</h2>
+    <p>Long JUZ26 (Dec-26) / Short JUM27 (Jun-27)</p>
     <span class="pill live">● flattener</span>
-    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="">+£0</span> · mark +6.0 bp</span>
+    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="">+£0</span></span>
   </a>
-  <a class="card" href="sonia_1m_dashboard.html">
-    <h2>1M SONIA curve live</h2>
-    <p>Full JU* strip, MPC pricing, daily Δ table, phone layout.</p>
+  <a class="card featured" href="trade_jun27_outright.html">
+    <h2>Long JUM27 (Jun-27 SONIA)</h2>
+    <p>Long JUM27 (Jun-27 1M SONIA)</p>
+    <span class="pill live">● long</span>
+    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="">+£0</span></span>
   </a>
-  <a class="card" href="sonia_dashboard.html">
-    <h2>Dec27−Dec26 SONIA monitor</h2>
-    <p>Slope, basis, Brent correlation, prior steepener entry.</p>
-  </a>
-  <a class="card" href="stir_curves_dashboard.html">
-    <h2>STIR curves (SOFR / SONIA / €STR)</h2>
-    <p>3M quarterly chains, 88+ contracts.</p>
-  </a>
-  <a class="card" href="index.html">
-    <h2>FFR−SOFR basis</h2>
-    <p>US money markets · July trade monitor.</p>
-  </a>
-</div>
-</div>
-</body>
-</html>
+  <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2></a>
+  <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2></a>
+</div></div></body></html>

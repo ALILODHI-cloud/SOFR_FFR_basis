@@ -1,20 +1,10 @@
-#!/usr/bin/env python3
-"""Build Supra portal + multi-trade live tracker pages."""
-from __future__ import annotations
-
-import json
-from pathlib import Path
-
-ROOT = Path(__file__).resolve().parent
-INDEX_FILE = ROOT / "trades_index.json"
-
-DETAIL_HTML = r"""<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <meta name="theme-color" content="#0b0f17"/>
-<title>__PAGE_TITLE__</title>
+<title>Long JUM27 (Jun-27 SONIA) · live tracker</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--warn:#ffb84a;--bad:#ff6b6b;--good:#39d98a}
@@ -74,7 +64,7 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
 <p class="foot" id="foot"></p>
 </div>
 <script>
-const D = __DATA_JSON__;
+const D = {"generated_utc": "2026-06-24 12:18 UTC", "trade": {"id": "jun27_outright_long", "type": "outright", "label": "Long JUM27 (Jun-27 SONIA)", "position": "Long JUM27 (Jun-27 1M SONIA)", "direction": "long", "spread_label": "Jun-27", "entry_locked": true, "gbp_per_bp": 12.5, "detail_page": "trade_jun27_outright.html"}, "levels": {"entry_rate_pct": 4.09, "stop_rate_pct": 4.16, "take_profit_rate_pct": 3.95}, "bank_rate_pct": 3.75, "bank_rate_as_of": "2026-06-18", "entry": {"date": "2026-06-23", "label": "23 Jun 2026 EOD close", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null}, "mark": {"date": "2026-06-23", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null, "updated_utc": "2026-06-24 12:18 UTC"}, "pnl": {"slope_bp": 0.0, "gbp": 0.0, "to_stop_bp": 7.0, "to_tp_bp": -14.0}, "trade_path": [{"date": "2026-06-23", "rate_pct": 4.09, "pnl_bp": 0.0, "cum_pnl_gbp": 0.0, "daily_pnl_gbp": 0.0}], "regime_attribution": [], "market_note_url": "", "leg_labels": {"quoted_long": "Jun-27", "quoted_short": ""}};
 const GBP = D.trade.gbp_per_bp || 12.5;
 const isOutright = D.trade.type === 'outright';
 const L = D.levels || {};
@@ -178,156 +168,3 @@ document.getElementById('foot').textContent = D.trade.position + ' · £'+GBP+'/
 </script>
 </body>
 </html>
-"""
-
-HUB_HTML = r"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<meta name="theme-color" content="#0b0f17"/>
-<title>Supra · Live trade tracker</title>
-<style>
-:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--warn:#ffb84a;--bad:#ff6b6b;--good:#39d98a}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
-.wrap{max-width:960px;margin:0 auto;padding:20px 16px 64px}
-a{color:var(--acc);text-decoration:none}
-header{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:20px}
-.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
-h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
-.sub{color:var(--mut);font-size:14px;line-height:1.5}
-.nav{font-size:13px;margin-bottom:14px}
-.grid{display:grid;gap:14px}
-@media(min-width:700px){.grid{grid-template-columns:1fr 1fr}}
-.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;color:inherit;transition:border-color .15s}
-.card:hover{border-color:var(--acc)}
-.card h2{margin:0 0 6px;font-size:16px}
-.card p{margin:0 0 10px;color:var(--mut);font-size:13px;line-height:1.45}
-.row{display:flex;justify-content:space-between;gap:12px;font-size:13px;margin:4px 0}
-.row span:last-child{font-variant-numeric:tabular-nums;font-weight:600}
-.good{color:var(--good)}.bad{color:var(--bad)}
-.pill{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--mut);margin-right:6px}
-.foot{color:var(--mut);font-size:11px;margin-top:20px}
-</style>
-</head>
-<body>
-<div class="wrap">
-<div class="nav"><a href="portal.html">← Portal</a></div>
-<header>
-  <div class="eyebrow">Supra Fund Management</div>
-  <h1>Live trade tracker</h1>
-  <div class="sub">Jun-27 SONIA · entered 23 Jun 2026 EOD · Barchart marks weekdays</div>
-</header>
-<div class="grid" id="tradeGrid"></div>
-<p class="foot" id="foot"></p>
-</div>
-<script>
-const INDEX = __INDEX_JSON__;
-function fmtBp(v){ if(v==null) return '—'; return (v>=0?'+':'')+Number(v).toFixed(1)+' bp'; }
-function fmtPct(v){ if(v==null) return '—'; return Number(v).toFixed(2)+'%'; }
-function fmtGbp(v){ return (v>=0?'+':'')+'£'+Math.abs(v).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}); }
-function cls(v){ return v>0.5?'good':v<-0.5?'bad':''; }
-const grid = document.getElementById('tradeGrid');
-INDEX.trades.forEach(t=>{
-  const isO = t.type === 'outright';
-  const entryRow = isO
-    ? '<div class="row"><span>Entry rate</span><span>'+fmtPct(t.entry_rate_pct)+'</span></div>'
-      + '<div class="row"><span>Stop / TP</span><span>'+fmtPct(t.stop_rate_pct)+' / '+fmtPct(t.take_profit_rate_pct)+'</span></div>'
-    : '<div class="row"><span>'+t.spread_label+' entry</span><span>'+fmtBp(t.entry_slope_bp)+'</span></div>'
-      + '<div class="row"><span>Stop / TP</span><span>'+fmtBp(t.stop_slope_bp)+' / '+fmtBp(t.take_profit_slope_bp)+'</span></div>';
-  const markRow = isO
-    ? '<div class="row"><span>Mark</span><span>'+fmtPct(t.mark_rate_pct)+'</span></div>'
-    : '<div class="row"><span>Mark spread</span><span>'+fmtBp(t.mark_slope_bp)+'</span></div>';
-  grid.innerHTML += '<a class="card" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
-    + '<span class="pill">'+t.direction+'</span>'
-    + entryRow + markRow
-    + '<div class="row"><span>P&amp;L</span><span class="'+cls(t.pnl_gbp)+'">'+fmtGbp(t.pnl_gbp)+'</span></div></a>';
-});
-document.getElementById('foot').textContent = 'Updated '+INDEX.generated_utc+' · Not investment advice.';
-</script>
-</body>
-</html>
-"""
-
-
-def portal_html(trades: list[dict]) -> str:
-    cards = []
-    for t in trades:
-        pnl_cls = "good" if t["pnl_gbp"] > 0.5 else "bad" if t["pnl_gbp"] < -0.5 else ""
-        sign = "+" if t["pnl_gbp"] >= 0 else ""
-        cards.append(
-            f"""  <a class="card featured" href="{t['detail_page']}">
-    <h2>{t['label']}</h2>
-    <p>{t['position']}</p>
-    <span class="pill live">● {t['direction']}</span>
-    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="{pnl_cls}">{sign}£{abs(t['pnl_gbp']):,.0f}</span></span>
-  </a>"""
-        )
-    trade_section = "\n".join(cards)
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>Supra · Markets Portal</title>
-<style>
-:root{{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a}}
-body{{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}}
-.wrap{{max-width:960px;margin:0 auto;padding:20px 16px 64px}}
-header{{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:20px}}
-.grid{{display:grid;gap:14px}}@media(min-width:700px){{.grid.cols-2{{grid-template-columns:1fr 1fr}}}}
-.card{{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:inherit}}
-.card.featured{{border-color:rgba(57,217,138,.35)}}
-.pill.live{{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--acc);color:var(--acc);margin-top:10px}}
-</style>
-</head>
-<body><div class="wrap">
-<header><h1>Markets portal</h1><p>Live dashboards &amp; trade trackers</p></header>
-<div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 outright + Jun27−Dec26 flattener · 23 Jun EOD entry</p></a>
-{trade_section}
-  <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2></a>
-  <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2></a>
-</div></div></body></html>"""
-
-
-def main() -> None:
-    with INDEX_FILE.open(encoding="utf-8") as f:
-        index = json.load(f)
-
-    outputs: list[tuple[str, str]] = [
-        ("trade_tracker.html", HUB_HTML.replace("__INDEX_JSON__", json.dumps(index))),
-        ("portal.html", portal_html(index["trades"])),
-    ]
-
-    for t in index["trades"]:
-        data = json.loads((ROOT / t["data_file"]).read_text(encoding="utf-8"))
-        page = DETAIL_HTML.replace("__PAGE_TITLE__", f"{data['trade']['label']} · live tracker").replace(
-            "__DATA_JSON__", json.dumps(data)
-        )
-        outputs.append((t["detail_page"], page))
-
-    stale = [
-        "trade_jul27_dec26.html",
-        "trade_jul27_dec27.html",
-        "jul27_dec26_steepener_trade_data.json",
-        "jul27_dec27_flattener_trade_data.json",
-    ]
-    for name in stale:
-        for prefix in ("", "docs/"):
-            p = ROOT / prefix / name
-            if p.exists():
-                p.unlink()
-                print(f"Removed stale {p}")
-
-    for name, html in outputs:
-        for prefix in ("", "docs/"):
-            out = ROOT / prefix / name
-            out.parent.mkdir(parents=True, exist_ok=True)
-            out.write_text(html, encoding="utf-8")
-            print(f"Wrote {out}")
-
-
-if __name__ == "__main__":
-    main()

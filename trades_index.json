@@ -1,33 +1,43 @@
 {
-  "generated_utc": "2026-06-23 14:52 UTC",
+  "generated_utc": "2026-06-24 12:18 UTC",
   "trades": [
     {
-      "id": "jul27_dec26_steepener",
-      "label": "Jul27\u2212Dec26 SONIA steepener",
-      "position": "Long JUN27 (Jul-27 1M) / Short JUZ26 (Dec-26 1M)",
-      "direction": "steepener",
-      "spread_label": "Jul27\u2212Dec26",
-      "entry_slope_bp": 16.0,
-      "mark_slope_bp": 16.0,
-      "pnl_gbp": -0.0,
-      "pnl_slope_bp": -0.0,
-      "entry_locked": false,
-      "detail_page": "trade_jul27_dec26.html",
-      "data_file": "jul27_dec26_steepener_trade_data.json"
-    },
-    {
-      "id": "jul27_dec27_flattener",
-      "label": "Jul27\u2212Dec27 SONIA flattener",
-      "position": "Long JUZ27 (Dec-27 1M) / Short JUN27 (Jul-27 1M)",
+      "id": "jun27_dec26_flattener",
+      "type": "spread",
+      "label": "Jun27\u2212Dec26 SONIA flattener",
+      "position": "Long JUZ26 (Dec-26) / Short JUM27 (Jun-27)",
       "direction": "flattener",
-      "spread_label": "Jul27\u2212Dec27",
-      "entry_slope_bp": 6.0,
-      "mark_slope_bp": 6.0,
+      "spread_label": "Jun27\u2212Dec26",
+      "entry_locked": true,
+      "detail_page": "trade_jun27_dec26.html",
+      "data_file": "jun27_dec26_flattener_trade_data.json",
       "pnl_gbp": 0.0,
       "pnl_slope_bp": 0.0,
-      "entry_locked": false,
-      "detail_page": "trade_jul27_dec27.html",
-      "data_file": "jul27_dec27_flattener_trade_data.json"
+      "entry_slope_bp": 13.0,
+      "mark_slope_bp": 13.0,
+      "stop_slope_bp": 20.0,
+      "take_profit_slope_bp": -1.0,
+      "entry_rate_pct": null,
+      "mark_rate_pct": null
+    },
+    {
+      "id": "jun27_outright_long",
+      "type": "outright",
+      "label": "Long JUM27 (Jun-27 SONIA)",
+      "position": "Long JUM27 (Jun-27 1M SONIA)",
+      "direction": "long",
+      "spread_label": "Jun-27",
+      "entry_locked": true,
+      "detail_page": "trade_jun27_outright.html",
+      "data_file": "jun27_outright_long_trade_data.json",
+      "pnl_gbp": 0.0,
+      "pnl_slope_bp": 0.0,
+      "entry_rate_pct": 4.09,
+      "mark_rate_pct": 4.09,
+      "stop_rate_pct": 4.16,
+      "take_profit_rate_pct": 3.95,
+      "entry_slope_bp": null,
+      "mark_slope_bp": null
     }
   ]
 }

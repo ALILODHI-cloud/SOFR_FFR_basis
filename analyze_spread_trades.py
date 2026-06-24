@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Track SONIA calendar-spread trades from Barchart / sonia_1m_data."""
+"""Track SONIA outright legs and calendar-spread trades from Barchart / sonia_1m_data."""
 from __future__ import annotations
 
 import json
@@ -53,16 +53,48 @@ def pnl_slope_bp(entry_slope: float, mark_slope: float, direction: str) -> float
     return mark_slope - entry_slope
 
 
+def pnl_outright_bp(entry_rate: float, mark_rate: float, direction: str) -> float:
+    """Long rates: profit when implied rate falls."""
+    delta = (entry_rate - mark_rate) * 100.0
+    if direction == "short":
+        return -delta
+    return delta
+
+
+def snap_from_sonia(symbol: str) -> dict | None:
+    if not SONIA_1M.exists():
+        return None
+    with SONIA_1M.open(encoding="utf-8") as f:
+        data = json.load(f)
+    for c in data.get("contracts", []):
+        if c.get("symbol") == symbol:
+            return {
+                "symbol": symbol,
+                "date": c.get("latest_date", ""),
+                "price": round(float(c["price"]), 4),
+                "implied_rate_pct": round(float(c["implied_rate_pct"]), 4),
+            }
+    return None
+
+
 def fetch_leg(symbol: str) -> tuple[pd.DataFrame, dict]:
-    df = fetch_barchart_eod(symbol)
-    rates = price_to_rate(df["price"])
-    latest = df.iloc[-1]
-    return df, {
-        "symbol": symbol,
-        "date": str(df.index[-1].date()),
-        "price": round(float(latest["price"]), 4),
-        "implied_rate_pct": round(float(rates.iloc[-1]), 4),
-    }
+    try:
+        df = fetch_barchart_eod(symbol)
+        rates = price_to_rate(df["price"])
+        latest = df.iloc[-1]
+        snap = {
+            "symbol": symbol,
+            "date": str(df.index[-1].date()),
+            "price": round(float(latest["price"]), 4),
+            "implied_rate_pct": round(float(rates.iloc[-1]), 4),
+        }
+        return df, snap
+    except Exception as exc:
+        print(f"  ::warning::{symbol} Barchart fetch failed ({exc}); using sonia_1m_data snapshot")
+        snap = snap_from_sonia(symbol)
+        if snap is None:
+            raise
+        return pd.DataFrame(), snap
 
 
 def series_from_sonia(keys: list[str]) -> pd.DataFrame | None:
@@ -74,12 +106,12 @@ def series_from_sonia(keys: list[str]) -> pd.DataFrame | None:
     df = pd.DataFrame(rows).set_index("date")
     df.index = pd.to_datetime(df.index)
     cols = [k for k in keys if k in df.columns]
-    if len(cols) < 2:
+    if not cols:
         return None
-    return df[cols].dropna().astype(float).sort_index()
+    return df[cols].dropna(how="all").astype(float).sort_index()
 
 
-def ensure_entry(
+def ensure_spread_entry(
     cfg_path: Path,
     cfg: dict,
     leg_rates: dict[str, float],
@@ -99,7 +131,7 @@ def ensure_entry(
         return cfg
 
     slope = quoted_slope_bp(leg_rates, q_long_key, q_short_key)
-    entry = {
+    cfg["entry"] = {
         "date": entry_date,
         "label": cfg.get("entry_label", entry_date),
         "short": short_snap,
@@ -108,7 +140,6 @@ def ensure_entry(
         "captured_utc": utc_now(),
         "source": "barchart_live",
     }
-    cfg["entry"] = entry
     if short_snap["date"] == entry_date and long_snap["date"] == entry_date:
         cfg["entry"]["source"] = "barchart_eod"
         cfg["entry_locked"] = True
@@ -116,7 +147,7 @@ def ensure_entry(
     return cfg
 
 
-def build_path(
+def build_spread_path(
     tail: pd.DataFrame,
     entry_slope: float,
     gbp_per_bp: float,
@@ -140,6 +171,31 @@ def build_path(
                 "quoted_short_rate": round(leg_rates[q_short_key], 4),
                 "slope_bp": round(q_slope, 2),
                 "dslope_bp": round(dslope, 2),
+                "cum_pnl_gbp": round(cum, 2),
+                "daily_pnl_gbp": round(daily, 2),
+            }
+        )
+    return path
+
+
+def build_outright_path(
+    tail: pd.Series,
+    entry_rate: float,
+    gbp_per_bp: float,
+    direction: str,
+) -> list[dict]:
+    path = []
+    prev_cum = 0.0
+    for i, (dt, rate) in enumerate(tail.items()):
+        pnl_bp = pnl_outright_bp(entry_rate, float(rate), direction)
+        cum = pnl_bp * gbp_per_bp
+        daily = cum if i == 0 else cum - prev_cum
+        prev_cum = cum
+        path.append(
+            {
+                "date": str(dt.date()),
+                "rate_pct": round(float(rate), 4),
+                "pnl_bp": round(pnl_bp, 2),
                 "cum_pnl_gbp": round(cum, 2),
                 "daily_pnl_gbp": round(daily, 2),
             }
@@ -195,7 +251,84 @@ def regime_stats(
     return out
 
 
-def analyze_trade(cfg_path: Path) -> dict:
+def analyze_outright(cfg_path: Path) -> dict:
+    cfg = load_cfg(cfg_path)
+    gbp = float(cfg["gbp_per_bp"])
+    direction = cfg.get("direction", "long")
+    symbol = cfg["symbol"]
+    key = cfg["contract_key"]
+    levels = cfg.get("levels") or {}
+
+    print(f"[{cfg['trade_id']}] Fetching {symbol}…")
+    df, snap = fetch_leg(symbol)
+    entry = cfg.get("entry") or {}
+    entry_rate = float(levels.get("entry_rate_pct", entry.get("rate_pct", snap["implied_rate_pct"])))
+    entry_date = pd.Timestamp(cfg["entry_date"])
+
+    hist = series_from_sonia([key])
+    if hist is None:
+        hist = pd.DataFrame(index=pd.DatetimeIndex([]))
+    if not df.empty and "price" in df.columns:
+        for dt, px in df["price"].items():
+            hist.loc[pd.Timestamp(dt).normalize(), key] = float(price_to_rate(pd.Series([px])).iloc[0])
+    hist = hist.sort_index()
+
+    tail = hist.loc[hist.index >= entry_date, key].dropna()
+    if tail.empty:
+        tail = pd.Series([entry_rate], index=[entry_date])
+
+    mark_rate = float(tail.iloc[-1])
+    pnl_bp = pnl_outright_bp(entry_rate, mark_rate, direction)
+    pnl_gbp = pnl_bp * gbp
+
+    path = build_outright_path(tail, entry_rate, gbp, direction)
+    stop = levels.get("stop_rate_pct")
+    tp = levels.get("take_profit_rate_pct")
+
+    return {
+        "generated_utc": utc_now(),
+        "trade": {
+            "id": cfg["trade_id"],
+            "type": "outright",
+            "label": cfg["label"],
+            "position": cfg["position"],
+            "direction": direction,
+            "spread_label": cfg.get("contract_label", symbol),
+            "entry_locked": cfg.get("entry_locked", False),
+            "gbp_per_bp": gbp,
+            "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
+        },
+        "levels": levels,
+        "bank_rate_pct": BANK_RATE_PCT,
+        "bank_rate_as_of": BANK_RATE_AS_OF,
+        "entry": {
+            "date": cfg["entry_date"],
+            "label": cfg.get("entry_label", cfg["entry_date"]),
+            "rate_pct": entry_rate,
+            "leg": entry.get("leg", snap),
+            "slope_bp": None,
+        },
+        "mark": {
+            "date": str(tail.index[-1].date()),
+            "rate_pct": round(mark_rate, 4),
+            "leg": snap,
+            "slope_bp": None,
+            "updated_utc": utc_now(),
+        },
+        "pnl": {
+            "slope_bp": round(pnl_bp, 2),
+            "gbp": round(pnl_gbp, 2),
+            "to_stop_bp": round((float(stop) - mark_rate) * 100, 2) if stop is not None else None,
+            "to_tp_bp": round((float(tp) - mark_rate) * 100, 2) if tp is not None else None,
+        },
+        "trade_path": path,
+        "regime_attribution": [],
+        "market_note_url": cfg.get("market_note_url", ""),
+        "leg_labels": {"quoted_long": cfg.get("contract_label", symbol), "quoted_short": ""},
+    }
+
+
+def analyze_spread(cfg_path: Path) -> dict:
     cfg = load_cfg(cfg_path)
     gbp = float(cfg["gbp_per_bp"])
     direction = cfg.get("direction", "steepener")
@@ -205,24 +338,26 @@ def analyze_trade(cfg_path: Path) -> dict:
     short_key = cfg["short_key"]
     q_long_key, q_short_key, spread_label = quoted_keys(cfg)
     keys = list({long_key, short_key, q_long_key, q_short_key})
+    levels = cfg.get("levels") or {}
 
     print(f"[{cfg['trade_id']}] Fetching {long_sym} / {short_sym}…")
     short_df, short_snap = fetch_leg(short_sym)
     long_df, long_snap = fetch_leg(long_sym)
     leg_rates = {short_key: short_snap["implied_rate_pct"], long_key: long_snap["implied_rate_pct"]}
-    cfg = ensure_entry(cfg_path, cfg, leg_rates, short_snap, long_snap, q_long_key, q_short_key)
+    cfg = ensure_spread_entry(cfg_path, cfg, leg_rates, short_snap, long_snap, q_long_key, q_short_key)
     entry = cfg["entry"]
     entry_date = pd.Timestamp(entry["date"])
-    entry_slope = float(entry["slope_bp"])
+    entry_slope = float(levels.get("entry_slope_bp", entry["slope_bp"]))
 
     hist = series_from_sonia(keys)
     if hist is None:
         hist = pd.DataFrame(index=pd.DatetimeIndex([]))
 
     for df, key in [(short_df, short_key), (long_df, long_key)]:
+        if df.empty or "price" not in df.columns:
+            continue
         for dt, px in df["price"].items():
-            dt = pd.Timestamp(dt).normalize()
-            hist.loc[dt, key] = float(price_to_rate(pd.Series([px])).iloc[0])
+            hist.loc[pd.Timestamp(dt).normalize(), key] = float(price_to_rate(pd.Series([px])).iloc[0])
     hist = hist.sort_index()
 
     tail = hist.loc[hist.index >= entry_date].copy()
@@ -238,25 +373,18 @@ def analyze_trade(cfg_path: Path) -> dict:
     pnl_slope = pnl_slope_bp(entry_slope, mark_slope, direction)
     pnl_gbp = pnl_slope * gbp
 
-    mark = {
-        "date": str(tail.index[-1].date()),
-        "short": short_snap,
-        "long": long_snap,
-        "slope_bp": round(mark_slope, 2),
-        "updated_utc": utc_now(),
-    }
-
     qs = cfg.get("quoted_spread") or {}
-    path = build_path(tail, entry_slope, gbp, direction, q_long_key, q_short_key)
+    path = build_spread_path(tail, entry_slope, gbp, direction, q_long_key, q_short_key)
     regimes = regime_stats(tail, direction, gbp, q_long_key, q_short_key)
 
-    entry_long = leg_rates[q_long_key]
-    entry_short = leg_rates[q_short_key]
+    stop = levels.get("stop_slope_bp")
+    tp = levels.get("take_profit_slope_bp")
 
-    payload = {
+    return {
         "generated_utc": utc_now(),
         "trade": {
             "id": cfg["trade_id"],
+            "type": "spread",
             "label": cfg["label"],
             "position": cfg["position"],
             "direction": direction,
@@ -265,28 +393,73 @@ def analyze_trade(cfg_path: Path) -> dict:
             "gbp_per_bp": gbp,
             "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
         },
+        "levels": levels,
         "bank_rate_pct": BANK_RATE_PCT,
         "bank_rate_as_of": BANK_RATE_AS_OF,
         "entry": entry,
-        "mark": mark,
+        "mark": {
+            "date": str(tail.index[-1].date()),
+            "short": short_snap,
+            "long": long_snap,
+            "slope_bp": round(mark_slope, 2),
+            "updated_utc": utc_now(),
+        },
         "pnl": {
             "slope_bp": round(pnl_slope, 2),
             "gbp": round(pnl_gbp, 2),
-            "quoted_long_leg_bp": round((mark_leg_rates[q_long_key] - entry_long) * 100, 2),
-            "quoted_short_leg_bp": round((mark_leg_rates[q_short_key] - entry_short) * 100, 2),
+            "quoted_long_leg_bp": round((mark_leg_rates[q_long_key] - leg_rates[q_long_key]) * 100, 2),
+            "quoted_short_leg_bp": round((mark_leg_rates[q_short_key] - leg_rates[q_short_key]) * 100, 2),
+            "to_stop_bp": round(float(stop) - mark_slope, 2) if stop is not None else None,
+            "to_tp_bp": round(float(tp) - mark_slope, 2) if tp is not None else None,
         },
         "trade_path": path,
         "regime_attribution": regimes,
-        "market_note_url": cfg.get(
-            "market_note_url",
-            "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_15/body.md",
-        ),
+        "market_note_url": cfg.get("market_note_url", ""),
         "leg_labels": {
             "quoted_long": qs.get("long_label", q_long_key),
             "quoted_short": qs.get("short_label", q_short_key),
         },
     }
-    return payload
+
+
+def analyze_trade(cfg_path: Path) -> dict:
+    cfg = load_cfg(cfg_path)
+    if cfg.get("trade_type") == "outright":
+        return analyze_outright(cfg_path)
+    return analyze_spread(cfg_path)
+
+
+def index_row(payload: dict) -> dict:
+    t = payload["trade"]
+    levels = payload.get("levels") or {}
+    row = {
+        "id": t["id"],
+        "type": t.get("type", "spread"),
+        "label": t["label"],
+        "position": t["position"],
+        "direction": t["direction"],
+        "spread_label": t["spread_label"],
+        "entry_locked": t["entry_locked"],
+        "detail_page": t["detail_page"],
+        "data_file": f"{t['id']}_trade_data.json",
+        "pnl_gbp": payload["pnl"]["gbp"],
+        "pnl_slope_bp": payload["pnl"]["slope_bp"],
+    }
+    if t.get("type") == "outright":
+        row["entry_rate_pct"] = levels.get("entry_rate_pct", payload["entry"].get("rate_pct"))
+        row["mark_rate_pct"] = payload["mark"].get("rate_pct")
+        row["stop_rate_pct"] = levels.get("stop_rate_pct")
+        row["take_profit_rate_pct"] = levels.get("take_profit_rate_pct")
+        row["entry_slope_bp"] = None
+        row["mark_slope_bp"] = None
+    else:
+        row["entry_slope_bp"] = levels.get("entry_slope_bp", payload["entry"].get("slope_bp"))
+        row["mark_slope_bp"] = payload["mark"].get("slope_bp")
+        row["stop_slope_bp"] = levels.get("stop_slope_bp")
+        row["take_profit_slope_bp"] = levels.get("take_profit_slope_bp")
+        row["entry_rate_pct"] = None
+        row["mark_rate_pct"] = None
+    return row
 
 
 def main() -> None:
@@ -299,26 +472,18 @@ def main() -> None:
         payload = analyze_trade(cfg_path)
         out = ROOT / f"{payload['trade']['id']}_trade_data.json"
         out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-        print(
-            f"  Entry {payload['entry']['slope_bp']:+.1f} bp → mark {payload['mark']['slope_bp']:+.1f} bp | "
-            f"P&L {payload['pnl']['gbp']:+.1f} GBP → {out.name}"
-        )
-        index["trades"].append(
-            {
-                "id": payload["trade"]["id"],
-                "label": payload["trade"]["label"],
-                "position": payload["trade"]["position"],
-                "direction": payload["trade"]["direction"],
-                "spread_label": payload["trade"]["spread_label"],
-                "entry_slope_bp": payload["entry"]["slope_bp"],
-                "mark_slope_bp": payload["mark"]["slope_bp"],
-                "pnl_gbp": payload["pnl"]["gbp"],
-                "pnl_slope_bp": payload["pnl"]["slope_bp"],
-                "entry_locked": payload["trade"]["entry_locked"],
-                "detail_page": payload["trade"]["detail_page"],
-                "data_file": out.name,
-            }
-        )
+        t = payload["trade"]
+        if t.get("type") == "outright":
+            print(
+                f"  Entry {payload['entry']['rate_pct']:.3f}% → mark {payload['mark']['rate_pct']:.3f}% | "
+                f"P&L {payload['pnl']['gbp']:+.1f} GBP → {out.name}"
+            )
+        else:
+            print(
+                f"  Entry {payload['entry']['slope_bp']:+.1f} bp → mark {payload['mark']['slope_bp']:+.1f} bp | "
+                f"P&L {payload['pnl']['gbp']:+.1f} GBP → {out.name}"
+            )
+        index["trades"].append(index_row(payload))
 
     index_path = ROOT / "trades_index.json"
     index_path.write_text(json.dumps(index, indent=2), encoding="utf-8")
