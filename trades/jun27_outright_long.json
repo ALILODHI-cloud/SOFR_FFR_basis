@@ -1,0 +1,37 @@
+{
+  "trade_id": "jun27_outright_long",
+  "trade_type": "outright",
+  "label": "Long JUM27 (Jun-27 SONIA)",
+  "position": "Long JUM27 (Jun-27 1M SONIA)",
+  "direction": "long",
+  "symbol": "JUM27",
+  "contract_key": "2027-06",
+  "contract_label": "Jun-27",
+  "entry_date": "2026-06-23",
+  "entry_label": "23 Jun 2026 EOD close",
+  "entry_source": "barchart_eod",
+  "entry_locked": true,
+  "gbp_per_bp": 12.5,
+  "face_value_gbp": 500000,
+  "contracts_per_leg": 1,
+  "detail_page": "trade_jun27_outright.html",
+  "live_proxy": {"enabled": true, "curve": "sonia_3m"},
+  "levels": {
+    "entry_rate_pct": 4.09,
+    "stop_rate_pct": 4.16,
+    "take_profit_rate_pct": 3.95
+  },
+  "entry": {
+    "date": "2026-06-23",
+    "label": "23 Jun 2026 EOD close",
+    "leg": {
+      "symbol": "JUM27",
+      "date": "2026-06-23",
+      "price": 95.91,
+      "implied_rate_pct": 4.09
+    },
+    "rate_pct": 4.09,
+    "captured_utc": "2026-06-24",
+    "source": "barchart_eod"
+  }
+}
