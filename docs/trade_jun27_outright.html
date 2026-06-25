@@ -35,6 +35,7 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
 .foot{color:var(--mut);font-size:11px;margin-top:16px;line-height:1.6}
 .level{border-left:3px solid var(--line);padding-left:10px}
 .level.stop{border-color:var(--bad)}.level.entry{border-color:var(--acc)}.level.tp{border-color:var(--good)}
+.loading{color:var(--mut);padding:24px;text-align:center}
 </style>
 </head>
 <body>
@@ -42,10 +43,12 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
 <div class="nav"><a href="portal.html">← Portal</a> · <a href="trade_tracker.html">All trades</a></div>
 <header>
   <div class="eyebrow">Supra Fund Management · live trade</div>
-  <h1 id="title"></h1>
+  <h1 id="title">Loading…</h1>
   <div class="sub" id="subtitle"></div>
   <div id="pills"></div>
 </header>
+<div id="loading" class="loading">Loading trade data…</div>
+<div id="content" style="display:none">
 <div class="grid stats" id="stats"></div>
 <div class="card" id="proxyCard" style="display:none">
   <h2>Live proxy (3M SONIA)</h2>
@@ -66,123 +69,135 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
   <h2>Daily path</h2>
   <div style="overflow:auto;max-height:320px"><table class="tbl" id="pathTbl"><thead><tr id="pathHead"></tr></thead><tbody></tbody></table></div>
 </div>
+</div>
 <p class="foot" id="foot"></p>
 </div>
 <script>
-const D = {"generated_utc": "2026-06-25 11:43 UTC", "trade": {"id": "jun27_outright_long", "type": "outright", "label": "Long JUM27 (Jun-27 SONIA)", "position": "Long JUM27 (Jun-27 1M SONIA)", "direction": "long", "spread_label": "Jun-27", "entry_locked": true, "gbp_per_bp": 12.5, "detail_page": "trade_jun27_outright.html"}, "levels": {"entry_rate_pct": 4.09, "stop_rate_pct": 4.16, "take_profit_rate_pct": 3.95}, "bank_rate_pct": 3.75, "bank_rate_as_of": "2026-06-18", "entry": {"date": "2026-06-23", "label": "23 Jun 2026 EOD close", "rate_pct": 4.09, "leg": {"symbol": "JUM27", "date": "2026-06-23", "price": 95.91, "implied_rate_pct": 4.09}, "slope_bp": null}, "mark": {"date": "2026-06-24", "rate_pct": 4.04, "leg": {"symbol": "JUM27", "date": "2026-06-24", "price": 95.96, "implied_rate_pct": 4.04}, "slope_bp": null, "updated_utc": "2026-06-25 11:43 UTC"}, "pnl": {"slope_bp": 5.0, "gbp": 62.5, "to_stop_bp": 12.0, "to_tp_bp": -9.0}, "trade_path": [{"date": "2026-06-23", "rate_pct": 4.09, "pnl_bp": -0.0, "cum_pnl_gbp": -0.0, "daily_pnl_gbp": -0.0}, {"date": "2026-06-24", "rate_pct": 4.04, "pnl_bp": 5.0, "cum_pnl_gbp": 62.5, "daily_pnl_gbp": 62.5}], "regime_attribution": [], "market_note_url": "", "leg_labels": {"quoted_long": "Jun-27", "quoted_short": ""}, "live_proxy": {"source": "3M SONIA (J8*) \u00b7 change applied to 1M entry", "note": "Indicative only. Official P&L uses 1M EOD (JU*). 3M levels differ from 1M; leg deltas ~0.99 corr (Jun-27).", "entry_3m_date": "2026-06-22", "latest_3m_date": "2026-06-22", "legs": {"2027-06": {"entry_3m_rate_pct": 4.16, "latest_3m_rate_pct": 4.16, "proxy_1m_rate_pct": 4.09, "delta_3m_bp": 0.0}}, "mark_rate_pct": 4.09, "pnl_bp": 0.0, "pnl_gbp": 0.0}};
-const GBP = D.trade.gbp_per_bp || 12.5;
-const isOutright = D.trade.type === 'outright';
-const L = D.levels || {};
+const DATA_FILE = 'jun27_outright_long_trade_data.json';
 function fmtBp(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+Number(v).toFixed(1)+' bp'; }
 function fmtPct(v){ if(v==null) return '—'; return Number(v).toFixed(3)+'%'; }
 function fmtGbp(v){ return (v>=0?'+':'')+'£'+Math.abs(v).toLocaleString('en-GB',{minimumFractionDigits:0,maximumFractionDigits:0}); }
 function cls(v){ return v>0.5?'good':v<-0.5?'bad':'neu'; }
 
-document.getElementById('title').textContent = D.trade.label;
-document.getElementById('subtitle').textContent = D.trade.position + ' · Entry ' + D.entry.label + ' · Mark ' + D.mark.date;
-const pills = document.getElementById('pills');
-pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span><span class="pill">Bank '+D.bank_rate_pct+'%</span>'
-  + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
-  + '<span class="pill">Updated '+D.generated_utc+'</span>';
+function render(D){
+  const GBP = D.trade.gbp_per_bp || 12.5;
+  const isOutright = D.trade.type === 'outright';
+  const L = D.levels || {};
+  const pnl = D.pnl;
 
-const pnl = D.pnl;
-if(isOutright){
-  document.getElementById('levels').innerHTML = [
-    ['entry','Entry',fmtPct(L.entry_rate_pct)],
-    ['stop','Stop',fmtPct(L.stop_rate_pct)],
-    ['tp','Take profit',fmtPct(L.take_profit_rate_pct)]
-  ].map(([c,l,v])=>'<div class="level '+c+'"><div class="statlbl">'+l+'</div><div class="stat sm neu">'+v+'</div></div>').join('');
-  document.getElementById('stats').innerHTML = [
-    ['P&amp;L', fmtGbp(pnl.gbp), cls(pnl.gbp)],
-    ['Δ rate', fmtBp(pnl.slope_bp), cls(pnl.slope_bp)],
-    ['Mark', fmtPct(D.mark.rate_pct), 'neu'],
-    ['To stop', fmtBp(pnl.to_stop_bp), pnl.to_stop_bp>0?'bad':'neu'],
-  ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat '+c+'">'+v+'</div></div>').join('');
-  document.getElementById('mainChartTitle').textContent = 'Implied rate (%)';
-  document.getElementById('secondChartCard').style.display='none';
-} else {
-  document.getElementById('levels').innerHTML = [
-    ['entry','Entry spread',fmtBp(L.entry_slope_bp)],
-    ['stop','Stop',fmtBp(L.stop_slope_bp)],
-    ['tp','Take profit',fmtBp(L.take_profit_slope_bp)]
-  ].map(([c,l,v])=>'<div class="level '+c+'"><div class="statlbl">'+l+'</div><div class="stat sm neu">'+v+'</div></div>').join('');
-  document.getElementById('stats').innerHTML = [
-    ['P&amp;L', fmtGbp(pnl.gbp), cls(pnl.gbp)],
-    ['Δ spread', fmtBp(pnl.slope_bp), cls(pnl.slope_bp)],
-    ['Mark spread', fmtBp(D.mark.slope_bp), cls(pnl.slope_bp)],
-    ['To stop', fmtBp(pnl.to_stop_bp), (D.trade.direction==='flattener'?pnl.to_stop_bp<0:pnl.to_stop_bp>0)?'bad':'neu'],
-  ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat '+c+'">'+v+'</div></div>').join('');
-  document.getElementById('mainChartTitle').textContent = D.trade.spread_label + ' spread (bp)';
-  document.getElementById('secondChartTitle').textContent = 'Implied rates (%)';
-}
+  document.getElementById('loading').style.display='none';
+  document.getElementById('content').style.display='block';
+  document.getElementById('title').textContent = D.trade.label;
+  document.getElementById('subtitle').textContent = D.trade.position + ' · Entry ' + D.entry.label + ' · Mark ' + D.mark.date;
+  const pills = document.getElementById('pills');
+  pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span><span class="pill">Bank '+D.bank_rate_pct+'%</span>'
+    + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
+    + '<span class="pill">Updated '+D.generated_utc+'</span>';
 
-const path = D.trade_path || [];
-const labels = path.map(r=>r.date);
-const cum = path.map(r=>r.cum_pnl_gbp);
-new Chart(document.getElementById('pnlChart'), {
-  type:'line',
-  data:{labels,datasets:[{label:'Cum P&L £',data:cum,borderColor:'#39d98a',backgroundColor:'rgba(57,217,138,.08)',fill:true,tension:.2}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
-});
+  if(isOutright){
+    document.getElementById('levels').innerHTML = [
+      ['entry','Entry',fmtPct(L.entry_rate_pct)],
+      ['stop','Stop',fmtPct(L.stop_rate_pct)],
+      ['tp','Take profit',fmtPct(L.take_profit_rate_pct)]
+    ].map(([c,l,v])=>'<div class="level '+c+'"><div class="statlbl">'+l+'</div><div class="stat sm neu">'+v+'</div></div>').join('');
+    document.getElementById('stats').innerHTML = [
+      ['P&amp;L', fmtGbp(pnl.gbp), cls(pnl.gbp)],
+      ['Δ rate', fmtBp(pnl.slope_bp), cls(pnl.slope_bp)],
+      ['Mark', fmtPct(D.mark.rate_pct), 'neu'],
+      ['To stop', fmtBp(pnl.to_stop_bp), pnl.to_stop_bp>0?'bad':'neu'],
+    ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat '+c+'">'+v+'</div></div>').join('');
+    document.getElementById('mainChartTitle').textContent = 'Implied rate (%)';
+    document.getElementById('secondChartCard').style.display='none';
+  } else {
+    document.getElementById('levels').innerHTML = [
+      ['entry','Entry spread',fmtBp(L.entry_slope_bp)],
+      ['stop','Stop',fmtBp(L.stop_slope_bp)],
+      ['tp','Take profit',fmtBp(L.take_profit_slope_bp)]
+    ].map(([c,l,v])=>'<div class="level '+c+'"><div class="statlbl">'+l+'</div><div class="stat sm neu">'+v+'</div></div>').join('');
+    document.getElementById('stats').innerHTML = [
+      ['P&amp;L', fmtGbp(pnl.gbp), cls(pnl.gbp)],
+      ['Δ spread', fmtBp(pnl.slope_bp), cls(pnl.slope_bp)],
+      ['Mark spread', fmtBp(D.mark.slope_bp), cls(pnl.slope_bp)],
+      ['To stop', fmtBp(pnl.to_stop_bp), (D.trade.direction==='flattener'?pnl.to_stop_bp<0:pnl.to_stop_bp>0)?'bad':'neu'],
+    ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat '+c+'">'+v+'</div></div>').join('');
+    document.getElementById('mainChartTitle').textContent = D.trade.spread_label + ' spread (bp)';
+    document.getElementById('secondChartTitle').textContent = 'Implied rates (%)';
+  }
 
-if(isOutright){
-  const rates = path.map(r=>r.rate_pct);
-  const entryLine = labels.map(()=>L.entry_rate_pct);
-  const datasets = [{label:'Rate %',data:rates,borderColor:'#39d98a',pointRadius:3}];
-  if(L.entry_rate_pct!=null) datasets.push({label:'Entry',data:entryLine,borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0});
-  if(L.stop_rate_pct!=null) datasets.push({label:'Stop',data:labels.map(()=>L.stop_rate_pct),borderColor:'#ff6b6b',borderDash:[4,4],pointRadius:0});
-  if(L.take_profit_rate_pct!=null) datasets.push({label:'Take profit',data:labels.map(()=>L.take_profit_rate_pct),borderColor:'#39d98a',borderDash:[4,4],pointRadius:0});
-  new Chart(document.getElementById('mainChart'), {
-    type:'line', data:{labels,datasets},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
-  });
-  document.getElementById('pathHead').innerHTML = '<th>Date</th><th>Rate %</th><th>Δ day</th><th>Cum £</th>';
-  const pt = document.querySelector('#pathTbl tbody');
-  [...path].reverse().forEach(r=>{
-    pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.rate_pct.toFixed(3)+'</td><td class="num">'+fmtGbp(r.daily_pnl_gbp)+'</td><td class="num">'+fmtGbp(r.cum_pnl_gbp)+'</td></tr>';
-  });
-  document.getElementById('regimeCard').style.display='none';
-} else {
-  const slopes = path.map(r=>r.slope_bp);
-  const ds = [{label:'Spread bp',data:slopes,borderColor:'#ffb84a',pointRadius:3}];
-  ds.push({label:'Entry',data:labels.map(()=>L.entry_slope_bp),borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0});
-  if(L.stop_slope_bp!=null) ds.push({label:'Stop',data:labels.map(()=>L.stop_slope_bp),borderColor:'#ff6b6b',borderDash:[4,4],pointRadius:0});
-  if(L.take_profit_slope_bp!=null) ds.push({label:'Take profit',data:labels.map(()=>L.take_profit_slope_bp),borderColor:'#39d98a',borderDash:[4,4],pointRadius:0});
-  new Chart(document.getElementById('mainChart'), { type:'line', data:{labels,datasets:ds},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
-  });
-  new Chart(document.getElementById('secondChart'), {
+  const path = D.trade_path || [];
+  const labels = path.map(r=>r.date);
+  const cum = path.map(r=>r.cum_pnl_gbp);
+  new Chart(document.getElementById('pnlChart'), {
     type:'line',
-    data:{labels,datasets:[
-      {label:D.leg_labels.quoted_long,data:path.map(r=>r.quoted_long_rate),borderColor:'#39d98a'},
-      {label:D.leg_labels.quoted_short,data:path.map(r=>r.quoted_short_rate),borderColor:'#ffb84a'}
-    ]},
+    data:{labels,datasets:[{label:'Cum P&L £',data:cum,borderColor:'#39d98a',backgroundColor:'rgba(57,217,138,.08)',fill:true,tension:.2}]},
     options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
   });
-  const rt = document.querySelector('#regimeTbl tbody');
-  (D.regime_attribution||[]).forEach(r=>{
-    rt.innerHTML += '<tr><td>'+r.label+'</td><td class="num">'+r.days+'</td><td class="num">'+fmtBp(r.pnl_slope_bp)+'</td><td class="num">'+fmtGbp(r.pnl_gbp)+'</td></tr>';
-  });
-  document.getElementById('pathHead').innerHTML = '<th>Date</th><th>'+D.leg_labels.quoted_short+'</th><th>'+D.leg_labels.quoted_long+'</th><th>Spread</th><th>Δ day</th><th>Cum £</th>';
-  const pt = document.querySelector('#pathTbl tbody');
-  [...path].reverse().forEach(r=>{
-    pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.quoted_short_rate.toFixed(3)+'</td><td class="num">'+r.quoted_long_rate.toFixed(3)+'</td><td class="num">'+r.slope_bp.toFixed(1)+'</td><td class="num">'+fmtGbp(r.daily_pnl_gbp)+'</td><td class="num">'+fmtGbp(r.cum_pnl_gbp)+'</td></tr>';
-  });
-}
-document.getElementById('foot').textContent = D.trade.position + ' · £'+GBP+'/bp · Barchart EOD. Not investment advice.';
 
-const px = D.live_proxy;
-if(px && px.pnl_gbp != null){
-  document.getElementById('proxyCard').style.display='block';
-  document.getElementById('proxyNote').textContent = px.source + ' · 3M as of '+px.latest_3m_date+' (1M entry anchored). '+px.note;
-  const markLbl = isOutright ? fmtPct(px.mark_rate_pct) : fmtBp(px.mark_slope_bp);
-  document.getElementById('proxyStats').innerHTML = [
-    ['Proxy P&amp;L', fmtGbp(px.pnl_gbp), cls(px.pnl_gbp)],
-    ['Proxy mark', markLbl, cls(px.pnl_bp)],
-    ['3M ref date', px.latest_3m_date, 'neu'],
-    ['vs EOD P&amp;L', fmtGbp(px.pnl_gbp - pnl.gbp), cls(px.pnl_gbp - pnl.gbp)],
-  ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat sm '+c+'">'+v+'</div></div>').join('');
+  if(isOutright){
+    const rates = path.map(r=>r.rate_pct);
+    const datasets = [{label:'Rate %',data:rates,borderColor:'#39d98a',pointRadius:3}];
+    if(L.entry_rate_pct!=null) datasets.push({label:'Entry',data:labels.map(()=>L.entry_rate_pct),borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0});
+    if(L.stop_rate_pct!=null) datasets.push({label:'Stop',data:labels.map(()=>L.stop_rate_pct),borderColor:'#ff6b6b',borderDash:[4,4],pointRadius:0});
+    if(L.take_profit_rate_pct!=null) datasets.push({label:'Take profit',data:labels.map(()=>L.take_profit_rate_pct),borderColor:'#39d98a',borderDash:[4,4],pointRadius:0});
+    new Chart(document.getElementById('mainChart'), {
+      type:'line', data:{labels,datasets},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
+    });
+    document.getElementById('pathHead').innerHTML = '<th>Date</th><th>Rate %</th><th>Δ day</th><th>Cum £</th>';
+    const pt = document.querySelector('#pathTbl tbody');
+    [...path].reverse().forEach(r=>{
+      pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.rate_pct.toFixed(3)+'</td><td class="num">'+fmtGbp(r.daily_pnl_gbp)+'</td><td class="num">'+fmtGbp(r.cum_pnl_gbp)+'</td></tr>';
+    });
+    document.getElementById('regimeCard').style.display='none';
+  } else {
+    const slopes = path.map(r=>r.slope_bp);
+    const ds = [{label:'Spread bp',data:slopes,borderColor:'#ffb84a',pointRadius:3}];
+    ds.push({label:'Entry',data:labels.map(()=>L.entry_slope_bp),borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0});
+    if(L.stop_slope_bp!=null) ds.push({label:'Stop',data:labels.map(()=>L.stop_slope_bp),borderColor:'#ff6b6b',borderDash:[4,4],pointRadius:0});
+    if(L.take_profit_slope_bp!=null) ds.push({label:'Take profit',data:labels.map(()=>L.take_profit_slope_bp),borderColor:'#39d98a',borderDash:[4,4],pointRadius:0});
+    new Chart(document.getElementById('mainChart'), { type:'line', data:{labels,datasets:ds},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
+    });
+    new Chart(document.getElementById('secondChart'), {
+      type:'line',
+      data:{labels,datasets:[
+        {label:D.leg_labels.quoted_long,data:path.map(r=>r.quoted_long_rate),borderColor:'#39d98a'},
+        {label:D.leg_labels.quoted_short,data:path.map(r=>r.quoted_short_rate),borderColor:'#ffb84a'}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
+    });
+    const rt = document.querySelector('#regimeTbl tbody');
+    (D.regime_attribution||[]).forEach(r=>{
+      rt.innerHTML += '<tr><td>'+r.label+'</td><td class="num">'+r.days+'</td><td class="num">'+fmtBp(r.pnl_slope_bp)+'</td><td class="num">'+fmtGbp(r.pnl_gbp)+'</td></tr>';
+    });
+    document.getElementById('pathHead').innerHTML = '<th>Date</th><th>'+D.leg_labels.quoted_short+'</th><th>'+D.leg_labels.quoted_long+'</th><th>Spread</th><th>Δ day</th><th>Cum £</th>';
+    const pt = document.querySelector('#pathTbl tbody');
+    [...path].reverse().forEach(r=>{
+      pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.quoted_short_rate.toFixed(3)+'</td><td class="num">'+r.quoted_long_rate.toFixed(3)+'</td><td class="num">'+r.slope_bp.toFixed(1)+'</td><td class="num">'+fmtGbp(r.daily_pnl_gbp)+'</td><td class="num">'+fmtGbp(r.cum_pnl_gbp)+'</td></tr>';
+    });
+  }
+  document.getElementById('foot').textContent = D.trade.position + ' · £'+GBP+'/bp · Barchart EOD. Not investment advice.';
+
+  const px = D.live_proxy;
+  if(px && px.pnl_gbp != null){
+    document.getElementById('proxyCard').style.display='block';
+    document.getElementById('proxyNote').textContent = px.source + ' · 3M as of '+px.latest_3m_date+' (1M entry anchored). '+px.note;
+    const markLbl = isOutright ? fmtPct(px.mark_rate_pct) : fmtBp(px.mark_slope_bp);
+    document.getElementById('proxyStats').innerHTML = [
+      ['Proxy P&amp;L', fmtGbp(px.pnl_gbp), cls(px.pnl_gbp)],
+      ['Proxy mark', markLbl, cls(px.pnl_bp)],
+      ['3M ref date', px.latest_3m_date, 'neu'],
+      ['vs EOD P&amp;L', fmtGbp(px.pnl_gbp - pnl.gbp), cls(px.pnl_gbp - pnl.gbp)],
+    ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat sm '+c+'">'+v+'</div></div>').join('');
+  }
 }
+
+fetch(DATA_FILE).then(r=>{
+  if(!r.ok) throw new Error(r.statusText);
+  return r.json();
+}).then(render).catch(err=>{
+  document.getElementById('loading').textContent = 'Failed to load '+DATA_FILE+': '+err.message;
+});
 </script>
 </body>
 </html>

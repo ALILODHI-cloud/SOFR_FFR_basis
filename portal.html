@@ -13,24 +13,32 @@ header{padding:22px;border:1px solid var(--line);border-radius:16px;background:v
 .card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:inherit}
 .card.featured{border-color:rgba(57,217,138,.35)}
 .pill.live{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--acc);color:var(--acc);margin-top:10px}
+.good{color:#39d98a}.bad{color:#ff6b6b}
+.loading{color:var(--mut);padding:12px}
 </style>
 </head>
 <body><div class="wrap">
 <header><h1>Markets portal</h1><p>Live dashboards &amp; trade trackers</p></header>
 <div class="grid cols-2">
   <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 outright + Jun27−Dec26 flattener · 23 Jun EOD entry</p></a>
-  <a class="card featured" href="trade_jun27_dec26.html">
-    <h2>Jun27−Dec26 SONIA flattener</h2>
-    <p>Long JUZ26 (Dec-26) / Short JUM27 (Jun-27)</p>
-    <span class="pill live">● flattener</span>
-    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="good">+£38</span></span>
-  </a>
-  <a class="card featured" href="trade_jun27_outright.html">
-    <h2>Long JUM27 (Jun-27 SONIA)</h2>
-    <p>Long JUM27 (Jun-27 1M SONIA)</p>
-    <span class="pill live">● long</span>
-    <span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="good">+£62</span></span>
-  </a>
+  <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
   <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2></a>
   <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2></a>
-</div></div></body></html>
+</div></div>
+<script>
+fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
+  const el = document.getElementById('tradeCards');
+  el.className = '';
+  el.innerHTML = '';
+  INDEX.trades.forEach(t=>{
+    const pnlCls = t.pnl_gbp > 0.5 ? 'good' : t.pnl_gbp < -0.5 ? 'bad' : '';
+    const sign = t.pnl_gbp >= 0 ? '+' : '';
+    el.innerHTML += '<a class="card featured" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
+      + '<span class="pill live">● '+t.direction+'</span>'
+      + '<span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="'+pnlCls+'">'+sign+'£'+Math.abs(t.pnl_gbp).toLocaleString('en-GB',{maximumFractionDigits:0})+'</span></span></a>';
+  });
+}).catch(()=>{
+  document.getElementById('tradeCards').textContent = 'Trade data unavailable';
+});
+</script>
+</body></html>

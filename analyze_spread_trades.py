@@ -593,6 +593,10 @@ def main() -> None:
     index_path.write_text(json.dumps(index, indent=2), encoding="utf-8")
     print(f"Wrote {index_path} ({len(index['trades'])} trades)")
 
+    from build_trade_tracker import sync_trade_json_to_docs
+
+    sync_trade_json_to_docs()
+
 
 if __name__ == "__main__":
     main()

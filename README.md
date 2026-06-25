@@ -78,6 +78,24 @@ Stable Dev Tunnel URL (same link across restarts, while this machine is on):
 # URL saved to .sonia_1m_devtunnel_url
 ```
 
+### Live trade tracker
+
+**URL:** https://alilodhi-cloud.github.io/SOFR_FFR_basis/trade_tracker.html
+
+Pages load JSON at runtime — **refresh is data-only** (no HTML rebuild):
+
+```bash
+pip install -r requirements-sonia.txt
+playwright install chromium
+python3 analyze_spread_trades.py   # Barchart EOD → trades_index.json + *_trade_data.json
+```
+
+Rebuild HTML shells only when adding a new trade or changing layout:
+
+```bash
+python3 build_trade_tracker.py
+```
+
 ## Key findings
 - 99 months (Apr-2018 → Jun-2026). Mean ≈ +0.2bp, median ≈ +0.5bp, std ≈ 4.2bp.
 - **−1bp sits around the ~30th percentile** — ~70% of months printed above it.
