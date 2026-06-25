@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-25 11:43 UTC",
+  "generated_utc": "2026-06-25 17:11 UTC",
   "trade": {
     "id": "jun27_dec26_flattener",
     "type": "spread",
@@ -38,29 +38,29 @@
     "source": "barchart_eod"
   },
   "mark": {
-    "date": "2026-06-24",
+    "date": "2026-06-25",
     "short": {
       "symbol": "JUM27",
-      "date": "2026-06-24",
-      "price": 95.96,
-      "implied_rate_pct": 4.04
+      "date": "2026-06-25",
+      "price": 95.99,
+      "implied_rate_pct": 4.01
     },
     "long": {
       "symbol": "JUZ26",
-      "date": "2026-06-24",
-      "price": 96.06,
-      "implied_rate_pct": 3.94
+      "date": "2026-06-25",
+      "price": 96.065,
+      "implied_rate_pct": 3.935
     },
-    "slope_bp": 10.0,
-    "updated_utc": "2026-06-25 11:43 UTC"
+    "slope_bp": 7.5,
+    "updated_utc": "2026-06-25 17:11 UTC"
   },
   "pnl": {
-    "slope_bp": 3.0,
-    "gbp": 37.5,
+    "slope_bp": 5.5,
+    "gbp": 68.75,
     "quoted_long_leg_bp": 0.0,
-    "quoted_short_leg_bp": -0.0,
-    "to_stop_bp": 10.0,
-    "to_tp_bp": -11.0
+    "quoted_short_leg_bp": 0.0,
+    "to_stop_bp": 12.5,
+    "to_tp_bp": -8.5
   },
   "trade_path": [
     {
@@ -80,15 +80,24 @@
       "dslope_bp": 3.0,
       "cum_pnl_gbp": 37.5,
       "daily_pnl_gbp": 37.5
+    },
+    {
+      "date": "2026-06-25",
+      "quoted_long_rate": 4.01,
+      "quoted_short_rate": 3.935,
+      "slope_bp": 7.5,
+      "dslope_bp": 5.5,
+      "cum_pnl_gbp": 68.75,
+      "daily_pnl_gbp": 31.25
     }
   ],
   "regime_attribution": [
     {
       "regime": "bull_steepening",
       "label": "Bull steepening",
-      "days": 1,
-      "pnl_slope_bp": 3.0,
-      "pnl_gbp": 37.5
+      "days": 2,
+      "pnl_slope_bp": 5.5,
+      "pnl_gbp": 68.75
     }
   ],
   "market_note_url": "",
