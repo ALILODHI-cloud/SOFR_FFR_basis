@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-26 02:03 UTC",
+  "generated_utc": "2026-06-26 11:48 UTC",
   "trade": {
     "id": "jun27_dec26_flattener",
     "type": "spread",
@@ -52,7 +52,7 @@
       "implied_rate_pct": 3.935
     },
     "slope_bp": 7.5,
-    "updated_utc": "2026-06-26 02:03 UTC"
+    "updated_utc": "2026-06-26 11:48 UTC"
   },
   "pnl": {
     "slope_bp": 5.5,
