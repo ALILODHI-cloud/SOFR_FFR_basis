@@ -48,8 +48,10 @@ jobs:
         run: |
           python analyze_sonia_1m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
           python build_sonia_1m_dashboard.py
+
+      - name: Refresh trade marks from Barchart (JSON only)
+        run: |
           python analyze_spread_trades.py || echo "::warning::Trade mark failed"
-          python build_trade_tracker.py
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -59,8 +61,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html docs/portal.html docs/trade_tracker.html docs/trade_*.html trade_tracker.html trade_*.html portal.html trades_index.json *_trade_data.json trades/*.json
-          git diff --staged --quiet || git commit -m "Auto-refresh 1M SONIA dashboard $(date -u +%Y-%m-%dT%H:%MZ)"
+          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json trades_index.json *_trade_data.json trades/*.json
+          git diff --staged --quiet || git commit -m "Auto-refresh SONIA + trade marks $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 
   deploy:
