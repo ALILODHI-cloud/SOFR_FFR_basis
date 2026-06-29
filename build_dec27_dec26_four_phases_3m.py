@@ -19,6 +19,7 @@ from analyze_sonia import UA, BANK_RATE_PCT, classify_curve_move, price_to_rate
 ROOT = Path(__file__).resolve().parent
 BARCHART_LIMIT = 500
 WAR_OPEN = "2026-03-02"
+TRIM_PROPORTION = 0.10  # fraction dropped from each tail before μ, σ
 
 # Data-pinned boundaries (EOD sessions on Barchart J8Z26/J8Z27)
 PHASES = [
@@ -105,22 +106,40 @@ def resolve_phase_bounds(index: pd.DatetimeIndex) -> list[tuple[str, str, pd.Tim
     return out
 
 
-def hawk_dov_threshold(d26: pd.Series, start: str, multiplier: float = 1.5) -> dict:
+def trimmed_daily_stats(values: pd.Series | np.ndarray, proportion: float = TRIM_PROPORTION) -> tuple[float, float, int, int]:
+    arr = np.sort(np.asarray(values, dtype=float))
+    n = len(arr)
+    k = int(np.floor(proportion * n))
+    if n < 3 or k == 0 or 2 * k >= n:
+        trimmed = arr
+        k = 0
+    else:
+        trimmed = arr[k:-k]
+    mu = float(trimmed.mean())
+    sigma = float(trimmed.std(ddof=1)) if len(trimmed) > 1 else 0.0
+    return mu, sigma, k, len(trimmed)
+
+
+def hawk_dov_threshold(d26: pd.Series, start: str, multiplier: float = 1.5, trim: float = TRIM_PROPORTION) -> dict:
     base = d26.loc[start:].dropna()
-    mu = float(base.mean())
-    sigma = float(base.std(ddof=1))
+    mu, sigma, trimmed_each_tail, n_trimmed = trimmed_daily_stats(base, trim)
     hawk_thr = mu + multiplier * sigma
     dov_thr = mu - multiplier * sigma
+    pct = int(round(100 * trim))
     return {
         "multiplier": multiplier,
+        "trim_proportion_each_tail": trim,
+        "trimmed_each_tail_n": trimmed_each_tail,
+        "n_trimmed_sample": n_trimmed,
         "mean_d26_bp": round(mu, 2),
         "stdev_d26_bp": round(sigma, 2),
         "hawk_threshold_bp": round(hawk_thr, 2),
         "dov_threshold_bp": round(dov_thr, 2),
         "rule": (
-            f"Hawk if ΔDec26 > μ + {multiplier}σ = +{hawk_thr:.2f} bp; "
-            f"Dov if ΔDec26 < μ − {multiplier}σ = {dov_thr:.2f} bp "
-            f"(μ, σ of daily ΔDec26 over sample from {start})"
+            f"Hawk if ΔDec26 > μ̃ + {multiplier}σ̃ = +{hawk_thr:.2f} bp; "
+            f"Dov if ΔDec26 < μ̃ − {multiplier}σ̃ = {dov_thr:.2f} bp "
+            f"(μ̃, σ̃ = trimmed mean/stdev of daily ΔDec26; {pct}% dropped from each tail, "
+            f"sample from {start})"
         ),
     }
 
