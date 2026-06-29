@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Dec27−Dec26 ICE 1M SONIA spread: line chart + three-phase regime analysis."""
+"""Dec27−Dec26 SONIA calendar spread: line chart + three-phase regime analysis."""
 from __future__ import annotations
 
+import argparse
 import json
 import re
 from collections import Counter
@@ -15,12 +16,31 @@ from playwright.sync_api import sync_playwright
 from analyze_sonia import UA, classify_curve_move, price_to_rate
 
 ROOT = Path(__file__).resolve().parent
-CHART_FILE = ROOT / "charts" / "dec27_dec26_spread_phases_labeled.png"
-CHART_SIMPLE = ROOT / "charts" / "dec27_dec26_spread_mar26.png"
-JSON_FILE = ROOT / "data" / "dec27_dec26_phase_regimes.json"
-CSV_FILE = ROOT / "data" / "dec27_dec26_spread.csv"
 BARCHART_LIMIT = 500
 START = "2026-03-02"
+
+TENORS = {
+    "1m": {
+        "label": "ICE 1M SONIA (JU*)",
+        "dec26_symbol": "JUZ26",
+        "dec27_symbol": "JUZ27",
+        "chart_labeled": ROOT / "charts" / "dec27_dec26_spread_phases_labeled.png",
+        "chart_simple": ROOT / "charts" / "dec27_dec26_spread_mar26.png",
+        "json_file": ROOT / "data" / "dec27_dec26_phase_regimes.json",
+        "csv_file": ROOT / "data" / "dec27_dec26_spread.csv",
+        "line_color": "#6e2c00",
+    },
+    "3m": {
+        "label": "ICE 3M SONIA (J8*)",
+        "dec26_symbol": "J8Z26",
+        "dec27_symbol": "J8Z27",
+        "chart_labeled": ROOT / "charts" / "dec27_dec26_spread_phases_labeled_3m.png",
+        "chart_simple": ROOT / "charts" / "dec27_dec26_spread_mar26_3m.png",
+        "json_file": ROOT / "data" / "dec27_dec26_phase_regimes_3m.json",
+        "csv_file": ROOT / "data" / "dec27_dec26_spread_3m.csv",
+        "line_color": "#1a5276",
+    },
+}
 
 REGIME_LABELS = {
     "bear_steepening": "Bear steepening",
@@ -159,23 +179,23 @@ def analyze_phases(spread: pd.Series, daily: pd.DataFrame, rates: pd.DataFrame) 
     return out
 
 
-def make_simple_chart(spread: pd.Series) -> None:
+def make_simple_chart(spread: pd.Series, cfg: dict) -> None:
     sub = spread.loc[START:]
     fig, ax = plt.subplots(figsize=(9, 4))
-    ax.plot(sub.index, sub.values, color="#8B4513", lw=2)
+    ax.plot(sub.index, sub.values, color=cfg["line_color"], lw=2)
     ax.axhline(0, color="#666", ls="--", lw=0.9, alpha=0.7)
-    ax.set_title(f"Dec27−Dec26 (bp) from {sub.index[0].strftime('%d %b %Y')}")
+    ax.set_title(f"Dec27−Dec26 (bp) from {sub.index[0].strftime('%d %b %Y')} · {cfg['label']}")
     ax.set_ylabel("Spread (bp)")
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
     fig.autofmt_xdate(rotation=30, ha="right")
     ax.grid(True, alpha=0.25)
     fig.tight_layout()
-    CHART_SIMPLE.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(CHART_SIMPLE, dpi=150, bbox_inches="tight")
+    cfg["chart_simple"].parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(cfg["chart_simple"], dpi=150, bbox_inches="tight")
     plt.close(fig)
 
 
-def make_labeled_chart(spread: pd.Series, stats: list[dict]) -> None:
+def make_labeled_chart(spread: pd.Series, stats: list[dict], cfg: dict) -> None:
     start = pd.Timestamp(stats[0]["start"])
     end = pd.Timestamp(stats[-1]["end"])
     path = spread.loc[start:end]
@@ -183,7 +203,7 @@ def make_labeled_chart(spread: pd.Series, stats: list[dict]) -> None:
     ypos = {"I": 14, "II": 22, "III": 8}
 
     fig, ax = plt.subplots(figsize=(14, 7.5))
-    ax.plot(path.index, path.values, color="#6e2c00", lw=2.2, zorder=3)
+    ax.plot(path.index, path.values, color=cfg["line_color"], lw=2.2, zorder=3)
     ax.axhline(0, color="#666", ls="--", lw=0.9, alpha=0.75)
 
     for st in stats:
@@ -212,37 +232,59 @@ def make_labeled_chart(spread: pd.Series, stats: list[dict]) -> None:
             zorder=4,
         )
 
-    ax.set_title("Dec27−Dec26: three phases with overall + daily regime (ICE 1M SONIA)")
+    ax.set_title(f"Dec27−Dec26: three phases · {cfg['label']}")
     ax.set_ylabel("Spread (bp)")
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
     ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=3))
     fig.autofmt_xdate(rotation=30, ha="right")
-    ax.set_ylim(-20, 24)
+    ymin = min(-20, float(path.min()) - 3)
+    ymax = max(24, float(path.max()) + 3)
+    ax.set_ylim(ymin, ymax)
     ax.grid(True, alpha=0.2)
     fig.tight_layout()
-    CHART_FILE.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(CHART_FILE, dpi=160, bbox_inches="tight")
+    cfg["chart_labeled"].parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(cfg["chart_labeled"], dpi=160, bbox_inches="tight")
     plt.close(fig)
 
 
-def main() -> None:
-    rates = pd.DataFrame({"dec26": fetch_barchart("JUZ26"), "dec27": fetch_barchart("JUZ27")}).dropna()
+def run(tenor: str) -> None:
+    cfg = TENORS[tenor]
+    rates = pd.DataFrame(
+        {
+            "dec26": fetch_barchart(cfg["dec26_symbol"]),
+            "dec27": fetch_barchart(cfg["dec27_symbol"]),
+        }
+    ).dropna()
     rates["S"] = (rates["dec27"] - rates["dec26"]) * 100.0
     spread = rates["S"]
     daily = build_frames(rates)
-
     stats = analyze_phases(spread, daily, rates)
-    CSV_FILE.parent.mkdir(parents=True, exist_ok=True)
+
+    meta = {"tenor": tenor, "source": cfg["label"], "symbols": [cfg["dec26_symbol"], cfg["dec27_symbol"]]}
+    payload = {"meta": meta, "phases": stats}
+    cfg["csv_file"].parent.mkdir(parents=True, exist_ok=True)
     spread.loc[START:].reset_index().rename(columns={"index": "date", "S": "spread_bp"}).to_csv(
-        CSV_FILE, index=False
+        cfg["csv_file"], index=False
     )
-    JSON_FILE.write_text(json.dumps(stats, indent=2), encoding="utf-8")
-    make_simple_chart(spread)
-    make_labeled_chart(spread, stats)
-    print(f"Wrote {CHART_FILE}")
-    print(f"Wrote {CHART_SIMPLE}")
-    print(f"Wrote {JSON_FILE}")
-    print(f"Wrote {CSV_FILE}")
+    cfg["json_file"].write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    make_simple_chart(spread, cfg)
+    make_labeled_chart(spread, stats, cfg)
+    print(f"Wrote {cfg['chart_labeled']}")
+    print(f"Wrote {cfg['chart_simple']}")
+    print(f"Wrote {cfg['json_file']}")
+    print(f"Wrote {cfg['csv_file']}")
+
+
+def main() -> None:
+    p = argparse.ArgumentParser(description=__doc__)
+    p.add_argument("--tenor", choices=("1m", "3m"), default="1m")
+    p.add_argument("--all", action="store_true", help="Build both 1M and 3M outputs")
+    args = p.parse_args()
+    if args.all:
+        for t in ("1m", "3m"):
+            run(t)
+    else:
+        run(args.tenor)
 
 
 if __name__ == "__main__":
