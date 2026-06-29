@@ -2,7 +2,7 @@
 
 *ICE 3M SONIA futures **J8Z26 / J8Z27** (Barchart EOD), 2 Mar – 29 Jun 2026.*
 
-Each phase has two things happening at once: a **level move** (rates up or down) and a **curve move** (steepening or flattening). The question in each window is: should you have matched the level **outright**, or expressed both the level and the curve through the **aligned spread**? And on the days that hurt the outright — front-end down-days in a bear phase, front-end up-days in a bull phase — did the phase's curve type still show up, insulating you?
+Each phase combines a **level move** (rates up or down over the window) and a **curve move** (steepening or flattening). The question: should you have ridden the level **outright**, or expressed both legs through the **aligned spread**? The test is what happens on **contrary days** — sessions where the front end moves against the phase's level direction, regardless of size — and whether the curve shape you needed still appeared on those days. **Max loss** over the sample matters more than average return for that comparison.
 
 ---
 
@@ -14,32 +14,39 @@ Each phase has two things happening at once: a **level move** (rates up or down)
 | **Spread** | \(S_t = r_{\text{Dec27}} - r_{\text{Dec26}}\) (bp) |
 | **Sample** | 2 Mar → 29 Jun 2026 |
 
-**Hawk / dov** — trimmed μ̃ ± 1.5σ̃ of daily ΔDec26 (10% trimmed each tail):
+**Contrary day** — any session where ΔDec26 opposes the phase level move (no size threshold):
 
-| | |
-|---|---:|
-| **Hawk day** | ΔDec26 **> +9.3 bp** (front-end up; hurts a bull outright) |
-| **Dov day** | ΔDec26 **< −7.8 bp** (front-end down; hurts a bear outright) |
-
-**Risk-adjusted return** per structure within a phase:
-
-\[\text{RA} = \frac{\bar{r}_{\text{daily}} \times 252}{\sigma_{\text{daily}} \times \sqrt{252}}\]
-
-| Level move | Outright | Aligned curve |
+| Phase level | Contrary day | Aligned day |
 |---|---|---|
-| **Bear** (rates net higher) | Short Dec-26 | Flattener or steepener per phase shape |
-| **Bull** (rates net lower) | Long Dec-26 | Flattener or steepener per phase shape |
+| **Bear** (rates net higher) | ΔDec26 **< 0** (front-end down) | ΔDec26 **> 0** |
+| **Bull** (rates net lower) | ΔDec26 **> 0** (front-end up) | ΔDec26 **< 0** |
+
+**Correct curve move** — daily steepening or flattening matching the phase shape:
+
+| Phase curve | Correct on any day |
+|---|---|
+| Flattening (I, IV) | Bear, bull, or mixed **flattening** |
+| Steepening (II, III) | Bear, bull, or mixed **steepening** |
+
+**Structures compared:**
+
+| Level | Outright | Aligned curve |
+|---|---|---|
+| Bear | Short Dec-26 | Flattener (I) or steepener (III) |
+| Bull | Long Dec-26 | Steepener (II) or flattener (IV) |
+
+**Risk metrics:** RA gap (outright minus curve) and **max loss** — worst single session and maximum drawdown over the phase.
 
 ---
 
-## Four phases at a glance
+## Four phases
 
 | Phase | Window | Level | Curve | Outright vs |
 |---|---|---|---|---|
-| **I** | 2 Mar – 20 Mar | **Bear** | Bear flattening | Short Dec-26 vs **flattener** |
-| **II** | 23 Mar – 17 Apr | **Bull** | Bull steepening | Long Dec-26 vs **steepener** |
-| **III** | 20 Apr – 15 May | **Bear** | Bear steepening | Short Dec-26 vs **steepener** |
-| **IV** | 18 May – 29 Jun | **Bull** | Bull flattening | Long Dec-26 vs **flattener** |
+| **I** | 2 Mar – 20 Mar | Bear | Bear flattening | Short Dec-26 vs **flattener** |
+| **II** | 23 Mar – 17 Apr | Bull | Bull steepening | Long Dec-26 vs **steepener** |
+| **III** | 20 Apr – 15 May | Bear | Bear steepening | Short Dec-26 vs **steepener** |
+| **IV** | 18 May – 29 Jun | Bull | Bull flattening | Long Dec-26 vs **flattener** |
 
 ![Dec27−Dec26 four phases on ICE 3M SONIA](../charts/dec27_dec26_four_phases_3m.png)
 
@@ -49,47 +56,33 @@ Each phase has two things happening at once: a **level move** (rates up or down)
 
 **Net:** Dec-26 **+128 bp**, Dec-27 **+89 bp**. Spread +9.5 → **−30 bp**.
 
-**Question:** Short Dec-26 outright, or flattener (L Dec26 / S Dec27)?
+### Contrary days (front-end down — hurts a short)
 
-| | Ann. vol (bp) | **RA** |
-|---|---:|---:|
-| Short Dec-26 | 242 | **+9.5** |
-| Flattener | 108 | +6.6 |
-
-Outright wins on risk-adjusted terms over the full phase. But the flattener runs at less than half the vol.
-
-### On days that hurt the outright (dov days — Dec-26 down big)
-
-Bear outright is short Dec-26. A large front-end **down** move is the adverse session — rates fall, short loses.
-
-| | n | Share of phase |
-|---|---:|---:|
-| Dov days | 2 | 14% |
-
-| | Value |
+| | |
 |---|---:|
-| Bear-flattening on dov days | **0%** |
-| Modal curve type | Bull steepening 100% |
-| Short Dec-26 avg | **−12.5 bp** |
-| Flattener avg | **−2.8 bp** |
+| Contrary days | **4 of 14 (29%)** |
+| Correct curve move (flattening) on contrary days | **50%** |
+| Modal on contrary days | Bull steep / bull flat |
 
-No flattening on dov days — the curve does not bail you out with the aligned shape. But the flattener still loses **far less** than the outright short on those sessions. The hedge here is vol reduction, not curve-type alignment on dov tails.
+On contrary days the outright short loses (avg **−8.1 bp**/session). The flattener is flat (avg **0.0 bp**). Half of contrary sessions still flatten — the curve type you wanted survives even when the front end rallies against the bear trend.
 
-### On days that favour the outright (hawk days — Dec-26 up big)
+### Aligned-level days (front-end up — favours short)
 
-| | n | Share |
-|---|---:|---:|
-| Hawk days | 9 | **60%** |
-
-| | Value |
+| | |
 |---|---:|
-| Bear-flattening on hawk days | **67%** |
-| Short Dec-26 avg | **+18.7 bp** |
-| Flattener avg | **+4.4 bp** |
+| Aligned days | 10 of 14 (71%) |
+| Correct curve move on aligned days | **70%** |
 
-Two-thirds of hawk days bear-flatten — the phase's curve type on the sessions that define it. Outright captures more of the move; flattener participates with the belly as offset.
+### Outright vs flattener — full phase
 
-**Verdict:** Outright short wins on RA. Flattener only makes sense if you wanted lower vol through a crisis that was 60% hawk-day bear-flattening.
+| Metric | Short Dec-26 | Flattener |
+|---|---:|---:|
+| RA | **+9.5** | +6.6 |
+| RA gap | **+2.9** | — |
+| Worst single day | −15.5 bp | **−3.5 bp** |
+| Max drawdown | −15.5 bp | **−6.5 bp** |
+
+Outright wins on RA. But on contrary days — 29% of the sample — the flattener avoids the front-end hit and half those sessions still flatten. Max single-day loss is **4× smaller** on the curve.
 
 ---
 
@@ -97,47 +90,33 @@ Two-thirds of hawk days bear-flatten — the phase's curve type on the sessions 
 
 **Net:** Dec-26 **−45.5 bp**, Dec-27 **−36 bp**. Spread −24.5 → −15 bp.
 
-**Question:** Long Dec-26 outright, or steepener (L Dec27 / S Dec26)?
+### Contrary days (front-end up — hurts a long)
 
-| | Ann. vol (bp) | **RA** |
-|---|---:|---:|
-| Long Dec-26 | 178 | **+5.0** |
-| Steepener | 44 | +4.8 |
-
-Near-parity on RA; steepener at **¼ the vol**.
-
-### On days that hurt the outright (hawk days — Dec-26 up big)
-
-Bull outright is long Dec-26. A large front-end **up** move is adverse.
-
-| | n | Share of phase |
-|---|---:|---:|
-| Hawk days | 2 | 11% |
-
-| | Value |
+| | |
 |---|---:|
-| Any steepening on hawk days | **50%** |
-| Modal | Bear steepening / bear flattening |
-| Long Dec-26 avg | **−12.5 bp** |
-| Steepener avg | **−0.5 bp** |
+| Contrary days | **6 of 18 (33%)** |
+| Correct curve move (steepening) on contrary days | **33%** |
+| Modal on contrary days | Bear flattening 67% |
 
-On one hawk day the curve **still steepens** — bear steepening, a different kind — and the steepener earns **+0.5 bp** while outright loses −11.5 bp. On the other hawk day it bear-flattens: steepener −1.5 bp vs outright −13.5 bp. Even when the front-end spikes against your bull view, half of hawk days still steepen. That is the hedge for being bull via the curve.
+Only one-third of contrary days steepen — mostly they bear-flatten. Yet the steepener still absorbs the shock: avg **−1.1 bp** vs outright **−7.4 bp** on contrary sessions.
 
-### On days that favour the outright (dov days — Dec-26 down big)
+### Aligned-level days (front-end down)
 
-| | n | Share |
-|---|---:|---:|
-| Dov days | 5 | **28%** |
-
-| | Value |
+| | |
 |---|---:|
-| Bull-steepening on dov days | **80%** |
-| Long Dec-26 avg | **+17.6 bp** |
-| Steepener avg | **+3.8 bp** |
+| Aligned days | 11 of 18 (61%) |
+| Correct curve move on aligned days | **73%** |
 
-Dov tails are aligned — bull steepening dominates. Both structures earn; outright captures more.
+### Outright vs steepener — full phase
 
-**Verdict:** If you can take the vol, outright long marginally wins. If you want bull exposure with hawk-day insulation, the steepener is essentially tied on RA at a fraction of the risk.
+| Metric | Long Dec-26 | Steepener |
+|---|---:|---:|
+| RA | **+5.0** | +4.8 |
+| RA gap | **+0.3** | — |
+| Worst single day | −13.5 bp | **−3.0 bp** |
+| Max drawdown | −17.5 bp | **−4.5 bp** |
+
+RA essentially tied. Max drawdown on outright is **−17.5 bp** vs **−4.5 bp** on the steepener — the curve caps tail risk on the 33% of days the front end moves against you, even when only a third of those still steepen.
 
 ---
 
@@ -145,50 +124,33 @@ Dov tails are aligned — bull steepening dominates. Both structures earn; outri
 
 **Net:** Dec-26 **+39.5 bp**, Dec-27 **+53 bp**. Spread −13.5 → **0 bp**.
 
-**Question:** Short Dec-26 outright, or steepener (L Dec27 / S Dec26)?
+### Contrary days (front-end down — hurts a short)
 
-| | Ann. vol (bp) | **RA** |
-|---|---:|---:|
-| Short Dec-26 | 116 | **+5.2** |
-| Steepener | 43 | +4.6 |
-
-Outright short wins on RA, but closely — and at nearly 3× the vol.
-
-### On days that hurt the outright (dov days — Dec-26 down big)
-
-| | n | Share of phase |
-|---|---:|---:|
-| Dov days | 2 | 11% |
-
-| | Value |
+| | |
 |---|---:|
-| Any steepening on dov days | **100%** |
-| Modal | Bull steepening 100% |
-| Short Dec-26 avg | **−12.5 bp** |
-| Steepener avg | **+1.0 bp** |
+| Contrary days | **6 of 19 (32%)** |
+| Correct curve move (steepening) on contrary days | **50%** |
+| Modal on contrary days | Bull steep / bull flat |
 
-This is the cleanest adverse-day hedge in the sample. Front-end rallies against your bear view, but the curve **still steepens** every time — and the steepener earns while the outright short loses. Being bear via the steepener insulates you on dov tails even though the steepening is bull-steep rather than bear-steep.
+Half of contrary days still steepen. Outright short avg **−6.5 bp**; steepener avg **+0.4 bp** — the curve earns on the sessions that hurt the outright.
 
-### On days that favour the outright (hawk days — Dec-26 up big)
+### Aligned-level days (front-end up)
 
-| | n | Share |
-|---|---:|---:|
-| Hawk days | 2 | 11% |
-
-| | Value |
+| | |
 |---|---:|
-| Any steepening on hawk days | **0%** |
-| Modal | Bear flattening 100% |
-| Short Dec-26 avg | **+12.3 bp** |
-| Steepener avg | **−2.8 bp** |
+| Aligned days | 13 of 19 (68%) |
+| Correct curve move on aligned days | 46% |
 
-Hawk days flip the other way — bear-flattening, steepener loses, outright wins. Rare (11%), but the outright captures hawk tails better.
+### Outright vs steepener — full phase
 
-### On neutral days (79% of phase)
+| Metric | Short Dec-26 | Steepener |
+|---|---:|---:|
+| RA | **+5.2** | +4.6 |
+| RA gap | **+0.6** | — |
+| Worst single day | −15.5 bp | **−3.0 bp** |
+| Max drawdown | −21.5 bp | **−7.3 bp** |
 
-Bear-steepening modal **40%** — the phase's curve type on the grind, without a Dec-26 tail event.
-
-**Verdict:** Outright short wins on RA narrowly. The steepener's case is dov-day insulation (100% steepening, +1.0 vs −12.5 bp) and the neutral-day bear-steep grind — not hawk tails.
+Narrow RA gap. Max drawdown **−21.5 bp** outright vs **−7.3 bp** steepener — the starkest tail-risk gap in the sample. On 32% contrary days, 50% still steepen and the curve is near flat while the short bleeds.
 
 ---
 
@@ -196,61 +158,56 @@ Bear-steepening modal **40%** — the phase's curve type on the grind, without a
 
 **Net:** Dec-26 **−42 bp**, Dec-27 **−49 bp**. Spread +3.0 → −3.5 bp.
 
-**Question:** Long Dec-26 outright, or flattener (L Dec26 / S Dec27)?
+### Contrary days (front-end up — hurts a long)
 
-| | Ann. vol (bp) | **RA** |
-|---|---:|---:|
-| Long Dec-26 | 81 | **+4.8** |
-| Flattener | 35 | +0.9 |
-
-Outright dominates on RA. Not close.
-
-### On days that hurt the outright (hawk days — Dec-26 up big)
-
-| | n | Share of phase |
-|---|---:|---:|
-| Hawk days | 1 | 3% |
-
-| | Value |
+| | |
 |---|---:|
-| Flattening on hawk days | **100%** |
-| Modal | Bear flattening 100% |
-| Long Dec-26 avg | **−15.5 bp** |
-| Flattener avg | **+1.5 bp** |
+| Contrary days | **9 of 30 (30%)** |
+| Correct curve move (flattening) on contrary days | **33%** |
+| Modal on contrary days | Bear steepening 56% |
 
-One hawk day, but instructive: front-end spikes and the curve **flattens** (bear-flattening — belly does not participate). Outright crushed; flattener earns. On hawk sessions the aligned curve type fires even when the level move does not.
+Only a third of contrary days flatten — most bear-steepen. But the flattener still loses less (avg **−0.5 bp** vs **−4.2 bp** outright).
 
-### On neutral days (90% of phase)
+### Aligned-level days (front-end down)
 
-| | Value |
+| | |
 |---|---:|
-| Bull-flattening on neutral days | **33%** (modal) |
-| Long Dec-26 avg | **+1.4 bp** |
-| Flattener avg | **≈ 0 bp** |
+| Aligned days | 21 of 30 (70%) |
+| Correct curve move on aligned days | 48% |
 
-The phase is a slow bull-flattening grind on neutral sessions. Outright captures it; flattener treads water.
+### Outright vs flattener — full phase
 
-**Verdict:** Outright long wins clearly on RA. The flattener only pays on the rare hawk spike — correct curve type, but too few sessions to compete with outright over the phase.
+| Metric | Long Dec-26 | Flattener |
+|---|---:|---:|
+| RA | **+4.8** | +0.9 |
+| RA gap | **+3.9** | — |
+| Worst single day | −15.5 bp | **−6.5 bp** |
+| Max drawdown | −18.0 bp | **−8.5 bp** |
+
+Outright wins clearly on RA. Curve only limits tail loss: worst day −6.5 vs −15.5 bp, drawdown −8.5 vs −18.0 bp. With only 33% of contrary days flattening, the insurance case is weaker than Phases II–III.
 
 ---
 
 ## Synthesis
 
-| Phase | Level + curve | RA winner | Adverse-day curve alignment | Hedge case for curve? |
-|---|---|---|---|---|
-| **I** Bear + bear flat | Short **9.5** vs flat 6.6 | Outright | 0% flat on dov days | Vol only — flattener loses less on dov tails |
-| **II** Bull + bull steep | Long **5.0** vs steep 4.8 | Outright (marginal) | **50%** steepen on hawk days | **Yes** — steepener −0.5 vs outright −12.5 on hawks |
-| **III** Bear + bear steep | Short **5.2** vs steep 4.6 | Outright (narrow) | **100%** steepen on dov days | **Yes** — steepener +1.0 vs outright −12.5 on dovs |
-| **IV** Bull + bull flat | Long **4.8** vs flat 0.9 | Outright | **100%** flat on hawk days | Theoretically yes, but one session — outright dominates |
+| Phase | Level + curve | Contrary days | Correct curve on contrary | Max DD outright | Max DD curve | RA gap |
+|---|---|---:|---:|---:|---:|---:|
+| **I** | Bear + bear flat | 29% | **50%** flat | −15.5 | **−6.5** | +2.9 |
+| **II** | Bull + bull steep | 33% | 33% steep | −17.5 | **−4.5** | +0.3 |
+| **III** | Bear + bear steep | 32% | **50%** steep | −21.5 | **−7.3** | +0.6 |
+| **IV** | Bull + bull flat | 30% | 33% flat | −18.0 | **−8.5** | +3.9 |
 
-The logic in each phase:
+Roughly **30% of every phase** is contrary days — front-end moving against the level trend, no size filter. The curve question is: on those days, does the phase's curve shape still appear, and does the spread cap your loss?
 
-1. Identify **level** (bear → short Dec-26; bull → long Dec-26) and **curve** (flat or steep).
-2. Ask whether the **aligned spread** beats outright on RA over the window.
-3. On **adverse outright days** (dov in bear, hawk in bull), check whether the phase's curve type still appears — that is the insurance argument.
-4. Where RA and adverse-day alignment agree, the curve expression earns its keep. Where outright wins on RA and adverse days lack alignment (Phase I dovs, Phase IV neutrals), there is no reason to be curved.
+1. **Correct curve on contrary days** ranges from 33–50%. It does not need to be a majority to matter — the curve structure can still cut max drawdown by 60–75% (Phases II–III).
 
-Outright wins on risk-adjusted terms in **every** phase. The curve only rationalises itself when adverse-day proportions show the aligned curve move still firing — and even then, usually at the cost of full-phase return.
+2. **RA gap** is small where the curve earns its keep (II: +0.3, III: +0.6) and large where it does not (I: +2.9, IV: +3.9). Max loss is the sharper discriminator.
+
+3. **Phase III** is the sweet spot: 50% of contrary days steepen, steepener earns on contrary sessions, max DD **−7.3 vs −21.5 bp**.
+
+4. **Phase IV** — outright dominates. Contrary days mostly bear-steepen; flattener only softens the tail.
+
+Outright wins RA in every phase. The curve is justified when contrary-day curve alignment is high **and** max drawdown on the spread is materially smaller — not because it beats outright on average, but because it survives the days that oppose the level trend.
 
 ---
 
