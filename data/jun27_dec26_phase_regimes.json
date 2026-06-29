@@ -1,0 +1,111 @@
+[
+  {
+    "id": "I",
+    "title": "Compression / inversion",
+    "start": "2026-03-02",
+    "end": "2026-04-17",
+    "n_days": 33,
+    "spread_start_bp": -0.5,
+    "spread_end_bp": -4.5,
+    "spread_change_bp": -4.0,
+    "steepener_pnl_bp": -5.5,
+    "modal_regime": "bear_flattening",
+    "modal_label": "Bear flattening",
+    "modal_pct": 24.2,
+    "all_days_pct": {
+      "Bear flattening": 24.2,
+      "Bear steepening": 24.2,
+      "Bull flattening": 21.2,
+      "Bull steepening": 18.2,
+      "Mixed steepening": 6.1,
+      "Unchanged": 3.0,
+      "Mixed flattening": 3.0
+    },
+    "flattening_days_pct": 48.5,
+    "steepening_days_pct": 48.5,
+    "hawk_days": 17,
+    "hawk_breakdown_pct": {
+      "Bear flattening": 47.1,
+      "Bear steepening": 47.1,
+      "Unchanged": 5.9
+    },
+    "dov_days": 15,
+    "dov_breakdown_pct": {
+      "Bull flattening": 46.7,
+      "Bull steepening": 40.0,
+      "Mixed steepening": 13.3
+    }
+  },
+  {
+    "id": "II",
+    "title": "Steepening",
+    "start": "2026-04-20",
+    "end": "2026-05-19",
+    "n_days": 21,
+    "spread_start_bp": -3.0,
+    "spread_end_bp": 21.5,
+    "spread_change_bp": 24.5,
+    "steepener_pnl_bp": 26.0,
+    "modal_regime": "bear_steepening",
+    "modal_label": "Bear steepening",
+    "modal_pct": 57.1,
+    "all_days_pct": {
+      "Bear steepening": 57.1,
+      "Bull flattening": 19.0,
+      "Bull steepening": 14.3,
+      "Bear flattening": 4.8,
+      "Unchanged": 4.8
+    },
+    "flattening_days_pct": 23.8,
+    "steepening_days_pct": 71.4,
+    "hawk_days": 13,
+    "hawk_breakdown_pct": {
+      "Bear steepening": 92.3,
+      "Bear flattening": 7.7
+    },
+    "dov_days": 8,
+    "dov_breakdown_pct": {
+      "Bull flattening": 50.0,
+      "Bull steepening": 37.5,
+      "Unchanged": 12.5
+    }
+  },
+  {
+    "id": "III",
+    "title": "Flattening",
+    "start": "2026-05-20",
+    "end": "2026-06-26",
+    "n_days": 27,
+    "spread_start_bp": 19.5,
+    "spread_end_bp": 8.0,
+    "spread_change_bp": -11.5,
+    "steepener_pnl_bp": -13.5,
+    "modal_regime": "bull_flattening",
+    "modal_label": "Bull flattening",
+    "modal_pct": 51.9,
+    "all_days_pct": {
+      "Bull flattening": 51.9,
+      "Bear steepening": 18.5,
+      "Mixed flattening": 11.1,
+      "Bull steepening": 7.4,
+      "Unchanged": 3.7,
+      "Bear flattening": 3.7,
+      "Mixed steepening": 3.7
+    },
+    "flattening_days_pct": 66.7,
+    "steepening_days_pct": 29.6,
+    "hawk_days": 9,
+    "hawk_breakdown_pct": {
+      "Bear steepening": 55.6,
+      "Mixed flattening": 33.3,
+      "Bear flattening": 11.1
+    },
+    "dov_days": 18,
+    "dov_breakdown_pct": {
+      "Bull flattening": 77.8,
+      "Bull steepening": 11.1,
+      "Unchanged": 5.6,
+      "Mixed steepening": 5.6
+    }
+  }
+]
