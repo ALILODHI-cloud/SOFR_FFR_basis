@@ -1,162 +1,203 @@
-# Dec27−Dec26 on ICE 3M SONIA: four regimes since the Iran shock
+# Dec27−Dec26 on ICE 3M SONIA: four curve regimes since the Iran shock
 
-*Follow-up to [UK SONIA Dec27−Dec26: Front-Loaded Hike Pricing and the Calendar Steepener](uk-sonia-front-loaded-hike-pricing.md). ICE 3M SONIA futures **J8Z26 / J8Z27** (Barchart EOD) through 29 Jun 2026.*
+*ICE 3M SONIA futures **J8Z26 / J8Z27** (Barchart EOD), 2 Mar – 29 Jun 2026.*
 
-The Dec27−Dec26 calendar spread did not move in one direction after the Iran shock. It ran through **four separable regimes** — each with a distinct **overall** curve type (net leg moves), and a different split between **hawk**, **dov**, and **neutral** days. This note pins phase boundaries to extrema in the data, defines hawk/dov with an explicit threshold, and maps where a long Dec27 / short Dec26 steepener won or lost.
+After the Iran shock the Dec27−Dec26 belly did not move in one direction. It cycled through **four separable regimes** — each with a distinct overall curve shape, a different hawk/dov/neutral day mix, and a different answer to a simple question: **was it better to ride the outright rate trend, or to express the view through the curve?**
 
 ---
 
-## Data & definitions
+## Setup
 
 | Item | Detail |
 |---|---|
-| **Contracts** | J8Z26 (Dec-26), J8Z27 (Dec-27) — ICE **3M compounded SONIA** |
+| **Contracts** | J8Z26 (Dec-26), J8Z27 (Dec-27) |
 | **Spread** | \(S_t = r_{\text{Dec27}} - r_{\text{Dec26}}\) (bp) |
 | **Sample** | 2 Mar 2026 (first post-weekend session) → 29 Jun 2026 |
-| **Overall phase type** | `classify_curve_move(ΣΔDec26, ΣΔDec27, ΣΔspread)` on start→end totals (ε = 0.5 bp) |
-| **Daily curve regime** | Same taxonomy on each session's ΔDec26, ΔDec27, Δspread (ε = 0.25 bp on spread) |
 
-### Hawk / dov / neutral days
+**Overall phase type** — net leg moves from phase open to close (`classify_curve_move` on cumulative ΔDec26, ΔDec27, Δspread; ε = 0.5 bp).
 
-Sort all **daily** \(\Delta r_{\text{Dec26}}\) (bp) from 2 Mar onward, drop the **top and bottom 10%** of observations, then compute **trimmed mean** \(\tilde\mu\) and **trimmed stdev** \(\tilde\sigma\) on the remainder (66 of 82 sessions):
+**Daily curve type** — same taxonomy session-by-session (ε = 0.25 bp on spread).
 
-| Stat | Value |
+**Hawk / dov / neutral** — based on daily ΔDec26. Sort all daily changes from 2 Mar, drop the top and bottom **10%**, compute trimmed mean \(\tilde\mu\) and trimmed stdev \(\tilde\sigma\) on the remainder (66 of 82 sessions), then:
+
+| | |
 |---|---:|
-| **\(\tilde\mu\)** | **+0.73 bp** |
-| **\(\tilde\sigma\)** | **5.69 bp** |
-| **k** | **1.5** |
+| \(\tilde\mu\) | +0.73 bp |
+| \(\tilde\sigma\) | 5.69 bp |
+| **Hawk** | ΔDec26 **> +9.3 bp** |
+| **Dov** | ΔDec26 **< −7.8 bp** |
+| **Neutral** | between |
 
-| Label | Rule |
+**Risk-adjusted return** — for each structure within a phase, \(\text{RA} = \dfrac{\bar{r}_{\text{daily}} \times 252}{\sigma_{\text{daily}} \times \sqrt{252}}\) (bp; no risk-free subtracted). Structures compared:
+
+| Structure | Daily return (bp) |
 |---|---|
-| **Hawk day** | \(\Delta r_{\text{Dec26}} > \tilde\mu + k\tilde\sigma\) → **> +9.3 bp** |
-| **Dov day** | \(\Delta r_{\text{Dec26}} < \tilde\mu - k\tilde\sigma\) → **< −7.8 bp** |
-| **Neutral day** | \(\tilde\mu - k\tilde\sigma \le \Delta r_{\text{Dec26}} \le \tilde\mu + k\tilde\sigma\) |
-
-Trimming removes the Iran-shock outliers before estimating dispersion, so 1.5σ lands near **±8–9 bp** rather than the **±15 bp** you'd get from the raw sample σ (~10 bp).
+| Long Dec-26 outright | \(-\Delta r_{\text{Dec26}}\) |
+| Long Dec-27 outright | \(-\Delta r_{\text{Dec27}}\) |
+| Steepener (L Dec27 / S Dec26) | \(\Delta r_{\text{Dec27}} - \Delta r_{\text{Dec26}}\) |
+| Flattener (L Dec26 / S Dec27) | \(\Delta r_{\text{Dec26}} - \Delta r_{\text{Dec27}}\) |
 
 ---
 
-## Four phases (data-pinned boundaries)
+## Four phases
 
-Boundaries follow the structure you outlined; dates are the **nearest EOD sessions** to the cited turning points.
-
-| Phase | Window | Anchor | Spread (bp) | **Overall type** | Steepener P&L |
-|---|---|---|---|---:|---:|
-| **I** Bear flat / inversion | **2 Mar – 20 Mar** | Spread trough **−30 bp** on **20 Mar** (last low before 24 Mar) | +9.5 → **−30.0** (−39.5) | **Bear flattening** | **−43.0** |
-| **II** Bull steepening | **23 Mar – 17 Apr** | **Local implied-rate low** both legs (**17 Apr**) | −24.5 → −15.0 (+9.5) | **Bull steepening** | +15.0 |
-| **III** Bear steepening | **20 Apr – 15 May** | **Local implied-rate high** (Dec-26 **12 May**, Dec-27 **15 May**) | −13.5 → **0.0** (+13.5) | **Bear steepening** | +15.0 |
-| **IV** Bull flattening | **18 May – 29 Jun** | First session after peak cluster; dovish unwind | +3.0 → −3.5 (−6.5) | **Bull flattening** | −3.5 |
-
-*Note on Phase III end:* joint rate highs sit **12–15 May**, not 26 May — by 26 May both legs had already fallen ~25 bp from peak. Phase IV starts **18 May** (next session after the 15 May high).
+| Phase | Window | Anchor | Spread (bp) | **Overall type** |
+|---|---|---|---:|---|
+| **I** | 2 Mar – 20 Mar | Trough **−30** on **20 Mar** | +9.5 → −30.0 | **Bear flattening** |
+| **II** | 23 Mar – 17 Apr | Local rate low both legs (**17 Apr**) | −24.5 → −15.0 | **Bull steepening** |
+| **III** | 20 Apr – 15 May | Rate highs **12–15 May** | −13.5 → 0.0 | **Bear steepening** |
+| **IV** | 18 May – 29 Jun | Post-peak unwind | +3.0 → −3.5 | **Bull flattening** |
 
 ![Dec27−Dec26 four phases on ICE 3M SONIA](../charts/dec27_dec26_four_phases_3m.png)
 
-*Top: Dec27−Dec26 spread (bp). Bottom: Dec-26 and Dec-27 implied rates (%); green dotted = Bank Rate 3.75%. Rebuild: `python3 build_dec27_dec26_four_phases_3m.py`.*
+*Top: Dec27−Dec26 spread (bp). Bottom: Dec-26 and Dec-27 implied rates (%); green dotted = Bank Rate 3.75%.*
 
 ---
 
 ## Phase I — Bear flattening / inversion (2 Mar – 20 Mar)
 
-**Net:** Dec-26 **+128 bp**, Dec-27 **+88.5 bp** → spread **−39.5 bp**. Both legs sell off violently; front runs → **bear flattening** into deep inversion.
+**Level story.** Both legs sell off violently; the front runs harder. Spread collapses from +9.5 bp to **−30 bp** — deep inversion. Net: Dec-26 **+128 bp**, Dec-27 **+89 bp**.
 
-| | n | Share of phase |
-|---|---:|---|
-| Hawk days | 9 | **60%** |
+**Hawk / dov mix** — crisis repricing dominated by large front-end up-moves.
+
+| | n | Share |
+|---|---:|---:|
+| Hawk | 9 | **60%** |
 | Neutral | 4 | 27% |
 | Dov | 2 | 13% |
 
-**On hawk days (n=9):** Bear flattening **67%**, Bear steepening 22%.
+| On… | Modal curve type |
+|-----|-----------------|
+| Hawk days (n=9) | Bear flattening **67%** |
+| Dov days (n=2) | Bull steepening **100%** |
+| All days | Bear flattening **53%** |
 
-**On dov days (n=2):** Bull steepening **100%**.
+**Outright vs curve.** This is a **bear** phase for rate longs — both outrights lose, with Dec-26 the worse leg (front sells off hardest).
 
-**On neutral days (n=4):** Bear flattening **50%**, Bull flattening 50%.
+| Structure | Ann. vol (bp) | **RA** |
+|---|---:|---:|
+| Long Dec-26 | 242 | **−9.5** |
+| Long Dec-27 | 174 | −9.2 |
+| Steepener | 108 | −6.6 |
+| **Flattener** | 108 | **+6.6** |
 
-**Steepener:** **−43 bp** — the crisis expression loses outright. Paying the front / flattening would have been the crisis trade.
+The flattener is the only structure with positive risk-adjusted return: it **insulates** against the bear shock by paying the front. The steepener amplifies the wrong leg — hawk days are 60% of the phase and modal bear-flattening — so curve exposure here is worse than even the back outright, not better.
 
 ---
 
 ## Phase II — Bull steepening (23 Mar – 17 Apr)
 
-**Net:** Both legs **rally** (Dec-26 −45.5 bp, Dec-27 −36 bp); spread **widens** from −24.5 to −15 bp → **bull steepening** (less inverted).
+**Level story.** Both legs rally off the lows; spread recovers from −24.5 to −15 bp. Net: Dec-26 **−45.5 bp**, Dec-27 **−36 bp** — a **bull** phase for rate longs.
+
+**Hawk / dov mix** — dovish days dominate; hawks are rare.
 
 | | n | Share |
-|---|---:|---|
+|---|---:|---:|
 | Hawk | 2 | 11% |
 | Neutral | 11 | 61% |
 | Dov | 5 | **28%** |
 
-**On dov days (n=5):** Bull steepening **80%** — when Dec-26 has a large *down* move, the belly catches bid.
+| On… | Modal curve type |
+|-----|-----------------|
+| Dov days (n=5) | Bull steepening **80%** |
+| Hawk days (n=2) | 50/50 bear steep / bear flat |
+| All days | Bull steepening **39%** |
 
-**On hawk days (n=2):** Split 50% bear steep / 50% bear flat (n too small).
+**Outright vs curve.** Outright long Dec-26 has the **highest** risk-adjusted return — you want to be in the bull trend directly.
 
-**On neutral days (n=11):** Bull steepening **27%**, Bear flattening 27%.
+| Structure | Ann. vol (bp) | **RA** |
+|---|---:|---:|
+| **Long Dec-26** | 178 | **+5.0** |
+| Long Dec-27 | 148 | +4.6 |
+| Steepener | 44 | +4.8 |
+| Flattener | 44 | −4.8 |
 
-**Steepener:** **+15 bp** — recovery from inversion as both rates fall, back faster.
+The steepener's RA is close to outright Dec-26 (+4.8 vs +5.0) but at roughly **one-quarter the annualized vol** (44 vs 178 bp). In a bull steepening phase with frequent dov days (bull-steep modal 80% on dov tails), the curve structure **sacrifices a sliver of return for insulation** — when Dec-26 spikes on the occasional hawk day, the short front leg offsets it. Outright is optimal on a risk-adjusted basis only if you can tolerate the full front-end vol.
 
 ---
 
 ## Phase III — Bear steepening (20 Apr – 15 May)
 
-**Net:** Dec-26 **+39.5 bp**, Dec-27 **+53 bp** → spread **+13.5 bp** to **flat** → **bear steepening**.
+**Level story.** Both legs rise again; the belly leads. Spread moves from −13.5 bp to **flat**. Net: Dec-26 **+39.5 bp**, Dec-27 **+53 bp** — another **bear** phase for rate longs, but now the **curve** shape matters.
+
+**Hawk / dov mix** — mostly neutral sessions; tails are symmetric.
 
 | | n | Share |
-|---|---:|---|
+|---|---:|---:|
 | Hawk | 2 | 11% |
 | Neutral | 15 | **79%** |
 | Dov | 2 | 11% |
 
-**On hawk days (n=2):** Bear flattening **100%**.
+| On… | Modal curve type |
+|-----|-----------------|
+| Hawk days (n=2) | Bear flattening **100%** |
+| Dov days (n=2) | Bull steepening **100%** |
+| Neutral days (n=15) | Bear steepening **40%** |
+| All days | Bear steep / bear flat **32%** each |
 
-**On dov days (n=2):** Bull steepening **100%**.
+**Outright vs curve.** Outrights lose again — both legs rise, belly more. But the **steepener** is the only structure with positive risk-adjusted return.
 
-**On neutral days (n=15):** Bear steepening **40%**, Bear flattening 27%.
+| Structure | Ann. vol (bp) | **RA** |
+|---|---:|---:|
+| Long Dec-26 | 116 | −5.2 |
+| Long Dec-27 | 125 | −6.5 |
+| **Steepener** | 43 | **+4.6** |
+| Flattener | 43 | −4.6 |
 
-**Steepener:** **+15 bp** — the regime your original thesis needed. Belly underperforms on hawk tails; on average both legs rise with Dec-27 leading.
+This is the regime where curve expression **dominates** outright: the belly is repricing hawkishly (bear steepening on neutral days, 40% modal), and the steepener captures that relative move at low vol. Hawk days bear-flatten, but there are only two of them — not enough to flip the phase. The proportion analysis and the risk-adjusted ranking tell the same story.
 
 ---
 
 ## Phase IV — Bull flattening (18 May – 29 Jun)
 
-**Net:** Dec-26 **−42 bp**, Dec-27 **−48.5 bp** → spread **−6.5 bp** → **bull flattening**.
+**Level story.** Post-peak unwind. Both legs fall; belly compresses. Net: Dec-26 **−42 bp**, Dec-27 **−49 bp** — a **bull** phase, but the **curve flattens** rather than steepens.
+
+**Hawk / dov mix** — almost entirely neutral; no structural tail days.
 
 | | n | Share |
-|---|---:|---|
+|---|---:|---:|
 | Hawk | 1 | 3% |
 | Neutral | 27 | **90%** |
 | Dov | 2 | 7% |
 
-**On hawk days (n=1):** Bear flattening **100%**.
+| On… | Modal curve type |
+|-----|-----------------|
+| Neutral days (n=27) | Bull flattening **33%** |
+| Dov days (n=2) | Bull flattening 50% / Unchanged 50% |
+| All days | Bull flattening **33%** |
 
-**On dov days (n=2):** Bull flattening **50%**, Unchanged 50%.
+**Outright vs curve.** Outrights win cleanly — you want to be long rates, full stop.
 
-**On neutral days (n=27):** Bull flattening **33%** (modal); Unchanged 19%.
+| Structure | Ann. vol (bp) | **RA** |
+|---|---:|---:|
+| **Long Dec-26** | 81 | **+4.8** |
+| Long Dec-27 | 93 | +4.5 |
+| Flattener | 35 | +0.9 |
+| Steepener | 35 | −0.9 |
 
-Modal **daily** type: Bull flattening **33%** — most sessions are neutral on the hawk/dov filter, but **persistent** belly compression on the level.
-
-**Steepener:** **−3.5 bp**. The **5 Jun** calendar steepener entry sat in this phase (belly already uninverted on 1M; 3M spread near flat). Modal path = dovish **bull flattening**, not migration.
-
----
-
-## What this means for the trade
-
-1. **Four regimes, four overall types** — bear flat → bull steep → bear steep → bull flat. No single calendar spread wins all four without timing the switches.
-
-2. **The steepener only carries Phases II–III** (+30 bp combined); Phase I (**−43 bp**) dominates the crisis window.
-
-3. **Hawk/dov via \(\tilde\mu \pm 1.5\tilde\sigma\)** (trimmed σ ≈ 5.7 bp) recovers a usable tail-day split — hawk days cluster in Phase I (60%), dov days in Phase II (28%) — while Phase IV stays mostly neutral (90%) yet still bull-flattens on the level.
-
-4. **Original thesis anatomy** (front-loaded hikes) was a Phase I–III story; **post-entry P&L** was a Phase IV story.
+The steepener's RA turns **negative** despite the bull backdrop: modal daily path is bull-flattening (33%), so the belly **outperforms** on the way down. The flattener offers modest positive RA at low vol, but outright Dec-26 is clearly superior. Curve structures here are a **drag** relative to riding the outright bull trend — the proportion data shows why (persistent belly outperformance on neutral days, not hawk/dov tails).
 
 ---
 
-## Reproduce
+## Synthesis
 
-```bash
-python3 build_dec27_dec26_four_phases_3m.py
-# → charts/dec27_dec26_four_phases_3m.png
-# → data/dec27_dec26_four_phases_3m.json
-```
+| Phase | Rate environment | Best outright | Best curve | Curve vs outright |
+|---|---|---|---|---|
+| **I** Bear flat | Rates up; front runs | — (both lose) | **Flattener** (+6.6 RA) | Curve **insulates** in bear shock |
+| **II** Bull steep | Rates down; spread widens | **Long Dec-26** (+5.0) | Steepener (+4.8, ¼ vol) | Curve **near-parity**, much lower vol |
+| **III** Bear steep | Rates up; belly leads | — (both lose) | **Steepener** (+4.6) | Curve **beats** outright |
+| **IV** Bull flat | Rates down; belly compresses | **Long Dec-26** (+4.8) | Flattener (+0.9) | Outright **dominates**; steepener negative |
+
+Three patterns link the proportion analysis to the risk-adjusted ranking:
+
+1. **Bear phases (I, III)** — hawk/neutral days modal bear-flattening or bear-steepening. Outrights lose; the curve structure aligned with the phase (flattener in I, steepener in III) is the only way to positive RA.
+
+2. **Bull phases with steepening (II)** — dov days modal bull-steepening (80%). Outright is marginally best on RA, but the steepener offers near-identical return at a fraction of the vol — curve as **insurance** against hawk tails.
+
+3. **Bull phases with flattening (IV)** — neutral days modal bull-flattening (33%), no hawk tail risk. Outright dominates; curve structures subtract value.
+
+The belly was not one trade. It was four different curve environments, and the right expression — outright, steepener, or flattener — depended on which regime you were in.
 
 ---
 
-*Internal research note. Not investment advice. ICE 3M SONIA EOD via Barchart; Bank Rate 3.75%.*
+*Rebuild chart and stats: `python3 build_dec27_dec26_four_phases_3m.py`. Internal research note; not investment advice.*
