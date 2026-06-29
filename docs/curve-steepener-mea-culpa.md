@@ -18,15 +18,21 @@ The Dec27−Dec26 calendar spread did not move in one direction after the Iran s
 
 ### Hawk / dov / neutral days
 
-Let **m** = median\(|\Delta r_{\text{Dec26}}|\) over the full sample from 2 Mar (= **5.0 bp**).
+Let **μ** and **σ** be the mean and sample standard deviation of \(\Delta r_{\text{Dec26}}\) (bp) over the full sample from 2 Mar:
+
+| Stat | Value |
+|---|---:|
+| **μ** | **+0.96 bp** |
+| **σ** | **10.31 bp** |
+| **k** | **1.5** |
 
 | Label | Rule |
 |---|---|
-| **Hawk day** | \(\Delta r_{\text{Dec26}} > +1.5\,m\) → **> +7.5 bp** |
-| **Dov day** | \(\Delta r_{\text{Dec26}} < -1.5\,m\) → **< −7.5 bp** |
-| **Neutral day** | \(|\Delta r_{\text{Dec26}}| \le 7.5\) bp |
+| **Hawk day** | \(\Delta r_{\text{Dec26}} > \mu + k\sigma\) → **> +16.4 bp** |
+| **Dov day** | \(\Delta r_{\text{Dec26}} < \mu - k\sigma\) → **< −14.5 bp** |
+| **Neutral day** | \(\mu - k\sigma \le \Delta r_{\text{Dec26}} \le \mu + k\sigma\) |
 
-So a hawk day is not “Dec-26 up a little” — it must be a move **at least 1.5× the typical daily Dec-26 change**. Neutral days dominate Phase IV; hawk days cluster in Phase I.
+So a hawk day is a Dec-26 move in the **upper tail** of the post-shock distribution — more than 1.5 standard deviations above the sample mean. With σ ≈ 10 bp, most sessions are neutral; extreme tails cluster in Phase I.
 
 ---
 
@@ -55,13 +61,15 @@ Boundaries follow the structure you outlined; dates are the **nearest EOD sessio
 
 | | n | Share of phase |
 |---|---:|---|
-| Hawk days | 10 | 67% |
-| Neutral | 3 | 20% |
-| Dov | 2 | 13% |
+| Hawk days | 3 | 20% |
+| Neutral | 11 | **73%** |
+| Dov | 1 | 7% |
 
-**On hawk days (n=10):** Bear flattening **70%**, Bear steepening 20%.
+**On hawk days (n=3):** Bear flattening **100%**.
 
-**On dov days (n=2):** Bull steepening **100%** (sample too small for stable shares).
+**On dov days (n=1):** Bull steepening **100%** (sample too small for stable shares).
+
+**On neutral days (n=11):** Bear flattening **46%**, Bear steepening 18%, Bull flattening 18%.
 
 **Steepener:** **−43 bp** — the crisis expression loses outright. Paying the front / flattening would have been the crisis trade.
 
@@ -73,13 +81,15 @@ Boundaries follow the structure you outlined; dates are the **nearest EOD sessio
 
 | | n | Share |
 |---|---:|---|
-| Hawk | 2 | 11% |
-| Neutral | 11 | 61% |
-| Dov | 5 | 28% |
+| Hawk | 0 | 0% |
+| Neutral | 16 | **89%** |
+| Dov | 2 | 11% |
 
-**On dov days (n=5):** Bull steepening **80%** — when Dec-26 has a large *down* move, the belly catches bid.
+**On dov days (n=2):** Bull steepening **100%** — when Dec-26 has a large *down* move, the belly catches bid.
 
-**On hawk days (n=2):** Split 50% bear steep / 50% bear flat (n too small).
+**On neutral days (n=16):** Bull steepening **31%**, Bear flattening 25%.
+
+**On hawk days:** none in this phase.
 
 **Steepener:** **+15 bp** — recovery from inversion as both rates fall, back faster.
 
@@ -91,13 +101,15 @@ Boundaries follow the structure you outlined; dates are the **nearest EOD sessio
 
 | | n | Share |
 |---|---:|---|
-| Hawk | 4 | 21% |
-| Neutral | 13 | 68% |
-| Dov | 2 | 11% |
+| Hawk | 0 | 0% |
+| Neutral | 18 | **95%** |
+| Dov | 1 | 5% |
 
-**On hawk days (n=4):** Bear steepening **50%**, Bear flattening 50%.
+**On dov days (n=1):** Bull steepening **100%**.
 
-**On dov days (n=2):** Bull steepening **100%**.
+**On neutral days (n=18):** Bear steepening **33%**, Bear flattening 33% (tied modal).
+
+**On hawk days:** none in this phase.
 
 **Steepener:** **+15 bp** — the regime your original thesis needed. Belly underperforms on hawk tails; on average both legs rise with Dec-27 leading.
 
@@ -109,13 +121,13 @@ Boundaries follow the structure you outlined; dates are the **nearest EOD sessio
 
 | | n | Share |
 |---|---:|---|
-| Hawk | 1 | 3% |
-| Neutral | 27 | **90%** |
-| Dov | 2 | 7% |
+| Hawk | 0 | 0% |
+| Neutral | 30 | **100%** |
+| Dov | 0 | 0% |
 
-**On dov days (n=2):** Bull flattening **50%**, Unchanged 50%.
+**On neutral days (n=30):** Bull flattening **33%** (modal); Unchanged 23%.
 
-Modal **daily** type: Bull flattening **33%**; most sessions are **neutral** on the hawk/dov filter — small Dec-26 moves, but **persistent** belly compression on the level.
+Modal **daily** type: Bull flattening **33%** — no sessions breach the ±1.5σ tails, but **persistent** belly compression on the level.
 
 **Steepener:** **−4 bp**. The **5 Jun** calendar steepener entry sat in this phase (belly already uninverted on 1M; 3M spread near flat). Modal path = dovish **bull flattening**, not migration.
 
@@ -127,7 +139,7 @@ Modal **daily** type: Bull flattening **33%**; most sessions are **neutral** on 
 
 2. **The steepener only carries Phases II–III** (+30 bp combined); Phase I (**−43 bp**) dominates the crisis window.
 
-3. **Hawk/dov with 1.5× threshold** is stricter than “Dec-26 up/down 0.25 bp”: most of Phase IV is **neutral**, yet the **level** still flattens — so **overall phase type** matters more than hawk-day counts for P&L.
+3. **Hawk/dov via μ ± 1.5σ** (σ ≈ 10 bp) flags only **tail** Dec-26 moves; Phases II–IV are almost entirely neutral on this filter, yet Phases III–IV still have clear **overall** curve types — so cumulative phase classification matters more than tail-day counts for P&L.
 
 4. **Original thesis anatomy** (front-loaded hikes) was a Phase I–III story; **post-entry P&L** was a Phase IV story.
 

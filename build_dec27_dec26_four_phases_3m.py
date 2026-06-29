@@ -107,14 +107,21 @@ def resolve_phase_bounds(index: pd.DatetimeIndex) -> list[tuple[str, str, pd.Tim
 
 def hawk_dov_threshold(d26: pd.Series, start: str, multiplier: float = 1.5) -> dict:
     base = d26.loc[start:].dropna()
-    med = float(base.abs().median())
-    thr = multiplier * med
+    mu = float(base.mean())
+    sigma = float(base.std(ddof=1))
+    hawk_thr = mu + multiplier * sigma
+    dov_thr = mu - multiplier * sigma
     return {
         "multiplier": multiplier,
-        "median_abs_d26_bp": round(med, 2),
-        "threshold_bp": round(thr, 2),
-        "rule": f"Hawk if ΔDec26 > +{thr:.2f} bp; Dov if ΔDec26 < −{thr:.2f} bp "
-        f"(>{multiplier}× median |ΔDec26| over sample from {start})",
+        "mean_d26_bp": round(mu, 2),
+        "stdev_d26_bp": round(sigma, 2),
+        "hawk_threshold_bp": round(hawk_thr, 2),
+        "dov_threshold_bp": round(dov_thr, 2),
+        "rule": (
+            f"Hawk if ΔDec26 > μ + {multiplier}σ = +{hawk_thr:.2f} bp; "
+            f"Dov if ΔDec26 < μ − {multiplier}σ = {dov_thr:.2f} bp "
+            f"(μ, σ of ΔDec26 over sample from {start})"
+        ),
     }
 
 
@@ -128,7 +135,8 @@ def regime_dist(seg: pd.DataFrame, mask: pd.Series | None = None) -> dict[str, f
 
 
 def analyze(rates: pd.DataFrame, bounds: list, hawk_rule: dict, d26: pd.Series) -> list[dict]:
-    thr = hawk_rule["threshold_bp"]
+    hawk_thr = hawk_rule["hawk_threshold_bp"]
+    dov_thr = hawk_rule["dov_threshold_bp"]
     chg = rates.diff() * 100.0
     daily = chg.iloc[1:].copy()
     daily["d26"] = daily["dec26"]
@@ -137,8 +145,9 @@ def analyze(rates: pd.DataFrame, bounds: list, hawk_rule: dict, d26: pd.Series) 
     daily["regime"] = [
         classify_curve_move(float(r.d26), float(r.d27), float(r.dS)) for _, r in daily.iterrows()
     ]
-    daily["hawk"] = daily["d26"] > thr
-    daily["dov"] = daily["d26"] < -thr
+    daily["hawk"] = daily["d26"] > hawk_thr
+    daily["dov"] = daily["d26"] < dov_thr
+    daily["neutral"] = ~daily["hawk"] & ~daily["dov"]
 
     stats = []
     for pid, title, start, end in bounds:
@@ -153,6 +162,7 @@ def analyze(rates: pd.DataFrame, bounds: list, hawk_rule: dict, d26: pd.Series) 
         overall = classify_curve_move(d26_tot, d27_tot, dS_tot, eps=0.5)
         hawk = seg["hawk"]
         dov = seg["dov"]
+        neutral = seg["neutral"]
         stats.append(
             {
                 "id": pid,
@@ -170,10 +180,11 @@ def analyze(rates: pd.DataFrame, bounds: list, hawk_rule: dict, d26: pd.Series) 
                 "modal_label": REGIME_LABELS.get(modal, modal),
                 "modal_pct": round(100 * counts[modal] / n, 1) if n else 0,
                 "hawk_days": int(hawk.sum()),
-                "neutral_days": int(n - hawk.sum() - dov.sum()),
+                "neutral_days": int(neutral.sum()),
                 "dov_days": int(dov.sum()),
                 "hawk_breakdown_pct": regime_dist(seg, hawk),
                 "dov_breakdown_pct": regime_dist(seg, dov),
+                "neutral_breakdown_pct": regime_dist(seg, neutral),
                 "all_days_pct": regime_dist(seg),
             }
         )
