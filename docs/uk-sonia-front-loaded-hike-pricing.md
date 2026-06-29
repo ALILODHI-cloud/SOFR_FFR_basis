@@ -74,6 +74,6 @@ It is only after furnishing answers to these questions that one may propose doin
 
 ---
 
-*Follow-up: [Dec27−Dec26 on ICE 3M SONIA: four regimes since the Iran shock](curve-steepener-mea-culpa.md).*
+*Follow-up: [Dec27−Dec26 SONIA: four curve regimes since the Iran shock](https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_15/body.md) (Market-Notes post_15).*
 
 *Internal research note. Not investment advice. SONIA data: Barchart ICE EOD; policy anchor: BoE Bank Rate 3.75% (held since Dec 2025).*
