@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-06-29 16:08 UTC",
+  "generated_utc": "2026-06-29 19:21 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -310,7 +310,7 @@
     "basis_bp": 19.13,
     "roll_corr_30": 0.278,
     "basis_vol_ann": 60.65,
-    "brent": 73.78,
+    "brent": 73.72,
     "dec26_rate": 3.92,
     "dec27_rate": 3.945,
     "dec26_vs_bank_bp": 17.0,
@@ -361,10 +361,10 @@
     "dec26_chg_vs_dec27_chg": 0.915,
     "dec26_chg_vs_slope_chg": 0.09,
     "dec27_chg_vs_slope_chg": 0.483,
-    "roll_10d_slope_chg_vs_brent": -0.079,
+    "roll_10d_slope_chg_vs_brent": -0.08,
     "roll_10d_dec26_chg_vs_brent": 0.307,
-    "roll_10d_dec27_chg_vs_brent": 0.061,
-    "roll_20d_slope_chg_vs_brent": 0.087,
+    "roll_10d_dec27_chg_vs_brent": 0.06,
+    "roll_20d_slope_chg_vs_brent": 0.086,
     "roll_20d_dec26_chg_vs_brent": 0.582,
     "roll_20d_dec27_chg_vs_brent": 0.408,
     "roll_30d_slope_chg_vs_brent": 0.278,
@@ -1428,11 +1428,11 @@
       "dec27_vs_bank_bp": 19.5,
       "sonia_pct": 3.7287,
       "basis_bp": 19.13,
-      "brent": 73.78,
+      "brent": 73.72,
       "slope_chg_bp": 1.0,
       "dec26_chg_bp": 0.5,
       "dec27_chg_bp": 1.5,
-      "brent_ret_pct": 2.49,
+      "brent_ret_pct": 2.4,
       "roll_corr_30": 0.278,
       "basis_vol_ann": 60.65
     }
@@ -2646,11 +2646,11 @@
       "dec27_vs_bank_bp": 19.5,
       "sonia_pct": 3.7287,
       "basis_bp": 19.13,
-      "brent": 73.78,
+      "brent": 73.72,
       "slope_chg_bp": 1.0,
       "dec26_chg_bp": 0.5,
       "dec27_chg_bp": 1.5,
-      "brent_ret_pct": 2.49,
+      "brent_ret_pct": 2.4,
       "roll_corr_30": 0.278,
       "basis_vol_ann": 60.65
     }
