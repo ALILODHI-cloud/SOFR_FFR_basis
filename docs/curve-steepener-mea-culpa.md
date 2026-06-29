@@ -2,7 +2,7 @@
 
 *ICE 3M SONIA futures **J8Z26 / J8Z27** (Barchart EOD), 2 Mar – 29 Jun 2026.*
 
-Each phase combines a **level move** (rates up or down over the window) and a **curve move** (steepening or flattening). The question: should you have ridden the level **outright**, or expressed both legs through the **aligned spread**? The test is what happens on **contrary days** — sessions where the front end moves against the phase's level direction, regardless of size — and whether the curve shape you needed still appeared on those days. **Max loss** over the sample matters more than average return for that comparison.
+Each phase has a **level move** and a **curve move**. Should you have ridden the level outright, or through the aligned spread? The answer turns on **contrary days** — sessions where the front end moves against the phase trend — and especially on the **worst outright days**: did the curve still do the right thing when it mattered?
 
 ---
 
@@ -14,28 +14,28 @@ Each phase combines a **level move** (rates up or down over the window) and a **
 | **Spread** | \(S_t = r_{\text{Dec27}} - r_{\text{Dec26}}\) (bp) |
 | **Sample** | 2 Mar → 29 Jun 2026 |
 
-**Contrary day** — any session where ΔDec26 opposes the phase level move (no size threshold):
+**Contrary day** — ΔDec26 opposes the phase level (any size):
 
-| Phase level | Contrary day | Aligned day |
+| Phase level | Contrary | Aligned |
 |---|---|---|
-| **Bear** (rates net higher) | ΔDec26 **< 0** (front-end down) | ΔDec26 **> 0** |
-| **Bull** (rates net lower) | ΔDec26 **> 0** (front-end up) | ΔDec26 **< 0** |
+| **Bear** | ΔDec26 **< 0** | ΔDec26 **> 0** |
+| **Bull** | ΔDec26 **> 0** | ΔDec26 **< 0** |
 
-**Correct curve move** — daily steepening or flattening matching the phase shape:
-
-| Phase curve | Correct on any day |
-|---|---|
-| Flattening (I, IV) | Bear, bull, or mixed **flattening** |
-| Steepening (II, III) | Bear, bull, or mixed **steepening** |
-
-**Structures compared:**
+**Correct curve move** — flattening in flat phases (I, IV); steepening in steep phases (II, III).
 
 | Level | Outright | Aligned curve |
 |---|---|---|
-| Bear | Short Dec-26 | Flattener (I) or steepener (III) |
-| Bull | Long Dec-26 | Steepener (II) or flattener (IV) |
+| Bear | Short Dec-26 | Flattener (I) / steepener (III) |
+| Bull | Long Dec-26 | Steepener (II) / flattener (IV) |
 
-**Risk metrics:** RA gap (outright minus curve) and **max loss** — worst single session and maximum drawdown over the phase.
+**Metrics:**
+
+| Metric | Definition |
+|---|---|
+| **Contrary-day alignment** | % of contrary days where the curve moved correctly |
+| **Return / \|max DD\|** | Total phase return ÷ absolute max drawdown — return per unit of tail risk |
+| **Max DD ratio** | \|max DD outright\| ÷ \|max DD curve\| |
+| **Worst outright days** | Largest daily losses on the outright; curve type and P&L on each |
 
 ---
 
@@ -54,35 +54,27 @@ Each phase combines a **level move** (rates up or down over the window) and a **
 
 ## Phase I — Bear level, bear flattening
 
-**Net:** Dec-26 **+128 bp**, Dec-27 **+89 bp**. Spread +9.5 → **−30 bp**.
+**Net:** Dec-26 **+128 bp**, Dec-27 **+89 bp**. Spread → **−30 bp**.
 
-### Contrary days (front-end down — hurts a short)
-
-| | |
-|---|---:|
-| Contrary days | **4 of 14 (29%)** |
-| Correct curve move (flattening) on contrary days | **50%** |
-| Modal on contrary days | Bull steep / bull flat |
-
-On contrary days the outright short loses (avg **−8.1 bp**/session). The flattener is flat (avg **0.0 bp**). Half of contrary sessions still flatten — the curve type you wanted survives even when the front end rallies against the bear trend.
-
-### Aligned-level days (front-end up — favours short)
-
-| | |
-|---|---:|
-| Aligned days | 10 of 14 (71%) |
-| Correct curve move on aligned days | **70%** |
-
-### Outright vs flattener — full phase
-
-| Metric | Short Dec-26 | Flattener |
+| | Outright (short) | Flattener |
 |---|---:|---:|
-| RA | **+9.5** | +6.6 |
-| RA gap | **+2.9** | — |
-| Worst single day | −15.5 bp | **−3.5 bp** |
+| Total return | +128 bp | +39.5 bp |
 | Max drawdown | −15.5 bp | **−6.5 bp** |
+| **Return / \|max DD\|** | **8.3** | 6.1 |
+| Max DD ratio | **2.4×** | — |
 
-Outright wins on RA. But on contrary days — 29% of the sample — the flattener avoids the front-end hit and half those sessions still flatten. Max single-day loss is **4× smaller** on the curve.
+**Contrary days:** 4 of 14 (**29%**) — front-end down, hurts the short. Correct curve (flattening) on contrary days: **50%**.
+
+### Worst outright days (all 4 losing sessions)
+
+| Date | Outright | Curve | ΔDec26 | Curve type | Correct? |
+|---|---:|---:|---:|---|---|
+| 10 Mar | **−15.5** | −3.5 | −15.5 | Bull steepening | no |
+| 4 Mar | **−9.5** | −2.0 | −9.5 | Bull steepening | no |
+| 16 Mar | −4.0 | **+3.0** | −4.0 | Bull flattening | **yes** |
+| 17 Mar | −3.5 | **+2.5** | −3.5 | Bull flattening | **yes** |
+
+The two biggest outright hits (Mar 4, Mar 10) were bull-steepening — wrong curve for a flattener. Combined: outright **−25 bp**, curve **−5.5 bp**. The smaller two losses had flattening: outright −7.5 bp, curve **+5.5 bp**. When the curve moved correctly on bad outright days, it flipped positive. When it didn't, it still cut the loss by ~75%.
 
 ---
 
@@ -90,67 +82,53 @@ Outright wins on RA. But on contrary days — 29% of the sample — the flattene
 
 **Net:** Dec-26 **−45.5 bp**, Dec-27 **−36 bp**. Spread −24.5 → −15 bp.
 
-### Contrary days (front-end up — hurts a long)
-
-| | |
-|---|---:|
-| Contrary days | **6 of 18 (33%)** |
-| Correct curve move (steepening) on contrary days | **33%** |
-| Modal on contrary days | Bear flattening 67% |
-
-Only one-third of contrary days steepen — mostly they bear-flatten. Yet the steepener still absorbs the shock: avg **−1.1 bp** vs outright **−7.4 bp** on contrary sessions.
-
-### Aligned-level days (front-end down)
-
-| | |
-|---|---:|
-| Aligned days | 11 of 18 (61%) |
-| Correct curve move on aligned days | **73%** |
-
-### Outright vs steepener — full phase
-
-| Metric | Long Dec-26 | Steepener |
+| | Outright (long) | Steepener |
 |---|---:|---:|
-| RA | **+5.0** | +4.8 |
-| RA gap | **+0.3** | — |
-| Worst single day | −13.5 bp | **−3.0 bp** |
+| Total return | +64 bp | +15 bp |
 | Max drawdown | −17.5 bp | **−4.5 bp** |
+| **Return / \|max DD\|** | **3.7** | 3.3 |
+| Max DD ratio | **3.9×** | — |
 
-RA essentially tied. Max drawdown on outright is **−17.5 bp** vs **−4.5 bp** on the steepener — the curve caps tail risk on the 33% of days the front end moves against you, even when only a third of those still steepen.
+**Contrary days:** 6 of 18 (**33%**) — front-end up, hurts the long. Correct curve (steepening) on contrary days: **33%**.
+
+### Worst 5 outright days
+
+| Date | Outright | Curve | ΔDec26 | Curve type | Correct? |
+|---|---:|---:|---:|---|---|
+| 7 Apr | **−13.5** | −1.5 | +13.5 | Bear flattening | no |
+| 26 Mar | **−11.5** | **+0.5** | +11.5 | Bear steepening | **yes** |
+| 13 Apr | −7.5 | −2.5 | +7.5 | Bear flattening | no |
+| 9 Apr | −5.5 | **+2.0** | +5.5 | Bear steepening | **yes** |
+| 4 Apr | −4.0 | −3.0 | +4.0 | Bear flattening | no |
+
+**2 of 5** worst days steepened. On those two: outright **−17 bp**, curve **+2.5 bp**. On the three that bear-flattened: outright **−25 bp**, curve **−7 bp**. The steepener earns on the worst day when the curve cooperates (bear steepening on a hawk spike); even when it doesn't, max DD is **3.9× smaller**. Return/max-DD nearly tied (3.7 vs 3.3) despite a quarter of the tail risk.
 
 ---
 
 ## Phase III — Bear level, bear steepening
 
-**Net:** Dec-26 **+39.5 bp**, Dec-27 **+53 bp**. Spread −13.5 → **0 bp**.
+**Net:** Dec-26 **+39.5 bp**, Dec-27 **+53 bp**. Spread → **flat**.
 
-### Contrary days (front-end down — hurts a short)
-
-| | |
-|---|---:|
-| Contrary days | **6 of 19 (32%)** |
-| Correct curve move (steepening) on contrary days | **50%** |
-| Modal on contrary days | Bull steep / bull flat |
-
-Half of contrary days still steepen. Outright short avg **−6.5 bp**; steepener avg **+0.4 bp** — the curve earns on the sessions that hurt the outright.
-
-### Aligned-level days (front-end up)
-
-| | |
-|---|---:|
-| Aligned days | 13 of 19 (68%) |
-| Correct curve move on aligned days | 46% |
-
-### Outright vs steepener — full phase
-
-| Metric | Short Dec-26 | Steepener |
+| | Outright (short) | Steepener |
 |---|---:|---:|
-| RA | **+5.2** | +4.6 |
-| RA gap | **+0.6** | — |
-| Worst single day | −15.5 bp | **−3.0 bp** |
+| Total return | +46 bp | +15 bp |
 | Max drawdown | −21.5 bp | **−7.3 bp** |
+| **Return / \|max DD\|** | 2.1 | **2.1** |
+| Max DD ratio | **3.0×** | — |
 
-Narrow RA gap. Max drawdown **−21.5 bp** outright vs **−7.3 bp** steepener — the starkest tail-risk gap in the sample. On 32% contrary days, 50% still steepen and the curve is near flat while the short bleeds.
+**Contrary days:** 6 of 19 (**32%**). Correct curve (steepening) on contrary days: **50%**.
+
+### Worst 5 outright days
+
+| Date | Outright | Curve | ΔDec26 | Curve type | Correct? |
+|---|---:|---:|---:|---|---|
+| 6 May | **−15.5** | **+1.5** | −15.5 | Bull steepening | **yes** |
+| 30 Apr | **−9.5** | **+0.5** | −9.5 | Bull steepening | **yes** |
+| 14 May | −5.5 | −1.0 | −5.5 | Bull flattening | no |
+| 13 May | −5.0 | **+3.0** | −5.0 | Bull steepening | **yes** |
+| 1 May | −2.0 | −0.7 | −2.0 | Bull flattening | no |
+
+**3 of 5** worst days steepened. On those three: outright **−30 bp**, curve **+5 bp** — the steepener *earns* on the biggest outright hits. On the two that flattened: outright −7.5 bp, curve −1.7 bp. Return/max-DD is **identical** (2.1 vs 2.1) at one-third the drawdown. This is the phase where the curve pays for itself on the days that matter.
 
 ---
 
@@ -158,56 +136,54 @@ Narrow RA gap. Max drawdown **−21.5 bp** outright vs **−7.3 bp** steepener �
 
 **Net:** Dec-26 **−42 bp**, Dec-27 **−49 bp**. Spread +3.0 → −3.5 bp.
 
-### Contrary days (front-end up — hurts a long)
-
-| | |
-|---|---:|
-| Contrary days | **9 of 30 (30%)** |
-| Correct curve move (flattening) on contrary days | **33%** |
-| Modal on contrary days | Bear steepening 56% |
-
-Only a third of contrary days flatten — most bear-steepen. But the flattener still loses less (avg **−0.5 bp** vs **−4.2 bp** outright).
-
-### Aligned-level days (front-end down)
-
-| | |
-|---|---:|
-| Aligned days | 21 of 30 (70%) |
-| Correct curve move on aligned days | 48% |
-
-### Outright vs flattener — full phase
-
-| Metric | Long Dec-26 | Flattener |
+| | Outright (long) | Flattener |
 |---|---:|---:|
-| RA | **+4.8** | +0.9 |
-| RA gap | **+3.9** | — |
-| Worst single day | −15.5 bp | **−6.5 bp** |
+| Total return | +46 bp | +3.5 bp |
 | Max drawdown | −18.0 bp | **−8.5 bp** |
+| **Return / \|max DD\|** | **2.6** | 0.4 |
+| Max DD ratio | **2.1×** | — |
 
-Outright wins clearly on RA. Curve only limits tail loss: worst day −6.5 vs −15.5 bp, drawdown −8.5 vs −18.0 bp. With only 33% of contrary days flattening, the insurance case is weaker than Phases II–III.
+**Contrary days:** 9 of 30 (**30%**). Correct curve (flattening) on contrary days: **33%**.
+
+### Worst 5 outright days
+
+| Date | Outright | Curve | ΔDec26 | Curve type | Correct? |
+|---|---:|---:|---:|---|---|
+| 1 Jun | **−15.5** | **+1.5** | +15.5 | Bear flattening | **yes** |
+| 19 Jun | −5.0 | −6.5 | +5.0 | Bear steepening | no |
+| 3 Jun | −4.5 | −1.0 | +4.5 | Bear steepening | no |
+| 8 Jun | −3.5 | −1.5 | +3.5 | Bear steepening | no |
+| 10 Jun | −3.0 | **+0.5** | +3.0 | Bear flattening | **yes** |
+
+**2 of 5** worst days flattened. The single biggest hit (1 Jun): outright **−15.5 bp**, flattener **+1.5 bp** — bear-flattening on a hawk spike. But the next three all bear-steepen and both legs lose. Return/max-DD heavily favours outright (2.6 vs 0.4). Tail risk is halved but return is not worth the trade.
 
 ---
 
 ## Synthesis
 
-| Phase | Level + curve | Contrary days | Correct curve on contrary | Max DD outright | Max DD curve | RA gap |
-|---|---|---:|---:|---:|---:|---:|
-| **I** | Bear + bear flat | 29% | **50%** flat | −15.5 | **−6.5** | +2.9 |
-| **II** | Bull + bull steep | 33% | 33% steep | −17.5 | **−4.5** | +0.3 |
-| **III** | Bear + bear steep | 32% | **50%** steep | −21.5 | **−7.3** | +0.6 |
-| **IV** | Bull + bull flat | 30% | 33% flat | −18.0 | **−8.5** | +3.9 |
+| Phase | Contrary | Correct curve on contrary | Return/\|max DD\| outright | Return/\|max DD\| curve | Max DD ratio | Worst-5 correct |
+|---|---:|---:|---:|---:|---:|---:|
+| **I** Bear flat | 29% | 50% | **8.3** | 6.1 | 2.4× | 2/4 |
+| **II** Bull steep | 33% | 33% | **3.7** | 3.3 | 3.9× | 2/5 |
+| **III** Bear steep | 32% | 50% | 2.1 | **2.1** | 3.0× | **3/5** |
+| **IV** Bull flat | 30% | 33% | **2.6** | 0.4 | 2.1× | 2/5 |
 
-Roughly **30% of every phase** is contrary days — front-end moving against the level trend, no size filter. The curve question is: on those days, does the phase's curve shape still appear, and does the spread cap your loss?
+~**30% contrary days** in every phase. The weighted question: on the **worst outright sessions**, did the curve move correctly — and what did it earn?
 
-1. **Correct curve on contrary days** ranges from 33–50%. It does not need to be a majority to matter — the curve structure can still cut max drawdown by 60–75% (Phases II–III).
+| Phase | Worst days with correct curve | Outright loss | Curve P&L |
+|---|---|---:|---:|
+| **I** | 2 smaller hits | −7.5 bp | **+5.5 bp** |
+| **I** | 2 biggest hits (wrong curve) | −25 bp | −5.5 bp |
+| **II** | 2 hits (steepened) | −17 bp | **+2.5 bp** |
+| **II** | 3 hits (flattened) | −25 bp | −7 bp |
+| **III** | 3 hits (steepened) | −30 bp | **+5 bp** |
+| **III** | 2 hits (flattened) | −7.5 bp | −1.7 bp |
+| **IV** | 2 hits (flattened) | −18.5 bp | **+2 bp** |
+| **IV** | 3 hits (steepened) | −13 bp | −9 bp |
 
-2. **RA gap** is small where the curve earns its keep (II: +0.3, III: +0.6) and large where it does not (I: +2.9, IV: +3.9). Max loss is the sharper discriminator.
+The curve earns its keep when the worst outright days coincide with the right curve type — Phase III being the standout (3/5 worst days steepen, curve **+5 bp** while outright loses 30 bp on those sessions). Return/max-DD can be **identical** (III: 2.1 vs 2.1) at a fraction of the drawdown. Where worst days mostly get the wrong curve type (IV: 3/5 bear-steepen), return/max-DD collapses for the spread (0.4 vs 2.6) and outright wins clearly.
 
-3. **Phase III** is the sweet spot: 50% of contrary days steepen, steepener earns on contrary sessions, max DD **−7.3 vs −21.5 bp**.
-
-4. **Phase IV** — outright dominates. Contrary days mostly bear-steepen; flattener only softens the tail.
-
-Outright wins RA in every phase. The curve is justified when contrary-day curve alignment is high **and** max drawdown on the spread is materially smaller — not because it beats outright on average, but because it survives the days that oppose the level trend.
+Outright captures more total return in every phase. The curve is rational when contrary-day alignment and worst-day curve behaviour combine to cap max DD without destroying return per unit of tail risk.
 
 ---
 
