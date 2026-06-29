@@ -1,0 +1,164 @@
+{
+  "meta": {
+    "source": "ICE 3M SONIA (J8Z26 / J8Z27)",
+    "symbols": [
+      "J8Z26",
+      "J8Z27"
+    ],
+    "sample_start": "2026-03-02",
+    "sample_end": "2026-06-29",
+    "boundary_notes": {
+      "I_end": "Spread trough \u221230 bp (20 Mar), last session before 24 Mar re-open",
+      "II_end": "Local implied-rate low in both legs (17 Apr)",
+      "III_end": "Joint local implied-rate high (15 May; Dec-26 peak 12 May)",
+      "IV_start": "Session after peak; dovish unwind"
+    },
+    "hawk_dov": {
+      "multiplier": 1.5,
+      "median_abs_d26_bp": 5.0,
+      "threshold_bp": 7.5,
+      "rule": "Hawk if \u0394Dec26 > +7.50 bp; Dov if \u0394Dec26 < \u22127.50 bp (>1.5\u00d7 median |\u0394Dec26| over sample from 2026-03-02)"
+    },
+    "daily_regime_note": "Curve regime from classify_curve_move(\u0394Dec26, \u0394Dec27, \u0394spread); \u03b5=0.25 bp on spread"
+  },
+  "phases": [
+    {
+      "id": "I",
+      "title": "Bear flattening / inversion",
+      "start": "2026-03-02",
+      "end": "2026-03-20",
+      "n_days": 15,
+      "spread_start_bp": 9.5,
+      "spread_end_bp": -30.0,
+      "spread_change_bp": -39.5,
+      "dec26_chg_bp": 128.0,
+      "dec27_chg_bp": 88.5,
+      "overall_label": "Bear flattening",
+      "steepener_pnl_bp": -43.0,
+      "modal_label": "Bear flattening",
+      "modal_pct": 53.3,
+      "hawk_days": 10,
+      "neutral_days": 3,
+      "dov_days": 2,
+      "hawk_breakdown_pct": {
+        "Bear flattening": 70.0,
+        "Bear steepening": 20.0,
+        "Unchanged": 10.0
+      },
+      "dov_breakdown_pct": {
+        "Bull steepening": 100.0
+      },
+      "all_days_pct": {
+        "Bear flattening": 53.3,
+        "Bull steepening": 13.3,
+        "Bear steepening": 13.3,
+        "Bull flattening": 13.3,
+        "Unchanged": 6.7
+      }
+    },
+    {
+      "id": "II",
+      "title": "Bull steepening",
+      "start": "2026-03-23",
+      "end": "2026-04-17",
+      "n_days": 18,
+      "spread_start_bp": -24.5,
+      "spread_end_bp": -15.0,
+      "spread_change_bp": 9.5,
+      "dec26_chg_bp": -45.5,
+      "dec27_chg_bp": -36.0,
+      "overall_label": "Bull steepening",
+      "steepener_pnl_bp": 15.0,
+      "modal_label": "Bull steepening",
+      "modal_pct": 38.9,
+      "hawk_days": 2,
+      "neutral_days": 11,
+      "dov_days": 5,
+      "hawk_breakdown_pct": {
+        "Bear steepening": 50.0,
+        "Bear flattening": 50.0
+      },
+      "dov_breakdown_pct": {
+        "Bull steepening": 80.0,
+        "Unchanged": 20.0
+      },
+      "all_days_pct": {
+        "Bull steepening": 38.9,
+        "Bear flattening": 22.2,
+        "Bear steepening": 11.1,
+        "Unchanged": 11.1,
+        "Bull flattening": 5.6,
+        "Mixed flattening": 5.6,
+        "Mixed steepening": 5.6
+      }
+    },
+    {
+      "id": "III",
+      "title": "Bear steepening",
+      "start": "2026-04-20",
+      "end": "2026-05-15",
+      "n_days": 19,
+      "spread_start_bp": -13.5,
+      "spread_end_bp": 0.0,
+      "spread_change_bp": 13.5,
+      "dec26_chg_bp": 39.5,
+      "dec27_chg_bp": 53.0,
+      "overall_label": "Bear steepening",
+      "steepener_pnl_bp": 15.0,
+      "modal_label": "Bear steepening",
+      "modal_pct": 31.6,
+      "hawk_days": 4,
+      "neutral_days": 13,
+      "dov_days": 2,
+      "hawk_breakdown_pct": {
+        "Bear flattening": 50.0,
+        "Bear steepening": 50.0
+      },
+      "dov_breakdown_pct": {
+        "Bull steepening": 100.0
+      },
+      "all_days_pct": {
+        "Bear steepening": 31.6,
+        "Bear flattening": 31.6,
+        "Bull steepening": 15.8,
+        "Bull flattening": 15.8,
+        "Unchanged": 5.3
+      }
+    },
+    {
+      "id": "IV",
+      "title": "Bull flattening",
+      "start": "2026-05-18",
+      "end": "2026-06-29",
+      "n_days": 30,
+      "spread_start_bp": 3.0,
+      "spread_end_bp": -4.0,
+      "spread_change_bp": -7.0,
+      "dec26_chg_bp": -42.0,
+      "dec27_chg_bp": -49.0,
+      "overall_label": "Bull flattening",
+      "steepener_pnl_bp": -4.0,
+      "modal_label": "Bull flattening",
+      "modal_pct": 33.3,
+      "hawk_days": 1,
+      "neutral_days": 27,
+      "dov_days": 2,
+      "hawk_breakdown_pct": {
+        "Bear flattening": 100.0
+      },
+      "dov_breakdown_pct": {
+        "Bull flattening": 50.0,
+        "Unchanged": 50.0
+      },
+      "all_days_pct": {
+        "Bull flattening": 33.3,
+        "Unchanged": 23.3,
+        "Bear steepening": 13.3,
+        "Bull steepening": 10.0,
+        "Mixed steepening": 10.0,
+        "Bear flattening": 6.7,
+        "Mixed flattening": 3.3
+      }
+    }
+  ]
+}
