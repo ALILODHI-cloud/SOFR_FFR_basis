@@ -74,4 +74,6 @@ It is only after furnishing answers to these questions that one may propose doin
 
 ---
 
+*Follow-up: [Mea culpa — two curve regimes and the modal path since entry](curve-steepener-mea-culpa.md).*
+
 *Internal research note. Not investment advice. SONIA data: Barchart ICE EOD; policy anchor: BoE Bank Rate 3.75% (held since Dec 2025).*

@@ -1,0 +1,96 @@
+{
+  "entry_date": "2026-06-05",
+  "latest_date": "2026-06-25",
+  "entry": {
+    "dec26_rate_pct": 4.175,
+    "dec27_rate_pct": 4.21,
+    "slope_bp": 3.5,
+    "dec26_vs_bank_bp": 42.5
+  },
+  "latest": {
+    "dec26_rate_pct": 3.935,
+    "dec27_rate_pct": 3.925,
+    "slope_bp": -1.0,
+    "dec26_vs_bank_bp": 18.5
+  },
+  "periods": [
+    {
+      "period": "crisis_onset (24 Mar \u2013 4 Jun)",
+      "n_days": 48,
+      "dec26_total_bp": -1.0,
+      "dec27_total_bp": 3.0,
+      "slope_total_bp": 4.0,
+      "modal_regime": "bull_steepening",
+      "regime_counts": {
+        "bull_steepening": 12,
+        "bear_steepening": 11,
+        "bull_flattening": 10,
+        "bear_flattening": 9,
+        "mixed_flattening": 3,
+        "unchanged": 2,
+        "mixed_steepening": 1
+      },
+      "bull_flattening_pct": 20.8,
+      "bear_steepening_pct": 22.9,
+      "hawk_days": 23,
+      "hawk_bear_steep_pct": 47.8,
+      "hawk_bear_flat_pct": 39.1,
+      "dov_days": 24,
+      "dov_bull_flat_pct": 41.7,
+      "dov_bull_steep_pct": 50.0,
+      "steepener_pnl_bp": 4.0,
+      "outright_dec26_pnl_bp": 1.0
+    },
+    {
+      "period": "post_entry (5 Jun \u2013 latest)",
+      "n_days": 15,
+      "dec26_total_bp": -23.5,
+      "dec27_total_bp": -28.0,
+      "slope_total_bp": -4.5,
+      "modal_regime": "bull_flattening",
+      "regime_counts": {
+        "bull_flattening": 9,
+        "bear_steepening": 4,
+        "unchanged": 1,
+        "mixed_steepening": 1
+      },
+      "bull_flattening_pct": 60.0,
+      "bear_steepening_pct": 26.7,
+      "hawk_days": 5,
+      "hawk_bear_steep_pct": 80.0,
+      "hawk_bear_flat_pct": 0.0,
+      "dov_days": 10,
+      "dov_bull_flat_pct": 90.0,
+      "dov_bull_steep_pct": 0.0,
+      "steepener_pnl_bp": -4.5,
+      "outright_dec26_pnl_bp": 23.5
+    },
+    {
+      "period": "full_sample",
+      "n_days": 63,
+      "dec26_total_bp": -24.5,
+      "dec27_total_bp": -25.0,
+      "slope_total_bp": -0.5,
+      "modal_regime": "bull_flattening",
+      "regime_counts": {
+        "bull_flattening": 19,
+        "bear_steepening": 15,
+        "bull_steepening": 12,
+        "bear_flattening": 9,
+        "mixed_flattening": 3,
+        "unchanged": 3,
+        "mixed_steepening": 2
+      },
+      "bull_flattening_pct": 30.2,
+      "bear_steepening_pct": 23.8,
+      "hawk_days": 28,
+      "hawk_bear_steep_pct": 53.6,
+      "hawk_bear_flat_pct": 32.1,
+      "dov_days": 34,
+      "dov_bull_flat_pct": 55.9,
+      "dov_bull_steep_pct": 35.3,
+      "steepener_pnl_bp": -0.5,
+      "outright_dec26_pnl_bp": 24.5
+    }
+  ]
+}
