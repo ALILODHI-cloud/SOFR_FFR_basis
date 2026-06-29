@@ -179,16 +179,70 @@ def analyze_phases(spread: pd.Series, daily: pd.DataFrame, rates: pd.DataFrame) 
     return out
 
 
-def make_simple_chart(spread: pd.Series, cfg: dict) -> None:
+def _plot_spread_and_legs(
+    ax: plt.Axes,
+    path: pd.Series,
+    legs: pd.DataFrame,
+    cfg: dict,
+    *,
+    spread_lw: float = 2.2,
+) -> tuple[plt.Axes, list]:
+    """Left axis: spread (bp). Right axis: Dec26 / Dec27 implied rates (%)."""
+    dec26_color = "#1f77b4"
+    dec27_color = "#e67e22"
+
+    spread_line, = ax.plot(
+        path.index,
+        path.values,
+        color=cfg["line_color"],
+        lw=spread_lw,
+        zorder=4,
+        label="Dec27−Dec26 spread",
+    )
+    ax.axhline(0, color="#666", ls="--", lw=0.9, alpha=0.75, zorder=1)
+    ax.set_ylabel("Spread (bp)", color=cfg["line_color"], fontweight="bold")
+    ax.tick_params(axis="y", labelcolor=cfg["line_color"])
+
+    ax2 = ax.twinx()
+    dec26_line, = ax2.plot(
+        legs.index,
+        legs["dec26"],
+        color=dec26_color,
+        lw=2.4,
+        zorder=3,
+        label="Dec-26 implied",
+    )
+    dec27_line, = ax2.plot(
+        legs.index,
+        legs["dec27"],
+        color=dec27_color,
+        lw=2.4,
+        zorder=3,
+        label="Dec-27 implied",
+    )
+    ax2.set_ylabel("Implied rate (%)", color="#333", fontweight="bold")
+    ax2.tick_params(axis="y", labelcolor="#333")
+    leg_pad = max(0.08, (legs.max().max() - legs.min().min()) * 0.1)
+    ax2.set_ylim(float(legs.min().min()) - leg_pad, float(legs.max().max()) + leg_pad)
+
+    ymin = min(-20, float(path.min()) - 3)
+    ymax = max(24, float(path.max()) + 3)
+    ax.set_ylim(ymin, ymax)
+    ax.grid(True, alpha=0.2, zorder=0)
+
+    lines = [spread_line, dec26_line, dec27_line]
+    ax.legend(lines, [ln.get_label() for ln in lines], loc="upper left", fontsize=9, framealpha=0.95)
+    return ax2, lines
+
+
+def make_simple_chart(spread: pd.Series, cfg: dict, rates: pd.DataFrame) -> None:
     sub = spread.loc[START:]
-    fig, ax = plt.subplots(figsize=(9, 4))
-    ax.plot(sub.index, sub.values, color=cfg["line_color"], lw=2)
-    ax.axhline(0, color="#666", ls="--", lw=0.9, alpha=0.7)
+    legs = rates.loc[START:, ["dec26", "dec27"]]
+    fig, ax = plt.subplots(figsize=(11, 5))
+    _plot_spread_and_legs(ax, sub, legs, cfg, spread_lw=2.4)
     ax.set_title(f"Dec27−Dec26 (bp) from {sub.index[0].strftime('%d %b %Y')} · {cfg['label']}")
-    ax.set_ylabel("Spread (bp)")
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
     fig.autofmt_xdate(rotation=30, ha="right")
-    ax.grid(True, alpha=0.25)
     fig.tight_layout()
     cfg["chart_simple"].parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(cfg["chart_simple"], dpi=150, bbox_inches="tight")
@@ -202,18 +256,9 @@ def make_labeled_chart(spread: pd.Series, stats: list[dict], cfg: dict, rates: p
     legs = rates.loc[start:end, ["dec26", "dec27"]]
     fills = {"I": "#fdecea", "II": "#e8f8f0", "III": "#eaf2fb"}
     ypos = {"I": 14, "II": 22, "III": 8}
-    dec26_color = "#1f77b4"
-    dec27_color = "#e67e22"
 
-    fig, ax = plt.subplots(figsize=(14, 7.5))
-    spread_line, = ax.plot(path.index, path.values, color=cfg["line_color"], lw=2.2, zorder=3, label="Dec27−Dec26 spread")
-    ax.axhline(0, color="#666", ls="--", lw=0.9, alpha=0.75)
-
-    ax2 = ax.twinx()
-    ax2.plot(legs.index, legs["dec26"], color=dec26_color, lw=1.8, alpha=0.9, zorder=2, label="Dec-26 implied")
-    ax2.plot(legs.index, legs["dec27"], color=dec27_color, lw=1.8, alpha=0.9, zorder=2, label="Dec-27 implied")
-    ax2.set_ylabel("Implied rate (%)", color="#444")
-    ax2.tick_params(axis="y", labelcolor="#444")
+    fig, ax = plt.subplots(figsize=(14, 8))
+    _plot_spread_and_legs(ax, path, legs, cfg)
 
     for st in stats:
         s = pd.Timestamp(st["start"])
@@ -242,26 +287,21 @@ def make_labeled_chart(spread: pd.Series, stats: list[dict], cfg: dict, rates: p
         )
 
     ax.set_title(f"Dec27−Dec26: three phases · {cfg['label']}")
-    ax.set_ylabel("Spread (bp)", color=cfg["line_color"])
-    ax.tick_params(axis="y", labelcolor=cfg["line_color"])
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d %b"))
     ax.xaxis.set_major_locator(mdates.WeekdayLocator(interval=3))
     fig.autofmt_xdate(rotation=30, ha="right")
-    ymin = min(-20, float(path.min()) - 3)
-    ymax = max(24, float(path.max()) + 3)
-    ax.set_ylim(ymin, ymax)
-    leg_pad = max(0.05, (legs.max().max() - legs.min().min()) * 0.08)
-    ax2.set_ylim(float(legs.min().min()) - leg_pad, float(legs.max().max()) + leg_pad)
-    ax.grid(True, alpha=0.2, zorder=0)
-
-    lines = [spread_line] + ax2.lines
-    labels = [ln.get_label() for ln in lines]
-    ax.legend(lines, labels, loc="upper left", fontsize=8, framealpha=0.92)
-
     fig.tight_layout()
     cfg["chart_labeled"].parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(cfg["chart_labeled"], dpi=160, bbox_inches="tight")
     plt.close(fig)
+
+
+def sync_to_docs(cfg: dict) -> None:
+    docs = ROOT / "docs" / "charts"
+    docs.mkdir(parents=True, exist_ok=True)
+    for src in (cfg["chart_labeled"], cfg["chart_simple"]):
+        if src.exists():
+            (docs / src.name).write_bytes(src.read_bytes())
 
 
 def run(tenor: str) -> None:
@@ -284,8 +324,9 @@ def run(tenor: str) -> None:
         cfg["csv_file"], index=False
     )
     cfg["json_file"].write_text(json.dumps(payload, indent=2), encoding="utf-8")
-    make_simple_chart(spread, cfg)
+    make_simple_chart(spread, cfg, rates)
     make_labeled_chart(spread, stats, cfg, rates)
+    sync_to_docs(cfg)
     print(f"Wrote {cfg['chart_labeled']}")
     print(f"Wrote {cfg['chart_simple']}")
     print(f"Wrote {cfg['json_file']}")
