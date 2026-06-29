@@ -18,7 +18,7 @@ The Dec27−Dec26 calendar spread did not move in one direction after the Iran s
 
 ### Hawk / dov / neutral days
 
-Let **μ** and **σ** be the mean and sample standard deviation of \(\Delta r_{\text{Dec26}}\) (bp) over the full sample from 2 Mar:
+Let **μ** and **σ** be the mean and sample standard deviation of **daily** \(\Delta r_{\text{Dec26}}\) (bp) — i.e. session-on-session changes in the Dec-26 implied rate, not levels or spread — computed over the full sample from 2 Mar:
 
 | Stat | Value |
 |---|---:|

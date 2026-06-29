@@ -120,7 +120,7 @@ def hawk_dov_threshold(d26: pd.Series, start: str, multiplier: float = 1.5) -> d
         "rule": (
             f"Hawk if ΔDec26 > μ + {multiplier}σ = +{hawk_thr:.2f} bp; "
             f"Dov if ΔDec26 < μ − {multiplier}σ = {dov_thr:.2f} bp "
-            f"(μ, σ of ΔDec26 over sample from {start})"
+            f"(μ, σ of daily ΔDec26 over sample from {start})"
         ),
     }
 
