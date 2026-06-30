@@ -320,6 +320,7 @@ header{padding:22px;border:1px solid var(--line);border-radius:16px;background:v
   <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 outright + Jun27−Dec26 flattener · 23 Jun EOD entry</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
   <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2></a>
+  <a class="card" href="sofr_3m_dashboard.html"><h2>3M SOFR curve live</h2></a>
   <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2></a>
 </div></div>
 <script>
