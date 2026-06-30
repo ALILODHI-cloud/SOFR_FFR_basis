@@ -78,6 +78,29 @@ Stable Dev Tunnel URL (same link across restarts, while this machine is on):
 # URL saved to .sonia_1m_devtunnel_url
 ```
 
+### 3M SOFR curve dashboard — permanent link + live refresh
+
+**Permanent URL (static, auto-refreshed weekdays):**  
+https://alilodhi-cloud.github.io/SOFR_FFR_basis/sofr_3m_dashboard.html
+
+Same UX as the 1M SONIA dashboard: frozen latest curve (green), historical time-travel (amber), pin legs, FOMC meeting pricing panel, and daily Δ table across all listed quarterly contracts.
+
+GitHub Actions fetches all CME 3M SOFR (`SQ*`) contracts from Barchart twice on weekdays (~10:00 and ~18:30 London) and redeploys. Trigger manually: **Actions → 3M SOFR curve — fetch, build, deploy → Run workflow**.
+
+**Live server (auto-refresh + FOMC pricing + daily Δ table):**
+```bash
+python3 analyze_sofr_3m.py
+python3 build_sofr_3m_dashboard.py
+./scripts/start_sofr_3m_live.sh    # Dev Tunnel if logged in, else Cloudflare
+```
+
+Stable Dev Tunnel URL (same link across restarts, while this machine is on):
+```bash
+./devtunnel user login -g -d    # one-time
+./scripts/start_sofr_3m_devtunnel.sh
+# URL saved to .sofr_3m_devtunnel_url
+```
+
 ### Live trade tracker
 
 **URL:** https://alilodhi-cloud.github.io/SOFR_FFR_basis/trade_tracker.html

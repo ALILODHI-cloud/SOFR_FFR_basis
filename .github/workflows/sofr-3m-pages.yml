@@ -1,0 +1,70 @@
+name: 3M SOFR curve — fetch, build, deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analyze_sofr_3m.py'
+      - 'analyze_sonia.py'
+      - 'analyze_stir_curves.py'
+      - 'build_sofr_3m_dashboard.py'
+      - 'build_trade_tracker.py'
+      - 'requirements-sonia.txt'
+      - '.github/workflows/sofr-3m-pages.yml'
+  schedule:
+    # Weekdays: ~10:00 London + ~18:30 London (post CME close)
+    - cron: "0 9 * * 1-5"
+    - cron: "30 17 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: sofr-3m-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-sonia.txt
+          playwright install chromium
+
+      - name: Fetch Barchart + rebuild 3M SOFR dashboard
+        run: |
+          python analyze_sofr_3m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
+          python build_sofr_3m_dashboard.py
+          python build_trade_tracker.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Commit refreshed data (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add sofr_3m_data.json sofr_3m_dashboard.html docs/sofr_3m_dashboard.html docs/portal.html portal.html
+          git diff --staged --quiet || git commit -m "Auto-refresh 3M SOFR curve $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push || true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
