@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 11:27 UTC",
+  "generated_utc": "2026-07-01 12:06 UTC",
   "trade": {
     "id": "dec27_dec26_steepener",
     "type": "spread",
@@ -52,7 +52,7 @@
       "implied_rate_pct": 3.915
     },
     "slope_bp": 6.0,
-    "updated_utc": "2026-07-01 11:27 UTC"
+    "updated_utc": "2026-07-01 12:06 UTC"
   },
   "pnl": {
     "slope_bp": 2.5,
