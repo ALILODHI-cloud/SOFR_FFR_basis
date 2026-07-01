@@ -5,38 +5,113 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>Supra · Markets Portal</title>
 <style>
-:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a}
+:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--policy:#4aa8ff;--warn:#ffb84a}
+*{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
-.wrap{max-width:960px;margin:0 auto;padding:20px 16px 64px}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 16px 64px}
 header{padding:22px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:20px}
-.grid{display:grid;gap:14px}@media(min-width:700px){.grid.cols-2{grid-template-columns:1fr 1fr}}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+h1{margin:6px 0;font-size:clamp(22px,4vw,30px)}
+h2{margin:0 0 8px;font-size:16px}
+.sub{color:var(--mut);font-size:13px;line-height:1.5}
+.grid{display:grid;gap:14px}
+@media(min-width:700px){.grid.cols-2{grid-template-columns:1fr 1fr}.grid.cols-4{grid-template-columns:repeat(4,1fr)}}
 .card{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;text-decoration:none;color:inherit}
 .card.featured{border-color:rgba(57,217,138,.35)}
-.pill.live{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--acc);color:var(--acc);margin-top:10px}
+.card.book{border-color:rgba(74,168,255,.35);margin-bottom:4px}
+.pill{display:inline-block;font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--line);color:var(--mut);margin:4px 6px 0 0}
+.pill.live{border-color:var(--acc);color:var(--acc)}
 .good{color:#39d98a}.bad{color:#ff6b6b}
 .loading{color:var(--mut);padding:12px}
+.statgrid{display:grid;gap:10px;margin:14px 0}
+@media(min-width:600px){.statgrid{grid-template-columns:repeat(4,1fr)}}
+.stat{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:12px}
+.stat .k{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em}
+.stat .v{font-size:22px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+.stat .v.sm{font-size:15px}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px}
+.tbl th,.tbl td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.tbl td.num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl th{color:var(--mut);font-weight:600}
+.conv{font-size:11px;color:var(--mut);line-height:1.55;margin-top:10px;padding:10px;background:#1b2536;border-radius:8px;border:1px solid var(--line)}
+.section{margin:20px 0 8px;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
 </style>
 </head>
 <body><div class="wrap">
-<header><h1>Markets portal</h1><p>Live dashboards &amp; trade trackers</p></header>
+<header>
+  <div class="eyebrow">Supra Fund Management</div>
+  <h1>Markets portal</h1>
+  <p class="sub">STIR book simulation · live dashboards · trade trackers</p>
+</header>
+
+<div id="bookSection" class="loading">Loading total book…</div>
+
+<div class="section">Open positions</div>
 <div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 outright + Jun27−Dec26 flattener · 23 Jun EOD entry</p></a>
+  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>All positions · detail pages · daily path</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
+</div>
+
+<div class="section">Curve dashboards</div>
+<div class="grid cols-2">
   <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2></a>
   <a class="card" href="sofr_3m_dashboard.html"><h2>3M SOFR curve live</h2></a>
   <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2></a>
-</div></div>
+</div>
+</div>
 <script>
+function fmtUsd(v){ if(v==null||isNaN(v)) return '—'; const s=v>=0?'+':''; return s+'$'+Math.abs(v).toLocaleString('en-US',{maximumFractionDigits:0}); }
+function fmtPct(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+Number(v).toFixed(2)+'%'; }
+function fmtGbp(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+'£'+Math.abs(v).toLocaleString('en-GB',{maximumFractionDigits:0}); }
+function cls(v){ return v>0.5?'good':v<-0.5?'bad':''; }
+
+fetch('book_summary.json').then(r=>r.json()).then(B=>{
+  const el = document.getElementById('bookSection');
+  const m = B.metrics;
+  const bk = B.book;
+  const c = bk.conventions;
+  let tradeRows = '';
+  B.trades.forEach(t=>{
+    tradeRows += '<tr><td>'+t.label+'</td><td>'+t.direction+'</td><td class="num">'+t.entry_date+'</td>'
+      +'<td class="num">'+t.pnl_bp+' bp</td><td class="num">'+fmtGbp(t.pnl_gbp)+'</td>'
+      +'<td class="num '+cls(t.pnl_usd)+'">'+fmtUsd(t.pnl_usd)+'</td>'
+      +'<td class="num">'+fmtPct(t.return_on_nav_pct)+'</td></tr>';
+  });
+  el.className = 'card book';
+  el.innerHTML = '<div class="eyebrow">Total book · simulated</div>'
+    +'<h2 style="margin-top:8px">'+bk.label+'</h2>'
+    +'<p class="sub">Starting NAV <strong>$'+bk.starting_nav_usd.toLocaleString()+'</strong> · '
+    +bk.contracts_per_leg+' ICE 1M SONIA contracts/leg (£'+(bk.face_value_gbp_per_leg/1e6).toFixed(1)+'M face) · '
+    +'£'+bk.gbp_per_bp+'/bp · FX '+bk.gbp_usd+' · as of '+m.as_of+'</p>'
+  +'<div class="statgrid">'
+    +'<div class="stat"><div class="k">NAV</div><div class="v">$'+m.nav_usd.toLocaleString('en-US',{maximumFractionDigits:0})+'</div></div>'
+    +'<div class="stat"><div class="k">Total P&amp;L</div><div class="v '+cls(m.total_pnl_usd)+'">'+fmtUsd(m.total_pnl_usd)+'</div></div>'
+    +'<div class="stat"><div class="k">MTD return</div><div class="v '+cls(m.mtd_return_pct)+'">'+fmtPct(m.mtd_return_pct)+'</div><div class="k" style="margin-top:4px">'+fmtUsd(m.mtd_pnl_usd)+'</div></div>'
+    +'<div class="stat"><div class="k">YTD return</div><div class="v '+cls(m.ytd_return_pct)+'">'+fmtPct(m.ytd_return_pct)+'</div><div class="k" style="margin-top:4px">'+fmtUsd(m.ytd_pnl_usd)+'</div></div>'
+    +'<div class="stat"><div class="k">30d ann. vol</div><div class="v sm">'+(m.vol_ann_30d_pct!=null?m.vol_ann_30d_pct.toFixed(1)+'%':'—')+'</div></div>'
+    +'<div class="stat"><div class="k">30d Sharpe</div><div class="v sm">'+(m.sharpe_ann_30d!=null?m.sharpe_ann_30d.toFixed(2):'—')+'</div></div>'
+    +'<div class="stat"><div class="k">Max drawdown</div><div class="v sm bad">'+fmtUsd(m.max_drawdown_usd)+'</div></div>'
+    +'<div class="stat"><div class="k">Margin (assumed)</div><div class="v sm">$'+bk.total_margin_assumed_usd.toLocaleString()+'</div><div class="k" style="margin-top:4px">'+bk.margin_utilisation_pct+'% of NAV</div></div>'
+  +'</div>'
+  +'<table class="tbl"><thead><tr><th>Trade</th><th>Dir</th><th>Entry</th><th>Δ</th><th>P&amp;L £</th><th>P&amp;L $</th><th>% NAV</th></tr></thead><tbody>'+tradeRows+'</tbody></table>'
+  +'<div class="conv"><strong>Conventions.</strong> '+c.product+' · '+c.quote+' · '
+    +'£'+c.bp_value_gbp_per_pair_per_contract+'/bp per contract per 1:1 pair → <strong>£'+bk.gbp_per_bp+'/bp</strong> at book size. '
+    +c.bp_formula+' Tick '+c.tick_size_price+' (= £'+c.tick_value_gbp_per_contract+'/contract). '
+    +c.margin_note+'<br><br><strong>P&amp;L bridge:</strong> '+B.pnl_bridge.note+'</div>'
+  +'<p class="sub" style="margin-top:10px">Updated '+B.generated_utc+' · Not investment advice.</p>';
+}).catch(()=>{
+  document.getElementById('bookSection').textContent = 'Book summary unavailable — run analyze_spread_trades.py';
+});
+
 fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
   const el = document.getElementById('tradeCards');
   el.className = '';
   el.innerHTML = '';
   INDEX.trades.forEach(t=>{
     const pnlCls = t.pnl_gbp > 0.5 ? 'good' : t.pnl_gbp < -0.5 ? 'bad' : '';
-    const sign = t.pnl_gbp >= 0 ? '+' : '';
     el.innerHTML += '<a class="card featured" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
       + '<span class="pill live">● '+t.direction+'</span>'
-      + '<span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="'+pnlCls+'">'+sign+'£'+Math.abs(t.pnl_gbp).toLocaleString('en-GB',{maximumFractionDigits:0})+'</span></span></a>';
+      + '<span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="'+pnlCls+'">'+(t.pnl_gbp>=0?'+':'')+'£'+Math.abs(t.pnl_gbp).toLocaleString('en-GB',{maximumFractionDigits:0})+'</span></span></a>';
   });
 }).catch(()=>{
   document.getElementById('tradeCards').textContent = 'Trade data unavailable';

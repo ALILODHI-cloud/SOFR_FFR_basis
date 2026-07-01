@@ -536,6 +536,14 @@ def analyze_trade(cfg_path: Path) -> dict:
 def index_row(payload: dict) -> dict:
     t = payload["trade"]
     levels = payload.get("levels") or {}
+    pnl_gbp = float(payload["pnl"]["gbp"])
+    pnl_bp = float(payload["pnl"]["slope_bp"])
+    if (ROOT / "book.json").is_file():
+        from analyze_book import book_gbp_per_bp, load_book
+
+        book = load_book()
+        scale = book_gbp_per_bp(book) / float(t.get("gbp_per_bp", 12.5))
+        pnl_gbp = round(pnl_gbp * scale, 2)
     row = {
         "id": t["id"],
         "type": t.get("type", "spread"),
@@ -546,8 +554,8 @@ def index_row(payload: dict) -> dict:
         "entry_locked": t["entry_locked"],
         "detail_page": t["detail_page"],
         "data_file": f"{t['id']}_trade_data.json",
-        "pnl_gbp": payload["pnl"]["gbp"],
-        "pnl_slope_bp": payload["pnl"]["slope_bp"],
+        "pnl_gbp": pnl_gbp,
+        "pnl_slope_bp": pnl_bp,
     }
     if t.get("type") == "outright":
         row["entry_rate_pct"] = levels.get("entry_rate_pct", payload["entry"].get("rate_pct"))
@@ -572,8 +580,10 @@ def main() -> None:
         raise SystemExit(f"No trade configs in {TRADES_DIR}")
 
     index = {"generated_utc": utc_now(), "trades": []}
+    payloads: list[dict] = []
     for cfg_path in configs:
         payload = analyze_trade(cfg_path)
+        payloads.append(payload)
         out = ROOT / f"{payload['trade']['id']}_trade_data.json"
         out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
         t = payload["trade"]
@@ -592,6 +602,17 @@ def main() -> None:
     index_path = ROOT / "trades_index.json"
     index_path.write_text(json.dumps(index, indent=2), encoding="utf-8")
     print(f"Wrote {index_path} ({len(index['trades'])} trades)")
+
+    if (ROOT / "book.json").is_file():
+        from analyze_book import build_book_summary
+
+        summary = build_book_summary(payloads)
+        (ROOT / "book_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        m = summary["metrics"]
+        print(
+            f"  Book NAV ${m['nav_usd']:,.0f} · MTD {m['mtd_return_pct']:+.2f}% · "
+            f"YTD {m['ytd_return_pct']:+.2f}% · 30d vol {m['vol_ann_30d_pct']}%"
+        )
 
     from build_trade_tracker import sync_trade_json_to_docs
 

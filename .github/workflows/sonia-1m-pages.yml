@@ -61,7 +61,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json trades_index.json *_trade_data.json trades/*.json
+          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json docs/book_summary.json docs/book.json book.json book_summary.json trades_index.json *_trade_data.json trades/*.json analyze_book.py build_trade_tracker.py portal.html docs/portal.html trade_tracker.html docs/trade_tracker.html trade_*.html docs/trade_*.html
           git diff --staged --quiet || git commit -m "Auto-refresh SONIA + trade marks $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 

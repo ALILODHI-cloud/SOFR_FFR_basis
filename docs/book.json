@@ -1,0 +1,23 @@
+{
+  "book_id": "supra_stir",
+  "label": "Supra STIR Book",
+  "starting_nav_usd": 1000000,
+  "book_start_date": "2026-01-01",
+  "gbp_usd": 1.274,
+  "gbp_usd_as_of": "2026-06-30",
+  "contracts_per_leg": 2,
+  "face_value_gbp_per_contract": 500000,
+  "margin_rate_gross": 0.004,
+  "risk_free_pct": 3.5,
+  "conventions": {
+    "product": "ICE 1M SONIA (JU*)",
+    "exchange": "ICE",
+    "quote": "price = 100 − implied rate (%)",
+    "tick_size_price": 0.005,
+    "tick_value_gbp_per_contract": 6.25,
+    "bp_value_gbp_per_pair_per_contract": 12.5,
+    "bp_formula": "£500,000 × 1bp × (days/360) ≈ £12.50 per bp per 1:1 calendar pair",
+    "day_count": "ACT/360",
+    "margin_note": "Initial margin assumed at 0.40% of gross notional (both legs) — illustrative ICE clearing level; exchange minimums vary."
+  }
+}
