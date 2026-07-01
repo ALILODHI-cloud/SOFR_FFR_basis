@@ -87,7 +87,7 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 <div class="navtop">
   <a href="portal.html"><strong>Markets portal</strong></a>
   <span style="color:var(--mut)">·</span>
-  <a href="trade_tracker.html">$1M STIR book &amp; live trades</a>
+  <a href="trade_tracker.html">Live trade tracker</a>
   <span style="color:var(--mut)">·</span>
   <a href="sonia_1m_dashboard.html">1M SONIA curve</a>
 </div>

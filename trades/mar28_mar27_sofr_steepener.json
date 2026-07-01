@@ -28,21 +28,29 @@
   "live_proxy": {
     "enabled": false
   },
-  "levels": {},
+  "levels": {
+    "entry_slope_bp": -23.5
+  },
   "entry": {
     "date": "2026-07-01",
     "label": "1 Jul 2026 EOD close",
+    "fed_funds_mid_pct": 3.625,
+    "fed_funds_as_of": "2026-06-29",
     "short": {
       "symbol": "SQH28",
+      "label": "Mar-28",
       "date": "2026-07-01",
       "price": 96.11,
-      "implied_rate_pct": 3.89
+      "implied_rate_pct": 3.89,
+      "vs_fed_bp": 26.5
     },
     "long": {
       "symbol": "SQH27",
+      "label": "Mar-27",
       "date": "2026-07-01",
       "price": 95.875,
-      "implied_rate_pct": 4.125
+      "implied_rate_pct": 4.125,
+      "vs_fed_bp": 50.0
     },
     "slope_bp": -23.5,
     "captured_utc": "2026-07-01 12:31 UTC",
