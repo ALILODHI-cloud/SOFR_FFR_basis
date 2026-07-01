@@ -383,11 +383,42 @@ function cls(v){ return v>0.5?'good':v<-0.5?'bad':''; }
 
 const BOOK_FALLBACK = __BOOK_FALLBACK__;
 
+function bookMetaLine(bk, m, B){
+  let line = 'Starting NAV <strong>$'+bk.starting_nav_usd.toLocaleString()+'</strong>';
+  const hasGbp = (B.trades||[]).some(t=>t.currency!=='USD');
+  const hasUsd = (B.trades||[]).some(t=>t.currency==='USD');
+  if (hasGbp && bk.contracts_per_leg && bk.face_value_gbp_per_leg) {
+    line += ' · '+bk.contracts_per_leg+' ICE 1M SONIA contracts/leg (£'+(bk.face_value_gbp_per_leg/1e6).toFixed(1)+'M face) · £'+bk.gbp_per_bp+'/bp';
+  }
+  if (hasUsd) {
+    const usd = (B.trades||[]).find(t=>t.currency==='USD');
+    if (usd && usd.position_size) line += ' · '+usd.position_size.split(' · ').slice(0,3).join(' · ');
+  }
+  if (bk.gbp_usd) line += ' · FX '+bk.gbp_usd;
+  return line+' · as of '+m.as_of;
+}
+
+function conventionsBlock(bk, B){
+  const c = bk.conventions;
+  if (!c) return '<strong>P&amp;L bridge:</strong> '+(B.pnl_bridge&&B.pnl_bridge.note?B.pnl_bridge.note:'Mixed STIR book.');
+  let html = '<strong>Conventions.</strong> '+c.product+' · '+c.quote;
+  if (c.bp_value_gbp_per_pair_per_contract && bk.gbp_per_bp) {
+    html += ' · £'+c.bp_value_gbp_per_pair_per_contract+'/bp per contract per 1:1 pair → <strong>£'+bk.gbp_per_bp+'/bp</strong> at SONIA book size';
+  }
+  if (c.bp_formula) html += '. '+c.bp_formula;
+  if (c.tick_size_price && c.tick_value_gbp_per_contract) {
+    html += ' Tick '+c.tick_size_price+' (= £'+c.tick_value_gbp_per_contract+'/contract).';
+  }
+  if (c.margin_note) html += ' '+c.margin_note;
+  if (B.pnl_bridge && B.pnl_bridge.note) html += '<br><br><strong>P&amp;L bridge:</strong> '+B.pnl_bridge.note;
+  return html;
+}
+
 function renderBook(B){
   const el = document.getElementById('bookSection');
+  if (!B || !B.metrics || !B.book || !B.trades) throw new Error('Invalid book summary payload');
   const m = B.metrics;
   const bk = B.book;
-  const c = bk.conventions;
   const marginUsd = bk.total_margin_ice_usd != null ? bk.total_margin_ice_usd : bk.total_margin_assumed_usd;
   let tradeRows = '';
   B.trades.forEach(t=>{
@@ -400,9 +431,7 @@ function renderBook(B){
   el.className = 'card book';
   el.innerHTML = '<div class="eyebrow">Total book · simulated</div>'
     +'<h2 style="margin-top:8px">'+bk.label+'</h2>'
-    +'<p class="sub">Starting NAV <strong>$'+bk.starting_nav_usd.toLocaleString()+'</strong> · '
-    +bk.contracts_per_leg+' ICE 1M SONIA contracts/leg (£'+(bk.face_value_gbp_per_leg/1e6).toFixed(1)+'M face) · '
-    +'£'+bk.gbp_per_bp+'/bp · FX '+bk.gbp_usd+' · as of '+m.as_of+'</p>'
+    +'<p class="sub">'+bookMetaLine(bk, m, B)+'</p>'
   +'<div class="statgrid">'
     +'<div class="stat"><div class="k">NAV</div><div class="v">$'+m.nav_usd.toLocaleString('en-US',{maximumFractionDigits:0})+'</div></div>'
     +'<div class="stat"><div class="k">Total P&amp;L</div><div class="v '+cls(m.total_pnl_usd)+'">'+fmtUsd(m.total_pnl_usd)+'</div></div>'
@@ -411,27 +440,42 @@ function renderBook(B){
     +'<div class="stat"><div class="k">30d ann. vol</div><div class="v sm">'+(m.vol_ann_30d_pct!=null?m.vol_ann_30d_pct.toFixed(1)+'%':'—')+'</div></div>'
     +'<div class="stat"><div class="k">30d Sharpe</div><div class="v sm">'+(m.sharpe_ann_30d!=null?m.sharpe_ann_30d.toFixed(2):'—')+'</div></div>'
     +'<div class="stat"><div class="k">Max drawdown</div><div class="v sm bad">'+fmtUsd(m.max_drawdown_usd)+'</div></div>'
-    +'<div class="stat"><div class="k">ICE indicative IM</div><div class="v sm">$'+(marginUsd||0).toLocaleString()+'</div><div class="k" style="margin-top:4px">'+bk.margin_utilisation_pct+'% of NAV</div></div>'
+    +'<div class="stat"><div class="k">ICE indicative IM</div><div class="v sm">$'+(marginUsd||0).toLocaleString()+'</div><div class="k" style="margin-top:4px">'+(bk.margin_utilisation_pct!=null?bk.margin_utilisation_pct+'% of NAV':'SONIA legs only')+'</div></div>'
   +'</div>'
   +'<table class="tbl"><thead><tr><th>Trade</th><th>Size</th><th>Dir</th><th>Entry</th><th>Δ</th><th>P&amp;L</th><th>P&amp;L $</th><th>% NAV</th></tr></thead><tbody>'+tradeRows+'</tbody></table>'
-  +'<div class="conv"><strong>Conventions.</strong> '+c.product+' · '+c.quote+' · '
-    +'£'+c.bp_value_gbp_per_pair_per_contract+'/bp per contract per 1:1 pair → <strong>£'+bk.gbp_per_bp+'/bp</strong> at book size. '
-    +c.bp_formula+' Tick '+c.tick_size_price+' (= £'+c.tick_value_gbp_per_contract+'/contract). '
-    +c.margin_note+'<br><br><strong>P&amp;L bridge:</strong> '+B.pnl_bridge.note+'</div>'
+  +'<div class="conv">'+conventionsBlock(bk, B)+'</div>'
   +'<p class="sub" style="margin-top:10px">Updated '+B.generated_utc+' · Not investment advice.</p>';
 }
 
-fetch('book_summary.json').then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.json(); }).then(renderBook).catch(()=>{
-  if (BOOK_FALLBACK) renderBook(BOOK_FALLBACK);
-  else document.getElementById('bookSection').textContent = 'Book summary unavailable — run analyze_spread_trades.py';
+function showBookError(msg){
+  const el = document.getElementById('bookSection');
+  el.className = 'loading';
+  el.textContent = msg;
+}
+
+function safeRenderBook(B){
+  try { renderBook(B); return true; }
+  catch (err) { console.error('renderBook failed', err); return false; }
+}
+
+if (BOOK_FALLBACK) safeRenderBook(BOOK_FALLBACK);
+
+fetch('book_summary.json').then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.json(); }).then(B=>{
+  if (!safeRenderBook(B) && BOOK_FALLBACK) safeRenderBook(BOOK_FALLBACK);
+}).catch(err=>{
+  console.warn('book_summary.json fetch failed', err);
+  if (!BOOK_FALLBACK || !safeRenderBook(BOOK_FALLBACK)) {
+    showBookError('Book summary unavailable — run analyze_spread_trades.py then build_trade_tracker.py');
+  }
 });
 
-fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
+fetch('trades_index.json').then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.json(); }).then(INDEX=>{
   const el = document.getElementById('tradeCards');
   el.className = '';
   el.innerHTML = '';
   INDEX.trades.forEach(t=>{
-    const pnlCls = t.pnl_gbp > 0.5 ? 'good' : t.pnl_gbp < -0.5 ? 'bad' : '';
+    const pnlVal = t.pnl_usd != null ? t.pnl_usd : t.pnl_gbp;
+    const pnlCls = pnlVal > 0.5 ? 'good' : pnlVal < -0.5 ? 'bad' : '';
     const pnlDisp = t.pnl_usd != null ? ((t.pnl_usd>=0?'+':'')+'$'+Math.abs(t.pnl_usd).toLocaleString('en-US',{maximumFractionDigits:0})) : ((t.pnl_gbp>=0?'+':'')+'£'+Math.abs(t.pnl_gbp).toLocaleString('en-GB',{maximumFractionDigits:0}));
     el.innerHTML += '<a class="card featured" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
       + (t.position_size ? '<p style="font-size:12px;color:var(--mut);margin:0 0 8px">'+t.position_size+'</p>' : '')
@@ -455,9 +499,11 @@ def trade_configs() -> list[dict]:
 
 def build_portal_html() -> str:
     book_path = ROOT / "book_summary.json"
-    fallback = "null"
-    if book_path.exists():
-        fallback = json.dumps(json.loads(book_path.read_text(encoding="utf-8")))
+    if not book_path.exists():
+        raise FileNotFoundError(
+            "book_summary.json missing — run analyze_spread_trades.py before build_trade_tracker.py"
+        )
+    fallback = json.dumps(json.loads(book_path.read_text(encoding="utf-8")))
     return PORTAL_HTML.replace("__BOOK_FALLBACK__", fallback)
 
 

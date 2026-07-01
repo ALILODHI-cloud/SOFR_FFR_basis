@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:32 UTC",
+  "generated_utc": "2026-07-01 12:36 UTC",
   "trades": [
     {
       "id": "dec27_dec26_steepener",
@@ -92,14 +92,14 @@
       "detail_page": "trade_mar28_mar27_sofr.html",
       "data_file": "mar28_mar27_sofr_steepener_trade_data.json",
       "pnl_gbp": null,
-      "pnl_usd": 25.0,
-      "pnl_slope_bp": 0.5,
+      "pnl_usd": 0.0,
+      "pnl_slope_bp": 0.0,
       "contracts_per_leg": 2,
       "gross_notional_gbp": 4000000.0,
       "gbp_per_bp": 50.0,
       "position_size": "2 lots/leg \u00b7 $2.0M face/leg \u00b7 $4.0M gross \u00b7 $50/bp",
       "entry_slope_bp": -23.5,
-      "mark_slope_bp": -23.0,
+      "mark_slope_bp": -23.5,
       "stop_slope_bp": null,
       "take_profit_slope_bp": null,
       "entry_rate_pct": null,
