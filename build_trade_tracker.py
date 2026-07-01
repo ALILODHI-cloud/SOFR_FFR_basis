@@ -103,6 +103,7 @@ function render(D){
   document.getElementById('subtitle').textContent = D.trade.position + ' · Entry ' + D.entry.label + ' · Mark ' + D.mark.date;
   const pills = document.getElementById('pills');
   pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span><span class="pill">Bank '+D.bank_rate_pct+'%</span>'
+    + (D.book_size ? '<span class="pill">'+D.book_size.position_size+'</span>' : '')
     + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
     + '<span class="pill">Updated '+D.generated_utc+'</span>';
 
@@ -293,6 +294,7 @@ fetch('trades_index.json').then(r=>{
       ? '<div class="row"><span>Mark</span><span>'+fmtPct(t.mark_rate_pct)+'</span></div>'
       : '<div class="row"><span>Mark spread</span><span>'+fmtBp(t.mark_slope_bp)+'</span></div>';
     grid.innerHTML += '<a class="card" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
+      + (t.position_size ? '<p style="font-size:12px;color:var(--mut);margin:0 0 8px">'+t.position_size+'</p>' : '')
       + '<span class="pill">'+t.direction+'</span>'
       + entryRow + markRow
       + '<div class="row"><span>P&amp;L</span><span class="'+cls(t.pnl_gbp)+'">'+fmtGbp(t.pnl_gbp)+'</span></div></a>';
@@ -383,7 +385,7 @@ function renderBook(B){
   const marginUsd = bk.total_margin_ice_usd != null ? bk.total_margin_ice_usd : bk.total_margin_assumed_usd;
   let tradeRows = '';
   B.trades.forEach(t=>{
-    tradeRows += '<tr><td>'+t.label+'</td><td>'+t.direction+'</td><td class="num">'+t.entry_date+'</td>'
+    tradeRows += '<tr><td>'+t.label+'</td><td class="num" style="font-size:11px;color:var(--mut)">'+(t.position_size||'—')+'</td><td>'+t.direction+'</td><td class="num">'+t.entry_date+'</td>'
       +'<td class="num">'+t.pnl_bp+' bp</td><td class="num">'+fmtGbp(t.pnl_gbp)+'</td>'
       +'<td class="num '+cls(t.pnl_usd)+'">'+fmtUsd(t.pnl_usd)+'</td>'
       +'<td class="num">'+fmtPct(t.return_on_nav_pct)+'</td></tr>';
@@ -404,7 +406,7 @@ function renderBook(B){
     +'<div class="stat"><div class="k">Max drawdown</div><div class="v sm bad">'+fmtUsd(m.max_drawdown_usd)+'</div></div>'
     +'<div class="stat"><div class="k">ICE indicative IM</div><div class="v sm">$'+(marginUsd||0).toLocaleString()+'</div><div class="k" style="margin-top:4px">'+bk.margin_utilisation_pct+'% of NAV</div></div>'
   +'</div>'
-  +'<table class="tbl"><thead><tr><th>Trade</th><th>Dir</th><th>Entry</th><th>Δ</th><th>P&amp;L £</th><th>P&amp;L $</th><th>% NAV</th></tr></thead><tbody>'+tradeRows+'</tbody></table>'
+  +'<table class="tbl"><thead><tr><th>Trade</th><th>Size</th><th>Dir</th><th>Entry</th><th>Δ</th><th>P&amp;L £</th><th>P&amp;L $</th><th>% NAV</th></tr></thead><tbody>'+tradeRows+'</tbody></table>'
   +'<div class="conv"><strong>Conventions.</strong> '+c.product+' · '+c.quote+' · '
     +'£'+c.bp_value_gbp_per_pair_per_contract+'/bp per contract per 1:1 pair → <strong>£'+bk.gbp_per_bp+'/bp</strong> at book size. '
     +c.bp_formula+' Tick '+c.tick_size_price+' (= £'+c.tick_value_gbp_per_contract+'/contract). '
@@ -424,6 +426,7 @@ fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
   INDEX.trades.forEach(t=>{
     const pnlCls = t.pnl_gbp > 0.5 ? 'good' : t.pnl_gbp < -0.5 ? 'bad' : '';
     el.innerHTML += '<a class="card featured" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
+      + (t.position_size ? '<p style="font-size:12px;color:var(--mut);margin:0 0 8px">'+t.position_size+'</p>' : '')
       + '<span class="pill live">● '+t.direction+'</span>'
       + '<span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="'+pnlCls+'">'+(t.pnl_gbp>=0?'+':'')+'£'+Math.abs(t.pnl_gbp).toLocaleString('en-GB',{maximumFractionDigits:0})+'</span></span></a>';
   });

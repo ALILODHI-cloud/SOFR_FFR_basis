@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:19 UTC",
+  "generated_utc": "2026-07-01 12:22 UTC",
   "trade": {
     "id": "dec27_dec26_steepener",
     "type": "spread",
@@ -54,7 +54,7 @@
       "implied_rate_pct": 3.915
     },
     "slope_bp": 6.0,
-    "updated_utc": "2026-07-01 12:19 UTC"
+    "updated_utc": "2026-07-01 12:22 UTC"
   },
   "pnl": {
     "slope_bp": 2.5,
@@ -278,5 +278,13 @@
     "mark_slope_bp": 6.5,
     "pnl_bp": 3.0,
     "pnl_gbp": 37.5
+  },
+  "book_size": {
+    "contracts_per_leg": 2,
+    "face_value_gbp_per_leg": 1000000.0,
+    "face_value_gbp_per_contract": 500000.0,
+    "gross_notional_gbp": 2000000.0,
+    "gbp_per_bp": 25.0,
+    "position_size": "2 lots/leg \u00b7 \u00a31.0M face/leg \u00b7 \u00a32.0M gross \u00b7 \u00a325/bp"
   }
 }

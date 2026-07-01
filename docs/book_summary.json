@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:19 UTC",
+  "generated_utc": "2026-07-01 12:22 UTC",
   "book": {
     "id": "supra_stir",
     "label": "Supra STIR Book",
@@ -60,6 +60,7 @@
       "contracts_per_leg": 2,
       "face_value_gbp_per_leg": 1000000.0,
       "gross_notional_gbp": 2000000.0,
+      "position_size": "2 lots/leg \u00b7 \u00a31.0M face/leg \u00b7 \u00a32.0M gross \u00b7 \u00a325/bp",
       "margin_ice_gbp": 24144.0,
       "margin_ice_usd": 30759.0,
       "margin_method": "ice_outright_legs",
@@ -87,6 +88,7 @@
       "contracts_per_leg": 2,
       "face_value_gbp_per_leg": 1000000.0,
       "gross_notional_gbp": 2000000.0,
+      "position_size": "2 lots/leg \u00b7 \u00a31.0M face/leg \u00b7 \u00a32.0M gross \u00b7 \u00a325/bp",
       "margin_ice_gbp": 27170.0,
       "margin_ice_usd": 34615.0,
       "margin_method": "ice_outright_legs",
@@ -114,6 +116,7 @@
       "contracts_per_leg": 2,
       "face_value_gbp_per_leg": 1000000.0,
       "gross_notional_gbp": 1000000.0,
+      "position_size": "2 lots \u00b7 \u00a31.0M face \u00b7 \u00a325/bp",
       "margin_ice_gbp": 9282.0,
       "margin_ice_usd": 11825.0,
       "margin_method": "ice_outright_long",

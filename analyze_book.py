@@ -39,6 +39,41 @@ def book_face_gbp(book: dict) -> float:
     return float(book["face_value_gbp_per_contract"]) * int(book["contracts_per_leg"])
 
 
+def format_position_size(
+    trade_type: str,
+    contracts_per_leg: int,
+    face_per_leg: float,
+    gbp_per_bp: float,
+) -> str:
+    """Human-readable book sizing for UI."""
+    face_m = face_per_leg / 1e6
+    if trade_type == "outright":
+        return f"{contracts_per_leg} lots · £{face_m:.1f}M face · £{gbp_per_bp:g}/bp"
+    gross_m = 2 * face_per_leg / 1e6
+    return (
+        f"{contracts_per_leg} lots/leg · £{face_m:.1f}M face/leg · "
+        f"£{gross_m:.1f}M gross · £{gbp_per_bp:g}/bp"
+    )
+
+
+def book_size_for_trade(trade: dict, book: dict | None = None) -> dict:
+    """Book-scaled sizing metadata for a trade (does not rescale marks/P&L path)."""
+    book = book or load_book()
+    contracts = int(book["contracts_per_leg"])
+    face = book_face_gbp(book)
+    gbp = book_gbp_per_bp(book)
+    trade_type = trade.get("type", "spread")
+    gross = face if trade_type == "outright" else 2 * face
+    return {
+        "contracts_per_leg": contracts,
+        "face_value_gbp_per_leg": face,
+        "face_value_gbp_per_contract": float(book["face_value_gbp_per_contract"]),
+        "gross_notional_gbp": gross,
+        "gbp_per_bp": gbp,
+        "position_size": format_position_size(trade_type, contracts, face, gbp),
+    }
+
+
 def _trade_margin_gbp(trade: dict, contracts_per_leg: int, margins: dict) -> tuple[float, str]:
     """ICE indicative IM for one open trade at book sizing."""
     if trade.get("type") == "outright":
@@ -129,6 +164,12 @@ def trade_breakdown(payload: dict, book: dict, margins: dict) -> dict:
         "contracts_per_leg": int(book["contracts_per_leg"]),
         "face_value_gbp_per_leg": face,
         "gross_notional_gbp": gross_gbp,
+        "position_size": format_position_size(
+            t.get("type", "spread"),
+            int(book["contracts_per_leg"]),
+            face,
+            gbp,
+        ),
         "margin_ice_gbp": round(margin_gbp, 0),
         "margin_ice_usd": round(margin_usd, 0),
         "margin_method": margin_method,
