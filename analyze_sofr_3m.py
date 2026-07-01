@@ -14,14 +14,14 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
 
-from analyze_sonia import price_to_rate
+from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import _parse_barchart_hist, fetch_barchart_batch, symbol_to_meta
 
-FED_FUNDS_PCT = 4.125
-FED_FUNDS_AS_OF = "2026-06-18"
+import requests
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/SQ*0/futures-prices"
 PREFIX = "SQ"
+NYFED_LATEST_URL = "https://markets.newyorkfed.org/api/rates/all/latest.json"
 
 # FOMC decision dates (Wednesday announcements).
 FOMC_MEETINGS = [
@@ -49,6 +49,41 @@ FOMC_PRICING_NOTE = (
     "rate proxy. Probabilities assume 25bp steps (FedWatch-style). Standard 3M futures can "
     "span multiple meetings — use CME FedWatch or OIS for precise per-meeting pricing."
 )
+
+
+def fetch_fed_funds_midpoint(fallback_path: Path | None = None) -> dict:
+    """Current FOMC target range midpoint from NY Fed EFFR (targetRateFrom/To)."""
+    try:
+        r = requests.get(NYFED_LATEST_URL, timeout=60, headers=UA)
+        r.raise_for_status()
+        for row in r.json().get("refRates", []):
+            if row.get("type") != "EFFR":
+                continue
+            lo = float(row["targetRateFrom"])
+            hi = float(row["targetRateTo"])
+            mid = round((lo + hi) / 2, 4)
+            as_of = str(row["effectiveDate"])
+            print(f"Fed funds target {lo:.2f}–{hi:.2f}% → midpoint {mid:.3f}% (as of {as_of})")
+            return {
+                "fed_funds_pct": mid,
+                "fed_funds_as_of": as_of,
+                "fed_funds_target_low_pct": lo,
+                "fed_funds_target_high_pct": hi,
+                "fed_funds_source": "NY Fed EFFR target range midpoint",
+            }
+        raise ValueError("EFFR row not found in NY Fed response")
+    except Exception as exc:
+        if fallback_path and fallback_path.is_file():
+            prev = json.loads(fallback_path.read_text(encoding="utf-8"))
+            print(f"WARN: Fed funds fetch failed ({exc}); using committed snapshot")
+            return {
+                "fed_funds_pct": prev["fed_funds_pct"],
+                "fed_funds_as_of": prev.get("fed_funds_as_of"),
+                "fed_funds_target_low_pct": prev.get("fed_funds_target_low_pct"),
+                "fed_funds_target_high_pct": prev.get("fed_funds_target_high_pct"),
+                "fed_funds_source": prev.get("fed_funds_source", "committed snapshot"),
+            }
+        raise RuntimeError(f"Could not fetch fed funds midpoint: {exc}") from exc
 
 
 def meta(symbol: str) -> dict | None:
@@ -239,6 +274,10 @@ def _compute_curve_evolution(
 
 
 def build_payload() -> dict:
+    out_path = ROOT / "sofr_3m_data.json"
+    fed = fetch_fed_funds_midpoint(out_path)
+    fed_mid = fed["fed_funds_pct"]
+
     symbols = discover_sq_chain()
     print(f"Fetching EOD for {len(symbols)} contracts…")
     batch = fetch_barchart_batch(symbols)
@@ -258,7 +297,7 @@ def build_payload() -> dict:
         key = m["key"]
         series[key] = rates
         implied = float(rates.iloc[-1])
-        vs_fed_bp = (implied - FED_FUNDS_PCT) * 100.0
+        vs_fed_bp = (implied - fed_mid) * 100.0
         contracts.append({
             **m,
             "latest_date": str(rates.index[-1].date()),
@@ -267,7 +306,7 @@ def build_payload() -> dict:
             "vs_fed_bp": round(vs_fed_bp, 1),
             "vs_fed_hikes_25bp": round(vs_fed_bp / 25.0, 2),
         })
-        print(f"  {sym} {m['label']}: {implied:.3f}% ({vs_fed_bp:+.1f} bp vs {FED_FUNDS_PCT}%)")
+        print(f"  {sym} {m['label']}: {implied:.3f}% ({vs_fed_bp:+.1f} bp vs {fed_mid}%)")
 
     if not contracts:
         raise RuntimeError("No 3M SOFR contracts fetched")
@@ -282,15 +321,14 @@ def build_payload() -> dict:
                 rec[col] = round(float(v), 4)
         records.append(rec)
 
-    evolution = _compute_curve_evolution(wide, contracts, FED_FUNDS_PCT)
+    evolution = _compute_curve_evolution(wide, contracts, fed_mid)
 
     return {
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
         "source": "Barchart EOD settles",
         "contract": "CME 3M SOFR (SQ*)",
         "quote_convention": "price = 100 − implied rate (%)",
-        "fed_funds_pct": FED_FUNDS_PCT,
-        "fed_funds_as_of": FED_FUNDS_AS_OF,
+        **fed,
         "n_contracts": len(contracts),
         "contracts": contracts,
         "timeseries": {
@@ -303,7 +341,7 @@ def build_payload() -> dict:
         },
         "curve_evolution": evolution,
         "fomc_meeting_pricing": compute_fomc_meeting_pricing(
-            contracts, FED_FUNDS_PCT, FED_FUNDS_AS_OF
+            contracts, fed_mid, fed["fed_funds_as_of"]
         ),
     }
 
