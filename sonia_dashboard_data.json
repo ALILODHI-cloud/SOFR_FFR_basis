@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 11:55 UTC",
+  "generated_utc": "2026-07-01 12:25 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -97,11 +97,12 @@
       "pnl_slope_bp": 2.5,
       "pnl_gbp_per_pair": 31.25,
       "return_gross_pct": 0.0031,
-      "return_margin_pct": 0.78,
-      "margin_assumed_gbp": 4000.0,
-      "cagr_margin_pct": 12.0,
-      "vol_ann_margin_pct": 15.8,
-      "sharpe_ann": 0.51,
+      "return_margin_pct": 0.26,
+      "margin_ice_gbp": 12072.0,
+      "margin_method": "ice_outright_legs",
+      "cagr_margin_pct": 3.8,
+      "vol_ann_margin_pct": 5.2,
+      "sharpe_ann": 0.06,
       "risk_free_pct": 3.5000000000000004,
       "max_drawdown_gbp": -143.75,
       "legs": {
