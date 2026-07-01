@@ -3,3 +3,4 @@ numpy
 requests
 playwright
 matplotlib
+pypdf

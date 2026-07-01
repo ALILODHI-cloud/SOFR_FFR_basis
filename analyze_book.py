@@ -14,6 +14,13 @@ BOOK_FILE = ROOT / "book.json"
 ANN_FACTOR = np.sqrt(252)
 ROLL_VOL = 30
 
+from ice_sonia_margin import (
+    load_margins,
+    margin_note,
+    margin_outright_long_gbp,
+    margin_spread_gbp,
+)
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -32,10 +39,35 @@ def book_face_gbp(book: dict) -> float:
     return float(book["face_value_gbp_per_contract"]) * int(book["contracts_per_leg"])
 
 
-def book_margin_gbp(book: dict, n_spread_legs: int = 1) -> float:
-    """Margin on one calendar spread (2 legs)."""
-    gross = 2 * book_face_gbp(book) * n_spread_legs
-    return gross * float(book["margin_rate_gross"])
+def _trade_margin_gbp(trade: dict, contracts_per_leg: int, margins: dict) -> tuple[float, str]:
+    """ICE indicative IM for one open trade at book sizing."""
+    if trade.get("type") == "outright":
+        expiry = trade.get("contract_label") or _expiry_from_symbol(trade.get("symbol"))
+        if not expiry:
+            raise KeyError(f"Outright trade {trade.get('id')} missing contract_label")
+        return margin_outright_long_gbp(expiry, contracts_per_leg, margins)
+
+  # spread: long_expiry / short_expiry from trade config fields
+    long_exp = trade.get("long_expiry") or _expiry_from_symbol(trade.get("long_symbol"))
+    short_exp = trade.get("short_expiry") or _expiry_from_symbol(trade.get("short_symbol"))
+    if not long_exp or not short_exp:
+        raise KeyError(f"Spread trade {trade.get('id')} missing expiry labels")
+    return margin_spread_gbp(long_exp, short_exp, contracts_per_leg, margins)
+
+
+def _expiry_from_symbol(symbol: str | None) -> str | None:
+    if not symbol or len(symbol) < 5:
+        return None
+    month_code = symbol[2]
+    year_suffix = symbol[3:]
+    months = {
+        "F": "Jan", "G": "Feb", "H": "Mar", "J": "Apr", "K": "May", "M": "Jun",
+        "N": "Jul", "Q": "Aug", "U": "Sep", "V": "Oct", "X": "Nov", "Z": "Dec",
+    }
+    label = months.get(month_code)
+    if not label:
+        return None
+    return f"{label}-{year_suffix}"
 
 
 def scale_trade_payload(payload: dict, book: dict) -> dict:
@@ -66,7 +98,7 @@ def scale_trade_payload(payload: dict, book: dict) -> dict:
     return out
 
 
-def trade_breakdown(payload: dict, book: dict) -> dict:
+def trade_breakdown(payload: dict, book: dict, margins: dict) -> dict:
     """Per-trade economics with USD conversion and return contribution."""
     fx = float(book["gbp_usd"])
     nav0 = float(book["starting_nav_usd"])
@@ -77,7 +109,9 @@ def trade_breakdown(payload: dict, book: dict) -> dict:
     t = payload["trade"]
     face = book_face_gbp(book)
     gross_gbp = 2 * face if t.get("type") != "outright" else face
-    margin_gbp = gross_gbp * float(book["margin_rate_gross"])
+    margin_gbp, margin_method = _trade_margin_gbp(
+        t, int(book["contracts_per_leg"]), margins
+    )
     margin_usd = margin_gbp * fx
 
     entry = payload.get("entry", {})
@@ -95,8 +129,9 @@ def trade_breakdown(payload: dict, book: dict) -> dict:
         "contracts_per_leg": int(book["contracts_per_leg"]),
         "face_value_gbp_per_leg": face,
         "gross_notional_gbp": gross_gbp,
-        "margin_assumed_gbp": round(margin_gbp, 0),
-        "margin_assumed_usd": round(margin_usd, 0),
+        "margin_ice_gbp": round(margin_gbp, 0),
+        "margin_ice_usd": round(margin_usd, 0),
+        "margin_method": margin_method,
         "gbp_per_bp": gbp,
         "pnl_bp": round(pnl_bp, 2),
         "pnl_gbp": round(pnl_gbp, 2),
@@ -230,16 +265,18 @@ def build_book_summary(trade_payloads: list[dict]) -> dict:
     fx = float(book["gbp_usd"])
     gbp = book_gbp_per_bp(book)
     face = book_face_gbp(book)
+    margins = load_margins()
 
     scaled = [scale_trade_payload(p, book) for p in trade_payloads]
-    breakdown = [trade_breakdown(p, book) for p in scaled]
+    breakdown = [trade_breakdown(p, book, margins) for p in scaled]
     breakdown.sort(key=lambda x: x.get("entry_date") or "")
     daily = aggregate_daily(scaled, book)
     metrics = compute_returns(daily, book)
 
-    # Total margin across open spreads (outright = 1 leg gross)
-    total_margin_gbp = sum(b["margin_assumed_gbp"] for b in breakdown)
-    total_margin_usd = sum(b["margin_assumed_usd"] for b in breakdown)
+    total_margin_gbp = sum(b["margin_ice_gbp"] for b in breakdown)
+    total_margin_usd = sum(b["margin_ice_usd"] for b in breakdown)
+    conv = dict(book["conventions"])
+    conv["margin_note"] = margin_note(margins)
 
     daily_rows = []
     if not daily.empty:
@@ -268,10 +305,10 @@ def build_book_summary(trade_payloads: list[dict]) -> dict:
             "contracts_per_leg": book["contracts_per_leg"],
             "face_value_gbp_per_leg": face,
             "gbp_per_bp": gbp,
-            "conventions": book["conventions"],
-            "margin_rate_gross": book["margin_rate_gross"],
-            "total_margin_assumed_gbp": round(total_margin_gbp, 0),
-            "total_margin_assumed_usd": round(total_margin_usd, 0),
+            "conventions": conv,
+            "margin_source": margins["source"],
+            "total_margin_ice_gbp": round(total_margin_gbp, 0),
+            "total_margin_ice_usd": round(total_margin_usd, 0),
             "margin_utilisation_pct": round(total_margin_usd / metrics["nav_usd"] * 100, 1),
         },
         "metrics": metrics,

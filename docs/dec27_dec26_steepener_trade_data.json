@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:06 UTC",
+  "generated_utc": "2026-07-01 12:19 UTC",
   "trade": {
     "id": "dec27_dec26_steepener",
     "type": "spread",
@@ -7,6 +7,8 @@
     "position": "Long JUZ26 (Dec-26) / Short JUZ27 (Dec-27)",
     "direction": "steepener",
     "spread_label": "Dec27\u2212Dec26",
+    "long_symbol": "JUZ26",
+    "short_symbol": "JUZ27",
     "entry_locked": true,
     "gbp_per_bp": 12.5,
     "detail_page": "trade_dec27_dec26.html"
@@ -52,7 +54,7 @@
       "implied_rate_pct": 3.915
     },
     "slope_bp": 6.0,
-    "updated_utc": "2026-07-01 12:06 UTC"
+    "updated_utc": "2026-07-01 12:19 UTC"
   },
   "pnl": {
     "slope_bp": 2.5,
