@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 11:57 UTC",
+  "generated_utc": "2026-07-01 12:34 UTC",
   "source": "Barchart EOD settles",
   "contract": "CME 3M SOFR (SQ*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -50,10 +50,10 @@
         12
       ],
       "latest_date": "2026-07-01",
-      "price": 95.935,
-      "implied_rate_pct": 4.065,
-      "vs_fed_bp": 44.0,
-      "vs_fed_hikes_25bp": 1.76
+      "price": 95.93,
+      "implied_rate_pct": 4.07,
+      "vs_fed_bp": 44.5,
+      "vs_fed_hikes_25bp": 1.78
     },
     {
       "key": "2027-03",
@@ -80,10 +80,10 @@
         6
       ],
       "latest_date": "2026-07-01",
-      "price": 95.91,
-      "implied_rate_pct": 4.09,
-      "vs_fed_bp": 46.5,
-      "vs_fed_hikes_25bp": 1.86
+      "price": 95.905,
+      "implied_rate_pct": 4.095,
+      "vs_fed_bp": 47.0,
+      "vs_fed_hikes_25bp": 1.88
     },
     {
       "key": "2027-09",
@@ -95,10 +95,10 @@
         9
       ],
       "latest_date": "2026-07-01",
-      "price": 95.975,
-      "implied_rate_pct": 4.025,
-      "vs_fed_bp": 40.0,
-      "vs_fed_hikes_25bp": 1.6
+      "price": 95.965,
+      "implied_rate_pct": 4.035,
+      "vs_fed_bp": 41.0,
+      "vs_fed_hikes_25bp": 1.64
     },
     {
       "key": "2027-12",
@@ -110,10 +110,10 @@
         12
       ],
       "latest_date": "2026-07-01",
-      "price": 96.055,
-      "implied_rate_pct": 3.945,
-      "vs_fed_bp": 32.0,
-      "vs_fed_hikes_25bp": 1.28
+      "price": 96.05,
+      "implied_rate_pct": 3.95,
+      "vs_fed_bp": 32.5,
+      "vs_fed_hikes_25bp": 1.3
     },
     {
       "key": "2028-03",
@@ -125,10 +125,10 @@
         3
       ],
       "latest_date": "2026-07-01",
-      "price": 96.115,
-      "implied_rate_pct": 3.885,
-      "vs_fed_bp": 26.0,
-      "vs_fed_hikes_25bp": 1.04
+      "price": 96.11,
+      "implied_rate_pct": 3.89,
+      "vs_fed_bp": 26.5,
+      "vs_fed_hikes_25bp": 1.06
     },
     {
       "key": "2028-06",
@@ -140,10 +140,10 @@
         6
       ],
       "latest_date": "2026-07-01",
-      "price": 96.145,
-      "implied_rate_pct": 3.855,
-      "vs_fed_bp": 23.0,
-      "vs_fed_hikes_25bp": 0.92
+      "price": 96.14,
+      "implied_rate_pct": 3.86,
+      "vs_fed_bp": 23.5,
+      "vs_fed_hikes_25bp": 0.94
     },
     {
       "key": "2028-09",
@@ -155,10 +155,10 @@
         9
       ],
       "latest_date": "2026-07-01",
-      "price": 96.165,
-      "implied_rate_pct": 3.835,
-      "vs_fed_bp": 21.0,
-      "vs_fed_hikes_25bp": 0.84
+      "price": 96.16,
+      "implied_rate_pct": 3.84,
+      "vs_fed_bp": 21.5,
+      "vs_fed_hikes_25bp": 0.86
     },
     {
       "key": "2028-12",
@@ -170,10 +170,10 @@
         12
       ],
       "latest_date": "2026-07-01",
-      "price": 96.17,
-      "implied_rate_pct": 3.83,
-      "vs_fed_bp": 20.5,
-      "vs_fed_hikes_25bp": 0.82
+      "price": 96.165,
+      "implied_rate_pct": 3.835,
+      "vs_fed_bp": 21.0,
+      "vs_fed_hikes_25bp": 0.84
     },
     {
       "key": "2029-03",
@@ -185,10 +185,10 @@
         3
       ],
       "latest_date": "2026-07-01",
-      "price": 96.175,
-      "implied_rate_pct": 3.825,
-      "vs_fed_bp": 20.0,
-      "vs_fed_hikes_25bp": 0.8
+      "price": 96.17,
+      "implied_rate_pct": 3.83,
+      "vs_fed_bp": 20.5,
+      "vs_fed_hikes_25bp": 0.82
     },
     {
       "key": "2029-06",
@@ -200,10 +200,10 @@
         6
       ],
       "latest_date": "2026-07-01",
-      "price": 96.175,
-      "implied_rate_pct": 3.825,
-      "vs_fed_bp": 20.0,
-      "vs_fed_hikes_25bp": 0.8
+      "price": 96.17,
+      "implied_rate_pct": 3.83,
+      "vs_fed_bp": 20.5,
+      "vs_fed_hikes_25bp": 0.82
     },
     {
       "key": "2029-09",
@@ -215,10 +215,10 @@
         9
       ],
       "latest_date": "2026-07-01",
-      "price": 96.165,
-      "implied_rate_pct": 3.835,
-      "vs_fed_bp": 21.0,
-      "vs_fed_hikes_25bp": 0.84
+      "price": 96.16,
+      "implied_rate_pct": 3.84,
+      "vs_fed_bp": 21.5,
+      "vs_fed_hikes_25bp": 0.86
     },
     {
       "key": "2029-12",
@@ -230,10 +230,10 @@
         12
       ],
       "latest_date": "2026-07-01",
-      "price": 96.15,
-      "implied_rate_pct": 3.85,
-      "vs_fed_bp": 22.5,
-      "vs_fed_hikes_25bp": 0.9
+      "price": 96.14,
+      "implied_rate_pct": 3.86,
+      "vs_fed_bp": 23.5,
+      "vs_fed_hikes_25bp": 0.94
     },
     {
       "key": "2030-03",
@@ -245,10 +245,10 @@
         3
       ],
       "latest_date": "2026-07-01",
-      "price": 96.13,
-      "implied_rate_pct": 3.87,
-      "vs_fed_bp": 24.5,
-      "vs_fed_hikes_25bp": 0.98
+      "price": 96.125,
+      "implied_rate_pct": 3.875,
+      "vs_fed_bp": 25.0,
+      "vs_fed_hikes_25bp": 1.0
     },
     {
       "key": "2030-06",
@@ -260,10 +260,10 @@
         6
       ],
       "latest_date": "2026-07-01",
-      "price": 96.105,
-      "implied_rate_pct": 3.895,
-      "vs_fed_bp": 27.0,
-      "vs_fed_hikes_25bp": 1.08
+      "price": 96.1,
+      "implied_rate_pct": 3.9,
+      "vs_fed_bp": 27.5,
+      "vs_fed_hikes_25bp": 1.1
     },
     {
       "key": "2030-09",
@@ -275,10 +275,10 @@
         9
       ],
       "latest_date": "2026-07-01",
-      "price": 96.075,
-      "implied_rate_pct": 3.925,
-      "vs_fed_bp": 30.0,
-      "vs_fed_hikes_25bp": 1.2
+      "price": 96.07,
+      "implied_rate_pct": 3.93,
+      "vs_fed_bp": 30.5,
+      "vs_fed_hikes_25bp": 1.22
     },
     {
       "key": "2030-12",
@@ -305,10 +305,10 @@
         3
       ],
       "latest_date": "2026-07-01",
-      "price": 96.005,
-      "implied_rate_pct": 3.995,
-      "vs_fed_bp": 37.0,
-      "vs_fed_hikes_25bp": 1.48
+      "price": 96.0,
+      "implied_rate_pct": 4.0,
+      "vs_fed_bp": 37.5,
+      "vs_fed_hikes_25bp": 1.5
     },
     {
       "key": "2031-06",
@@ -335,10 +335,10 @@
         9
       ],
       "latest_date": "2026-07-01",
-      "price": 95.955,
-      "implied_rate_pct": 4.045,
-      "vs_fed_bp": 42.0,
-      "vs_fed_hikes_25bp": 1.68
+      "price": 95.925,
+      "implied_rate_pct": 4.075,
+      "vs_fed_bp": 45.0,
+      "vs_fed_hikes_25bp": 1.8
     },
     {
       "key": "2031-12",
@@ -349,11 +349,11 @@
         2031,
         12
       ],
-      "latest_date": "2026-06-30",
-      "price": 95.96,
-      "implied_rate_pct": 4.04,
-      "vs_fed_bp": 41.5,
-      "vs_fed_hikes_25bp": 1.66
+      "latest_date": "2026-07-01",
+      "price": 95.895,
+      "implied_rate_pct": 4.105,
+      "vs_fed_bp": 48.0,
+      "vs_fed_hikes_25bp": 1.92
     },
     {
       "key": "2032-03",
@@ -365,10 +365,10 @@
         3
       ],
       "latest_date": "2026-07-01",
-      "price": 95.875,
-      "implied_rate_pct": 4.125,
-      "vs_fed_bp": 50.0,
-      "vs_fed_hikes_25bp": 2.0
+      "price": 95.86,
+      "implied_rate_pct": 4.14,
+      "vs_fed_bp": 51.5,
+      "vs_fed_hikes_25bp": 2.06
     },
     {
       "key": "2032-06",
@@ -708,7 +708,6 @@
     "rows": [
       {
         "date": "2026-03-31",
-        "2031-12": 4.035,
         "2032-06": 4.125,
         "2032-09": 4.17,
         "2032-12": 4.21,
@@ -3322,27 +3321,28 @@
         "date": "2026-07-01",
         "2026-06": 3.7025,
         "2026-09": 3.925,
-        "2026-12": 4.065,
+        "2026-12": 4.07,
         "2027-03": 4.12,
-        "2027-06": 4.09,
-        "2027-09": 4.025,
-        "2027-12": 3.945,
-        "2028-03": 3.885,
-        "2028-06": 3.855,
-        "2028-09": 3.835,
-        "2028-12": 3.83,
-        "2029-03": 3.825,
-        "2029-06": 3.825,
-        "2029-09": 3.835,
-        "2029-12": 3.85,
-        "2030-03": 3.87,
-        "2030-06": 3.895,
-        "2030-09": 3.925,
+        "2027-06": 4.095,
+        "2027-09": 4.035,
+        "2027-12": 3.95,
+        "2028-03": 3.89,
+        "2028-06": 3.86,
+        "2028-09": 3.84,
+        "2028-12": 3.835,
+        "2029-03": 3.83,
+        "2029-06": 3.83,
+        "2029-09": 3.84,
+        "2029-12": 3.86,
+        "2030-03": 3.875,
+        "2030-06": 3.9,
+        "2030-09": 3.93,
         "2030-12": 3.96,
-        "2031-03": 3.995,
+        "2031-03": 4.0,
         "2031-06": 4.035,
-        "2031-09": 4.045,
-        "2032-03": 4.125
+        "2031-09": 4.075,
+        "2031-12": 4.105,
+        "2032-03": 4.14
       }
     ],
     "n_sessions": 65,
@@ -8556,8 +8556,8 @@
             "key": "2026-12",
             "label": "Dec-26",
             "symbol": "SQZ26",
-            "implied_rate_pct": 4.065,
-            "vs_fed_bp": 44.0
+            "implied_rate_pct": 4.07,
+            "vs_fed_bp": 44.5
           },
           {
             "key": "2027-03",
@@ -8570,50 +8570,50 @@
             "key": "2027-06",
             "label": "Jun-27",
             "symbol": "SQM27",
-            "implied_rate_pct": 4.09,
-            "vs_fed_bp": 46.5
+            "implied_rate_pct": 4.095,
+            "vs_fed_bp": 47.0
           },
           {
             "key": "2027-09",
             "label": "Sep-27",
             "symbol": "SQU27",
-            "implied_rate_pct": 4.025,
-            "vs_fed_bp": 40.0
+            "implied_rate_pct": 4.035,
+            "vs_fed_bp": 41.0
           },
           {
             "key": "2027-12",
             "label": "Dec-27",
             "symbol": "SQZ27",
-            "implied_rate_pct": 3.945,
-            "vs_fed_bp": 32.0
+            "implied_rate_pct": 3.95,
+            "vs_fed_bp": 32.5
           },
           {
             "key": "2028-03",
             "label": "Mar-28",
             "symbol": "SQH28",
-            "implied_rate_pct": 3.885,
-            "vs_fed_bp": 26.0
+            "implied_rate_pct": 3.89,
+            "vs_fed_bp": 26.5
           },
           {
             "key": "2028-06",
             "label": "Jun-28",
             "symbol": "SQM28",
-            "implied_rate_pct": 3.855,
-            "vs_fed_bp": 23.0
+            "implied_rate_pct": 3.86,
+            "vs_fed_bp": 23.5
           },
           {
             "key": "2028-09",
             "label": "Sep-28",
             "symbol": "SQU28",
-            "implied_rate_pct": 3.835,
-            "vs_fed_bp": 21.0
+            "implied_rate_pct": 3.84,
+            "vs_fed_bp": 21.5
           },
           {
             "key": "2028-12",
             "label": "Dec-28",
             "symbol": "SQZ28",
-            "implied_rate_pct": 3.83,
-            "vs_fed_bp": 20.5
+            "implied_rate_pct": 3.835,
+            "vs_fed_bp": 21.0
           }
         ]
       }
@@ -8939,8 +8939,8 @@
           },
           {
             "date": "2026-07-01",
-            "implied_rate_pct": 4.065,
-            "vs_fed_bp": 44.0
+            "implied_rate_pct": 4.07,
+            "vs_fed_bp": 44.5
           }
         ]
       },
@@ -9264,8 +9264,8 @@
           },
           {
             "date": "2026-07-01",
-            "implied_rate_pct": 4.09,
-            "vs_fed_bp": 46.5
+            "implied_rate_pct": 4.095,
+            "vs_fed_bp": 47.0
           }
         ]
       },
@@ -9589,8 +9589,8 @@
           },
           {
             "date": "2026-07-01",
-            "implied_rate_pct": 3.945,
-            "vs_fed_bp": 32.0
+            "implied_rate_pct": 3.95,
+            "vs_fed_bp": 32.5
           }
         ]
       }
@@ -9600,7 +9600,7 @@
     "note": "Approximate meeting path from CME 3M SOFR futures (not Fed-dated OIS / FedWatch). Each meeting maps to the next quarterly contract after the decision as a post-meeting rate proxy. Probabilities assume 25bp steps (FedWatch-style). Standard 3M futures can span multiple meetings \u2014 use CME FedWatch or OIS for precise per-meeting pricing.",
     "as_of": "2026-06-29",
     "fed_funds_pct": 3.625,
-    "total_easing_priced_bp": 26.0,
+    "total_easing_priced_bp": 26.5,
     "next_meeting": {
       "meeting_date": "2026-07-30",
       "meeting_label": "Jul FOMC",
@@ -9679,12 +9679,12 @@
         "ref_contract_key": "2026-12",
         "ref_contract_label": "Dec-26",
         "ref_symbol": "SQZ26",
-        "implied_rate_pct": 4.065,
-        "cumulative_vs_fed_bp": 44.0,
-        "incremental_bp": 14.0,
+        "implied_rate_pct": 4.07,
+        "cumulative_vs_fed_bp": 44.5,
+        "incremental_bp": 14.5,
         "cut_pct": 0.0,
-        "hold_pct": 44.0,
-        "hike_pct": 56.0
+        "hold_pct": 42.0,
+        "hike_pct": 58.0
       },
       {
         "meeting_date": "2026-11-05",
@@ -9693,8 +9693,8 @@
         "ref_contract_key": "2026-12",
         "ref_contract_label": "Dec-26",
         "ref_symbol": "SQZ26",
-        "implied_rate_pct": 4.065,
-        "cumulative_vs_fed_bp": 44.0,
+        "implied_rate_pct": 4.07,
+        "cumulative_vs_fed_bp": 44.5,
         "incremental_bp": 0.0,
         "cut_pct": 0.0,
         "hold_pct": 100.0,
@@ -9709,10 +9709,10 @@
         "ref_symbol": "SQH27",
         "implied_rate_pct": 4.12,
         "cumulative_vs_fed_bp": 49.5,
-        "incremental_bp": 5.5,
+        "incremental_bp": 5.0,
         "cut_pct": 0.0,
-        "hold_pct": 78.0,
-        "hike_pct": 22.0
+        "hold_pct": 80.0,
+        "hike_pct": 20.0
       },
       {
         "meeting_date": "2027-01-28",
@@ -9735,11 +9735,11 @@
         "ref_contract_key": "2027-06",
         "ref_contract_label": "Jun-27",
         "ref_symbol": "SQM27",
-        "implied_rate_pct": 4.09,
-        "cumulative_vs_fed_bp": 46.5,
-        "incremental_bp": -3.0,
-        "cut_pct": 12.0,
-        "hold_pct": 88.0,
+        "implied_rate_pct": 4.095,
+        "cumulative_vs_fed_bp": 47.0,
+        "incremental_bp": -2.5,
+        "cut_pct": 10.0,
+        "hold_pct": 90.0,
         "hike_pct": 0.0
       },
       {
@@ -9749,8 +9749,8 @@
         "ref_contract_key": "2027-06",
         "ref_contract_label": "Jun-27",
         "ref_symbol": "SQM27",
-        "implied_rate_pct": 4.09,
-        "cumulative_vs_fed_bp": 46.5,
+        "implied_rate_pct": 4.095,
+        "cumulative_vs_fed_bp": 47.0,
         "incremental_bp": 0.0,
         "cut_pct": 0.0,
         "hold_pct": 100.0,
@@ -9763,11 +9763,11 @@
         "ref_contract_key": "2027-09",
         "ref_contract_label": "Sep-27",
         "ref_symbol": "SQU27",
-        "implied_rate_pct": 4.025,
-        "cumulative_vs_fed_bp": 40.0,
-        "incremental_bp": -6.5,
-        "cut_pct": 26.0,
-        "hold_pct": 74.0,
+        "implied_rate_pct": 4.035,
+        "cumulative_vs_fed_bp": 41.0,
+        "incremental_bp": -6.0,
+        "cut_pct": 24.0,
+        "hold_pct": 76.0,
         "hike_pct": 0.0
       },
       {
@@ -9777,8 +9777,8 @@
         "ref_contract_key": "2027-09",
         "ref_contract_label": "Sep-27",
         "ref_symbol": "SQU27",
-        "implied_rate_pct": 4.025,
-        "cumulative_vs_fed_bp": 40.0,
+        "implied_rate_pct": 4.035,
+        "cumulative_vs_fed_bp": 41.0,
         "incremental_bp": 0.0,
         "cut_pct": 0.0,
         "hold_pct": 100.0,
@@ -9791,11 +9791,11 @@
         "ref_contract_key": "2027-12",
         "ref_contract_label": "Dec-27",
         "ref_symbol": "SQZ27",
-        "implied_rate_pct": 3.945,
-        "cumulative_vs_fed_bp": 32.0,
-        "incremental_bp": -8.0,
-        "cut_pct": 32.0,
-        "hold_pct": 68.0,
+        "implied_rate_pct": 3.95,
+        "cumulative_vs_fed_bp": 32.5,
+        "incremental_bp": -8.5,
+        "cut_pct": 34.0,
+        "hold_pct": 66.0,
         "hike_pct": 0.0
       },
       {
@@ -9805,8 +9805,8 @@
         "ref_contract_key": "2027-12",
         "ref_contract_label": "Dec-27",
         "ref_symbol": "SQZ27",
-        "implied_rate_pct": 3.945,
-        "cumulative_vs_fed_bp": 32.0,
+        "implied_rate_pct": 3.95,
+        "cumulative_vs_fed_bp": 32.5,
         "incremental_bp": 0.0,
         "cut_pct": 0.0,
         "hold_pct": 100.0,
@@ -9819,8 +9819,8 @@
         "ref_contract_key": "2028-03",
         "ref_contract_label": "Mar-28",
         "ref_symbol": "SQH28",
-        "implied_rate_pct": 3.885,
-        "cumulative_vs_fed_bp": 26.0,
+        "implied_rate_pct": 3.89,
+        "cumulative_vs_fed_bp": 26.5,
         "incremental_bp": -6.0,
         "cut_pct": 24.0,
         "hold_pct": 76.0,
