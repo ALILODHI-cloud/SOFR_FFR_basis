@@ -67,11 +67,22 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
 .stackbar .dec27{background:var(--warn)}
 .stacklegend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--mut);margin:8px 0 0}
 .stacklegend span{display:inline-flex;align-items:center;gap:6px}
-.stacklegend i{width:10px;height:10px;border-radius:2px;display:inline-block}
+.pill-portal{border-color:var(--acc);color:var(--acc);background:rgba(57,217,138,.1);font-weight:600}
+.navtop{font-size:13px;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.navtop a{color:var(--acc2);text-decoration:none}
+.navtop a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="wrap">
+
+<div class="navtop">
+  <a href="portal.html"><strong>Markets portal</strong></a>
+  <span style="color:var(--mut)">·</span>
+  <a href="trade_tracker.html">$1M STIR book &amp; live trades</a>
+  <span style="color:var(--mut)">·</span>
+  <a href="sonia_1m_dashboard.html">1M SONIA curve</a>
+</div>
 
 <header>
   <div class="eyebrow">Supra Fund Management &middot; UK Rates</div>
@@ -84,6 +95,7 @@ h1{font-size:clamp(20px,5vw,30px);margin:6px 0 4px;line-height:1.15}
     <span class="pill">Futures: ICE 1M SONIA (JUZ26 / JUZ27)</span>
     <span class="pill">Spot: BoE SONIA</span>
     <span class="pill">Oil: Brent (BZ=F)</span>
+    <a class="pill pill-portal" href="portal.html">$1M book · portal →</a>
   </div>
 </header>
 
@@ -564,7 +576,7 @@ function renderTradeStats() {
   const fGbp = (x) => (x >= 0 ? '+' : '') + '£' + Math.abs(x).toFixed(0);
   const cards = [
     ['P&L (1 pair)', fGbp(T.pnl_gbp_per_pair), `${f1(T.pnl_slope_bp)} bp on slope`, T.pnl_gbp_per_pair >= 0 ? 'green' : 'red'],
-    ['Return on margin', f1(T.return_margin_pct) + '%', `~£${T.margin_assumed_gbp.toLocaleString()} assumed`, T.return_margin_pct >= 0 ? 'green' : 'red'],
+    ['Return on margin', f1(T.return_margin_pct) + '%', `~£${(T.margin_ice_gbp||T.margin_assumed_gbp).toLocaleString()} ICE IM`, T.return_margin_pct >= 0 ? 'green' : 'red'],
     ['Sharpe (ann.)', T.sharpe_ann == null ? '—' : f2(T.sharpe_ann), `rf ${T.risk_free_pct}% · ${T.session_days} sessions`, 'amber'],
     ['Vol (ann.)', T.vol_ann_margin_pct == null ? '—' : f1(T.vol_ann_margin_pct) + '%', 'On margin returns', 'blue'],
     ['CAGR (margin)', T.cagr_margin_pct == null ? '—' : f1(T.cagr_margin_pct) + '%', `${T.calendar_days} calendar days`, 'amber'],

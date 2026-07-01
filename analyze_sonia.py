@@ -318,9 +318,12 @@ def compute_trade_stats(tail: pd.DataFrame, entry_date: str) -> dict | None:
     GBP_PER_BP = 12.50
     FACE = 500_000.0
     GROSS = 2 * FACE
-    MARGIN_RATE = 0.004
-    MARGIN = GROSS * MARGIN_RATE
     RF = 0.035
+
+    from ice_sonia_margin import load_margins, margin_spread_gbp
+
+    margins = load_margins()
+    MARGIN, margin_method = margin_spread_gbp("Dec-26", "Dec-27", 1, margins)
 
     if entry_date not in tail.index.strftime("%Y-%m-%d"):
         return None
@@ -455,7 +458,8 @@ def compute_trade_stats(tail: pd.DataFrame, entry_date: str) -> dict | None:
         "pnl_gbp_per_pair": round(pnl_gbp, 2),
         "return_gross_pct": round(pnl_gbp / GROSS * 100, 4),
         "return_margin_pct": round(total_margin_ret * 100, 2),
-        "margin_assumed_gbp": round(MARGIN, 0),
+        "margin_ice_gbp": round(MARGIN, 0),
+        "margin_method": margin_method,
         "cagr_margin_pct": round(cagr_margin * 100, 1) if cagr_margin is not None else None,
         "vol_ann_margin_pct": round(vol_ann_margin * 100, 1) if vol_ann_margin else None,
         "sharpe_ann": round(sharpe, 2) if sharpe is not None else None,

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:13 UTC",
+  "generated_utc": "2026-07-01 12:24 UTC",
   "trade": {
     "id": "jun27_outright_long",
     "type": "outright",
@@ -7,6 +7,8 @@
     "position": "Long JUM27 (Jun-27 1M SONIA)",
     "direction": "long",
     "spread_label": "Jun-27",
+    "contract_label": "Jun-27",
+    "symbol": "JUM27",
     "entry_locked": true,
     "gbp_per_bp": 12.5,
     "detail_page": "trade_jun27_outright.html"
@@ -40,7 +42,7 @@
       "implied_rate_pct": 4.035
     },
     "slope_bp": null,
-    "updated_utc": "2026-07-01 12:13 UTC"
+    "updated_utc": "2026-07-01 12:24 UTC"
   },
   "pnl": {
     "slope_bp": 5.5,
@@ -114,5 +116,13 @@
     "mark_rate_pct": 4.09,
     "pnl_bp": 0.0,
     "pnl_gbp": 0.0
+  },
+  "book_size": {
+    "contracts_per_leg": 2,
+    "face_value_gbp_per_leg": 1000000.0,
+    "face_value_gbp_per_contract": 500000.0,
+    "gross_notional_gbp": 1000000.0,
+    "gbp_per_bp": 25.0,
+    "position_size": "2 lots \u00b7 \u00a31.0M face \u00b7 \u00a325/bp"
   }
 }

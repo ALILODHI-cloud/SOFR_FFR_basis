@@ -388,6 +388,8 @@ def analyze_outright(cfg_path: Path) -> dict:
             "position": cfg["position"],
             "direction": direction,
             "spread_label": cfg.get("contract_label", symbol),
+            "contract_label": cfg.get("contract_label"),
+            "symbol": symbol,
             "entry_locked": cfg.get("entry_locked", False),
             "gbp_per_bp": gbp,
             "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
@@ -492,6 +494,8 @@ def analyze_spread(cfg_path: Path) -> dict:
             "position": cfg["position"],
             "direction": direction,
             "spread_label": spread_label,
+            "long_symbol": cfg.get("long_symbol"),
+            "short_symbol": cfg.get("short_symbol"),
             "entry_locked": cfg.get("entry_locked", False),
             "gbp_per_bp": gbp,
             "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
@@ -538,10 +542,12 @@ def index_row(payload: dict) -> dict:
     levels = payload.get("levels") or {}
     pnl_gbp = float(payload["pnl"]["gbp"])
     pnl_bp = float(payload["pnl"]["slope_bp"])
+    book_size = None
     if (ROOT / "book.json").is_file():
-        from analyze_book import book_gbp_per_bp, load_book
+        from analyze_book import book_gbp_per_bp, book_size_for_trade, load_book
 
         book = load_book()
+        book_size = book_size_for_trade(t, book)
         scale = book_gbp_per_bp(book) / float(t.get("gbp_per_bp", 12.5))
         pnl_gbp = round(pnl_gbp * scale, 2)
     row = {
@@ -557,6 +563,13 @@ def index_row(payload: dict) -> dict:
         "pnl_gbp": pnl_gbp,
         "pnl_slope_bp": pnl_bp,
     }
+    if book_size:
+        row.update({
+            "contracts_per_leg": book_size["contracts_per_leg"],
+            "gross_notional_gbp": book_size["gross_notional_gbp"],
+            "gbp_per_bp": book_size["gbp_per_bp"],
+            "position_size": book_size["position_size"],
+        })
     if t.get("type") == "outright":
         row["entry_rate_pct"] = levels.get("entry_rate_pct", payload["entry"].get("rate_pct"))
         row["mark_rate_pct"] = payload["mark"].get("rate_pct")
@@ -583,6 +596,10 @@ def main() -> None:
     payloads: list[dict] = []
     for cfg_path in configs:
         payload = analyze_trade(cfg_path)
+        if (ROOT / "book.json").is_file():
+            from analyze_book import book_size_for_trade
+
+            payload["book_size"] = book_size_for_trade(payload["trade"])
         payloads.append(payload)
         out = ROOT / f"{payload['trade']['id']}_trade_data.json"
         out.write_text(json.dumps(payload, indent=2), encoding="utf-8")

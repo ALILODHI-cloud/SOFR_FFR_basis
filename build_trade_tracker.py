@@ -103,6 +103,7 @@ function render(D){
   document.getElementById('subtitle').textContent = D.trade.position + ' · Entry ' + D.entry.label + ' · Mark ' + D.mark.date;
   const pills = document.getElementById('pills');
   pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span><span class="pill">Bank '+D.bank_rate_pct+'%</span>'
+    + (D.book_size ? '<span class="pill">'+D.book_size.position_size+'</span>' : '')
     + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
     + '<span class="pill">Updated '+D.generated_utc+'</span>';
 
@@ -293,6 +294,7 @@ fetch('trades_index.json').then(r=>{
       ? '<div class="row"><span>Mark</span><span>'+fmtPct(t.mark_rate_pct)+'</span></div>'
       : '<div class="row"><span>Mark spread</span><span>'+fmtBp(t.mark_slope_bp)+'</span></div>';
     grid.innerHTML += '<a class="card" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
+      + (t.position_size ? '<p style="font-size:12px;color:var(--mut);margin:0 0 8px">'+t.position_size+'</p>' : '')
       + '<span class="pill">'+t.direction+'</span>'
       + entryRow + markRow
       + '<div class="row"><span>P&amp;L</span><span class="'+cls(t.pnl_gbp)+'">'+fmtGbp(t.pnl_gbp)+'</span></div></a>';
@@ -373,14 +375,17 @@ function fmtPct(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+Num
 function fmtGbp(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+'£'+Math.abs(v).toLocaleString('en-GB',{maximumFractionDigits:0}); }
 function cls(v){ return v>0.5?'good':v<-0.5?'bad':''; }
 
-fetch('book_summary.json').then(r=>r.json()).then(B=>{
+const BOOK_FALLBACK = __BOOK_FALLBACK__;
+
+function renderBook(B){
   const el = document.getElementById('bookSection');
   const m = B.metrics;
   const bk = B.book;
   const c = bk.conventions;
+  const marginUsd = bk.total_margin_ice_usd != null ? bk.total_margin_ice_usd : bk.total_margin_assumed_usd;
   let tradeRows = '';
   B.trades.forEach(t=>{
-    tradeRows += '<tr><td>'+t.label+'</td><td>'+t.direction+'</td><td class="num">'+t.entry_date+'</td>'
+    tradeRows += '<tr><td>'+t.label+'</td><td class="num" style="font-size:11px;color:var(--mut)">'+(t.position_size||'—')+'</td><td>'+t.direction+'</td><td class="num">'+t.entry_date+'</td>'
       +'<td class="num">'+t.pnl_bp+' bp</td><td class="num">'+fmtGbp(t.pnl_gbp)+'</td>'
       +'<td class="num '+cls(t.pnl_usd)+'">'+fmtUsd(t.pnl_usd)+'</td>'
       +'<td class="num">'+fmtPct(t.return_on_nav_pct)+'</td></tr>';
@@ -399,16 +404,19 @@ fetch('book_summary.json').then(r=>r.json()).then(B=>{
     +'<div class="stat"><div class="k">30d ann. vol</div><div class="v sm">'+(m.vol_ann_30d_pct!=null?m.vol_ann_30d_pct.toFixed(1)+'%':'—')+'</div></div>'
     +'<div class="stat"><div class="k">30d Sharpe</div><div class="v sm">'+(m.sharpe_ann_30d!=null?m.sharpe_ann_30d.toFixed(2):'—')+'</div></div>'
     +'<div class="stat"><div class="k">Max drawdown</div><div class="v sm bad">'+fmtUsd(m.max_drawdown_usd)+'</div></div>'
-    +'<div class="stat"><div class="k">Margin (assumed)</div><div class="v sm">$'+bk.total_margin_assumed_usd.toLocaleString()+'</div><div class="k" style="margin-top:4px">'+bk.margin_utilisation_pct+'% of NAV</div></div>'
+    +'<div class="stat"><div class="k">ICE indicative IM</div><div class="v sm">$'+(marginUsd||0).toLocaleString()+'</div><div class="k" style="margin-top:4px">'+bk.margin_utilisation_pct+'% of NAV</div></div>'
   +'</div>'
-  +'<table class="tbl"><thead><tr><th>Trade</th><th>Dir</th><th>Entry</th><th>Δ</th><th>P&amp;L £</th><th>P&amp;L $</th><th>% NAV</th></tr></thead><tbody>'+tradeRows+'</tbody></table>'
+  +'<table class="tbl"><thead><tr><th>Trade</th><th>Size</th><th>Dir</th><th>Entry</th><th>Δ</th><th>P&amp;L £</th><th>P&amp;L $</th><th>% NAV</th></tr></thead><tbody>'+tradeRows+'</tbody></table>'
   +'<div class="conv"><strong>Conventions.</strong> '+c.product+' · '+c.quote+' · '
     +'£'+c.bp_value_gbp_per_pair_per_contract+'/bp per contract per 1:1 pair → <strong>£'+bk.gbp_per_bp+'/bp</strong> at book size. '
     +c.bp_formula+' Tick '+c.tick_size_price+' (= £'+c.tick_value_gbp_per_contract+'/contract). '
     +c.margin_note+'<br><br><strong>P&amp;L bridge:</strong> '+B.pnl_bridge.note+'</div>'
   +'<p class="sub" style="margin-top:10px">Updated '+B.generated_utc+' · Not investment advice.</p>';
-}).catch(()=>{
-  document.getElementById('bookSection').textContent = 'Book summary unavailable — run analyze_spread_trades.py';
+}
+
+fetch('book_summary.json').then(r=>{ if(!r.ok) throw new Error(r.statusText); return r.json(); }).then(renderBook).catch(()=>{
+  if (BOOK_FALLBACK) renderBook(BOOK_FALLBACK);
+  else document.getElementById('bookSection').textContent = 'Book summary unavailable — run analyze_spread_trades.py';
 });
 
 fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
@@ -418,6 +426,7 @@ fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
   INDEX.trades.forEach(t=>{
     const pnlCls = t.pnl_gbp > 0.5 ? 'good' : t.pnl_gbp < -0.5 ? 'bad' : '';
     el.innerHTML += '<a class="card featured" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
+      + (t.position_size ? '<p style="font-size:12px;color:var(--mut);margin:0 0 8px">'+t.position_size+'</p>' : '')
       + '<span class="pill live">● '+t.direction+'</span>'
       + '<span style="display:block;margin-top:10px;font-size:13px">P&amp;L <span class="'+pnlCls+'">'+(t.pnl_gbp>=0?'+':'')+'£'+Math.abs(t.pnl_gbp).toLocaleString('en-GB',{maximumFractionDigits:0})+'</span></span></a>';
   });
@@ -436,10 +445,18 @@ def trade_configs() -> list[dict]:
     return configs
 
 
+def build_portal_html() -> str:
+    book_path = ROOT / "book_summary.json"
+    fallback = "null"
+    if book_path.exists():
+        fallback = json.dumps(json.loads(book_path.read_text(encoding="utf-8")))
+    return PORTAL_HTML.replace("__BOOK_FALLBACK__", fallback)
+
+
 def main() -> None:
     outputs: list[tuple[str, str]] = [
         ("trade_tracker.html", HUB_HTML),
-        ("portal.html", PORTAL_HTML),
+        ("portal.html", build_portal_html()),
     ]
 
     for cfg in trade_configs():
@@ -487,6 +504,9 @@ def sync_trade_json_to_docs() -> None:
     book_summary = ROOT / "book_summary.json"
     if book_summary.exists():
         shutil.copy2(book_summary, docs / "book_summary.json")
+    ice_margins = ROOT / "ice_sonia_margins.json"
+    if ice_margins.exists():
+        shutil.copy2(ice_margins, docs / "ice_sonia_margins.json")
     book_cfg = ROOT / "book.json"
     if book_cfg.exists():
         shutil.copy2(book_cfg, docs / "book.json")
