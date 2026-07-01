@@ -186,7 +186,7 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 <div class="card">
   <h2>All contracts (latest)</h2>
   <div class="tblwrap"><table id="tbl"><thead><tr>
-    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank</th><th>As of</th>
+    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Fed</th><th>As of</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
@@ -391,7 +391,7 @@ function updatePinTray() {
       <div class="sym">${pin.symbol}</div>
       <div class="row"><span>Frozen (latest)</span><span>${f ? f.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
       <div class="row"><span>Historical</span><span>${h ? h.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
-      <div class="row"><span>vs Bank ${DATA.fed_funds_pct}%</span><span>${h ? fmtBp(h.vs_fed_bp) : '—'}</span></div>
+      <div class="row"><span>vs Fed midpoint ${DATA.fed_funds_pct}%</span><span>${h ? fmtBp(h.vs_fed_bp) : '—'}</span></div>
       <div class="row"><span>Δ vs frozen</span><span>${f && h ? fmtBp((h.implied_rate_pct - f.implied_rate_pct)*100) : '—'}</span></div>
       <div style="color:var(--mut);margin-top:4px">${hdate}</div>
       <label><input type="checkbox" data-i="${i}" class="lvlChk" ${pin.showLevelLine?'checked':''}/> Show level line</label>
@@ -507,7 +507,7 @@ function buildMainChart() {
           order: 2,
         },
         {
-          label: `Fed funds ${br}%`,
+          label: `Fed funds midpoint ${br}%`,
           data: labels.map(() => br),
           borderColor: '#4aa8ff',
           borderDash: [6, 4],
@@ -558,10 +558,10 @@ function buildMainChart() {
               const lines = [`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(3)}%`];
               if (ctx.datasetIndex === 1 && fp && hm) {
                 lines.push(`Δ vs frozen: ${fmtBp((hm.implied_rate_pct - fp.implied_rate_pct)*100)}`);
-                lines.push(`vs Bank: ${fmtBp(hm.vs_fed_bp)}`);
+                lines.push(`vs Fed: ${fmtBp(hm.vs_fed_bp)}`);
               }
               if (ctx.datasetIndex === 0 && fp) {
-                lines.push(`vs Bank: ${fmtBp(fp.vs_fed_bp)}`);
+                lines.push(`vs Fed: ${fmtBp(fp.vs_fed_bp)}`);
               }
               lines.push('Click to pin');
               return lines;
@@ -631,10 +631,20 @@ function setupSlider() {
   };
 }
 
+function policyPillText() {
+  const lo = DATA.fed_funds_target_low_pct;
+  const hi = DATA.fed_funds_target_high_pct;
+  const mid = DATA.fed_funds_pct;
+  if (lo != null && hi != null) {
+    return `Fed ${mid}% (${lo.toFixed(2)}–${hi.toFixed(2)})`;
+  }
+  return `Fed ${mid}%`;
+}
+
 function renderHeader(status) {
   document.getElementById('asof').textContent =
     `Data ${DATA.generated_utc}` + (status?.last_refresh_utc ? ` · refresh ${status.last_refresh_utc}` : '');
-  document.getElementById('policyPill').textContent = `Fed ${DATA.fed_funds_pct}%`;
+  document.getElementById('policyPill').textContent = policyPillText();
   if (isLiveMode()) document.getElementById('livePill').style.display = 'inline-block';
 }
 
@@ -647,7 +657,7 @@ function renderFomcPanel() {
   const sum = document.getElementById('fomcSummary');
   const nxt = fomc.next_meeting;
   sum.innerHTML = `
-    <div class="fomc-stat"><div class="k">Fed funds</div><div class="v">${fomc.fed_funds_pct.toFixed(2)}%</div></div>
+    <div class="fomc-stat"><div class="k">Fed funds midpoint</div><div class="v">${fomc.fed_funds_pct.toFixed(3)}%</div>${DATA.fed_funds_target_low_pct != null ? `<div class="k" style="margin-top:4px">Range ${DATA.fed_funds_target_low_pct.toFixed(2)}–${DATA.fed_funds_target_high_pct.toFixed(2)}%</div>` : ''}</div>
     <div class="fomc-stat"><div class="k">Total easing priced</div><div class="v">${fmtBp(fomc.total_easing_priced_bp)}</div></div>
     ${nxt ? `<div class="fomc-stat"><div class="k">Next: ${nxt.meeting_label}</div><div class="v">${fmtBp(nxt.incremental_bp)}</div><div class="k" style="margin-top:4px">${nxt.cut_pct}% cut · ${nxt.hold_pct}% hold · ${nxt.hike_pct}% hike</div></div>` : ''}`;
 
@@ -686,7 +696,7 @@ function renderFomcPanel() {
       labels,
       datasets: [
         {
-          label: 'Cumulative vs Bank (bp)',
+          label: 'Cumulative vs Fed (bp)',
           data: cum,
           type: 'line',
           borderColor: '#4aa8ff',

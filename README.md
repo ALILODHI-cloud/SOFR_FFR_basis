@@ -83,7 +83,7 @@ Stable Dev Tunnel URL (same link across restarts, while this machine is on):
 **Permanent URL (static, auto-refreshed weekdays):**  
 https://alilodhi-cloud.github.io/SOFR_FFR_basis/sofr_3m_dashboard.html
 
-Same UX as the 1M SONIA dashboard: frozen latest curve (green), historical time-travel (amber), pin legs, FOMC meeting pricing panel, and daily Δ table across all listed quarterly contracts.
+Same UX as the 1M SONIA dashboard: frozen latest curve (green), historical time-travel (amber), pin legs, FOMC meeting pricing panel, and daily Δ table across all listed quarterly contracts. Policy anchor is the **live fed funds target range midpoint** from NY Fed EFFR (not a hardcoded rate).
 
 GitHub Actions fetches all CME 3M SOFR (`SQ*`) contracts from Barchart twice on weekdays (~10:00 and ~18:30 London) and redeploys. Trigger manually: **Actions → 3M SOFR curve — fetch, build, deploy → Run workflow**.
 
