@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:24 UTC",
+  "generated_utc": "2026-07-01 12:32 UTC",
   "trade": {
     "id": "jun27_outright_long",
     "type": "outright",
@@ -42,7 +42,7 @@
       "implied_rate_pct": 4.035
     },
     "slope_bp": null,
-    "updated_utc": "2026-07-01 12:24 UTC"
+    "updated_utc": "2026-07-01 12:32 UTC"
   },
   "pnl": {
     "slope_bp": 5.5,
@@ -119,10 +119,10 @@
   },
   "book_size": {
     "contracts_per_leg": 2,
-    "face_value_gbp_per_leg": 1000000.0,
-    "face_value_gbp_per_contract": 500000.0,
     "gross_notional_gbp": 1000000.0,
     "gbp_per_bp": 25.0,
-    "position_size": "2 lots \u00b7 \u00a31.0M face \u00b7 \u00a325/bp"
+    "position_size": "2 lots \u00b7 \u00a31.0M face \u00b7 \u00a325/bp",
+    "currency": "GBP",
+    "face_value_gbp_per_leg": 1000000.0
   }
 }

@@ -19,6 +19,7 @@ from analyze_sonia import (
 ROOT = Path(__file__).resolve().parent
 TRADES_DIR = ROOT / "trades"
 SONIA_1M = ROOT / "sonia_1m_data.json"
+SOFR_3M = ROOT / "sofr_3m_data.json"
 STIR_3M = ROOT / "stir_curves_data.json"
 
 
@@ -78,7 +79,40 @@ def snap_from_sonia(symbol: str) -> dict | None:
     return None
 
 
+def snap_from_sofr(symbol: str) -> dict | None:
+    if not SOFR_3M.exists():
+        return None
+    with SOFR_3M.open(encoding="utf-8") as f:
+        data = json.load(f)
+    for c in data.get("contracts", []):
+        if c.get("symbol") == symbol:
+            return {
+                "symbol": symbol,
+                "date": c.get("latest_date", ""),
+                "price": round(float(c["price"]), 4),
+                "implied_rate_pct": round(float(c["implied_rate_pct"]), 4),
+            }
+    return None
+
+
+def series_from_sofr(keys: list[str]) -> pd.DataFrame | None:
+    if not SOFR_3M.exists():
+        return None
+    with SOFR_3M.open(encoding="utf-8") as f:
+        data = json.load(f)
+    rows = data.get("timeseries", {}).get("rows", [])
+    if not rows:
+        return None
+    df = pd.DataFrame(rows).set_index("date")
+    df.index = pd.to_datetime(df.index)
+    cols = [k for k in keys if k in df.columns]
+    if not cols:
+        return None
+    return df[cols].dropna(how="all").astype(float).sort_index()
+
+
 def fetch_leg(symbol: str) -> tuple[pd.DataFrame, dict]:
+    snap_fallback = snap_from_sofr if symbol.startswith("SQ") else snap_from_sonia
     try:
         df = fetch_barchart_eod(symbol)
         rates = price_to_rate(df["price"])
@@ -91,8 +125,9 @@ def fetch_leg(symbol: str) -> tuple[pd.DataFrame, dict]:
         }
         return df, snap
     except Exception as exc:
-        print(f"  ::warning::{symbol} Barchart fetch failed ({exc}); using sonia_1m_data snapshot")
-        snap = snap_from_sonia(symbol)
+        label = "sofr_3m_data" if symbol.startswith("SQ") else "sonia_1m_data"
+        print(f"  ::warning::{symbol} Barchart fetch failed ({exc}); using {label} snapshot")
+        snap = snap_fallback(symbol)
         if snap is None:
             raise
         return pd.DataFrame(), snap
@@ -241,10 +276,11 @@ def ensure_spread_entry(
 def build_spread_path(
     tail: pd.DataFrame,
     entry_slope: float,
-    gbp_per_bp: float,
+    pnl_per_bp: float,
     direction: str,
     q_long_key: str,
     q_short_key: str,
+    daily_pnl_key: str = "daily_pnl_gbp",
 ) -> list[dict]:
     path = []
     prev_cum = 0.0
@@ -252,7 +288,7 @@ def build_spread_path(
         leg_rates = {k: float(row[k]) for k in row.index}
         q_slope = quoted_slope_bp(leg_rates, q_long_key, q_short_key)
         dslope = pnl_slope_bp(entry_slope, q_slope, direction)
-        cum = dslope * gbp_per_bp
+        cum = dslope * pnl_per_bp
         daily = cum if i == 0 else cum - prev_cum
         prev_cum = cum
         path.append(
@@ -263,7 +299,7 @@ def build_spread_path(
                 "slope_bp": round(q_slope, 2),
                 "dslope_bp": round(dslope, 2),
                 "cum_pnl_gbp": round(cum, 2),
-                "daily_pnl_gbp": round(daily, 2),
+                daily_pnl_key: round(daily, 2),
             }
         )
     return path
@@ -427,7 +463,8 @@ def analyze_outright(cfg_path: Path) -> dict:
 
 def analyze_spread(cfg_path: Path) -> dict:
     cfg = load_cfg(cfg_path)
-    gbp = float(cfg["gbp_per_bp"])
+    market = cfg.get("market", "sonia_1m")
+    currency = cfg.get("currency", "GBP")
     direction = cfg.get("direction", "steepener")
     long_sym = cfg["long_symbol"]
     short_sym = cfg["short_symbol"]
@@ -436,6 +473,24 @@ def analyze_spread(cfg_path: Path) -> dict:
     q_long_key, q_short_key, spread_label = quoted_keys(cfg)
     keys = list({long_key, short_key, q_long_key, q_short_key})
     levels = cfg.get("levels") or {}
+
+    if market == "sofr_3m":
+        pnl_per_bp = float(cfg["usd_per_bp"])
+        daily_pnl_key = "daily_pnl_usd"
+        series_fn = series_from_sofr
+        policy_rate = None
+        policy_as_of = None
+        if SOFR_3M.exists():
+            with SOFR_3M.open(encoding="utf-8") as f:
+                sofr_meta = json.load(f)
+            policy_rate = sofr_meta.get("fed_funds_pct")
+            policy_as_of = sofr_meta.get("fed_funds_as_of")
+    else:
+        pnl_per_bp = float(cfg["gbp_per_bp"])
+        daily_pnl_key = "daily_pnl_gbp"
+        series_fn = series_from_sonia
+        policy_rate = BANK_RATE_PCT
+        policy_as_of = BANK_RATE_AS_OF
 
     print(f"[{cfg['trade_id']}] Fetching {long_sym} / {short_sym}…")
     short_df, short_snap = fetch_leg(short_sym)
@@ -446,7 +501,7 @@ def analyze_spread(cfg_path: Path) -> dict:
     entry_date = pd.Timestamp(entry["date"])
     entry_slope = float(levels.get("entry_slope_bp", entry["slope_bp"]))
 
-    hist = series_from_sonia(keys)
+    hist = series_fn(keys)
     if hist is None:
         hist = pd.DataFrame(index=pd.DatetimeIndex([]))
 
@@ -468,11 +523,13 @@ def analyze_spread(cfg_path: Path) -> dict:
     mark_leg_rates = {k: float(latest[k]) for k in keys if k in latest.index}
     mark_slope = quoted_slope_bp(mark_leg_rates, q_long_key, q_short_key)
     pnl_slope = pnl_slope_bp(entry_slope, mark_slope, direction)
-    pnl_gbp = pnl_slope * gbp
+    pnl_native = pnl_slope * pnl_per_bp
 
     qs = cfg.get("quoted_spread") or {}
-    path = build_spread_path(tail, entry_slope, gbp, direction, q_long_key, q_short_key)
-    regimes = regime_stats(tail, direction, gbp, q_long_key, q_short_key)
+    path = build_spread_path(
+        tail, entry_slope, pnl_per_bp, direction, q_long_key, q_short_key, daily_pnl_key
+    )
+    regimes = regime_stats(tail, direction, pnl_per_bp, q_long_key, q_short_key)
 
     stop = levels.get("stop_slope_bp")
     tp = levels.get("take_profit_slope_bp")
@@ -481,28 +538,51 @@ def analyze_spread(cfg_path: Path) -> dict:
         q_long_key: float(leg_by_key[q_long_key]["implied_rate_pct"]),
         q_short_key: float(leg_by_key[q_short_key]["implied_rate_pct"]),
     }
-    live_proxy = build_live_proxy(
-        cfg, entry_date, entry_1m_rates, q_long_key, q_short_key, direction, gbp, "spread"
-    )
+    live_proxy = None
+    if market != "sofr_3m":
+        live_proxy = build_live_proxy(
+            cfg, entry_date, entry_1m_rates, q_long_key, q_short_key, direction, pnl_per_bp, "spread"
+        )
+
+    trade_row = {
+        "id": cfg["trade_id"],
+        "type": "spread",
+        "label": cfg["label"],
+        "position": cfg["position"],
+        "direction": direction,
+        "spread_label": spread_label,
+        "long_symbol": cfg.get("long_symbol"),
+        "short_symbol": cfg.get("short_symbol"),
+        "market": market,
+        "currency": currency,
+        "entry_locked": cfg.get("entry_locked", False),
+        "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
+    }
+    if market == "sofr_3m":
+        trade_row["usd_per_bp"] = pnl_per_bp
+        trade_row["face_value_usd"] = float(cfg.get("face_value_usd", 1_000_000))
+    else:
+        trade_row["gbp_per_bp"] = pnl_per_bp
+
+    pnl_row = {
+        "slope_bp": round(pnl_slope, 2),
+        "quoted_long_leg_bp": round((mark_leg_rates[q_long_key] - leg_rates[q_long_key]) * 100, 2),
+        "quoted_short_leg_bp": round((mark_leg_rates[q_short_key] - leg_rates[q_short_key]) * 100, 2),
+        "to_stop_bp": round(float(stop) - mark_slope, 2) if stop is not None else None,
+        "to_tp_bp": round(float(tp) - mark_slope, 2) if tp is not None else None,
+    }
+    if currency == "USD":
+        pnl_row["usd"] = round(pnl_native, 2)
+        pnl_row["gbp"] = 0.0
+    else:
+        pnl_row["gbp"] = round(pnl_native, 2)
 
     return {
         "generated_utc": utc_now(),
-        "trade": {
-            "id": cfg["trade_id"],
-            "type": "spread",
-            "label": cfg["label"],
-            "position": cfg["position"],
-            "direction": direction,
-            "spread_label": spread_label,
-            "long_symbol": cfg.get("long_symbol"),
-            "short_symbol": cfg.get("short_symbol"),
-            "entry_locked": cfg.get("entry_locked", False),
-            "gbp_per_bp": gbp,
-            "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
-        },
+        "trade": trade_row,
         "levels": levels,
-        "bank_rate_pct": BANK_RATE_PCT,
-        "bank_rate_as_of": BANK_RATE_AS_OF,
+        "bank_rate_pct": policy_rate,
+        "bank_rate_as_of": policy_as_of,
         "entry": entry,
         "mark": {
             "date": str(tail.index[-1].date()),
@@ -511,14 +591,7 @@ def analyze_spread(cfg_path: Path) -> dict:
             "slope_bp": round(mark_slope, 2),
             "updated_utc": utc_now(),
         },
-        "pnl": {
-            "slope_bp": round(pnl_slope, 2),
-            "gbp": round(pnl_gbp, 2),
-            "quoted_long_leg_bp": round((mark_leg_rates[q_long_key] - leg_rates[q_long_key]) * 100, 2),
-            "quoted_short_leg_bp": round((mark_leg_rates[q_short_key] - leg_rates[q_short_key]) * 100, 2),
-            "to_stop_bp": round(float(stop) - mark_slope, 2) if stop is not None else None,
-            "to_tp_bp": round(float(tp) - mark_slope, 2) if tp is not None else None,
-        },
+        "pnl": pnl_row,
         "trade_path": path,
         "regime_attribution": regimes,
         "market_note_url": cfg.get("market_note_url", ""),
@@ -540,16 +613,23 @@ def analyze_trade(cfg_path: Path) -> dict:
 def index_row(payload: dict) -> dict:
     t = payload["trade"]
     levels = payload.get("levels") or {}
-    pnl_gbp = float(payload["pnl"]["gbp"])
     pnl_bp = float(payload["pnl"]["slope_bp"])
+    currency = t.get("currency", "GBP")
+    if currency == "USD":
+        pnl_display = float(payload["pnl"].get("usd", 0))
+        trade_per_bp = float(t.get("usd_per_bp", 25))
+    else:
+        pnl_display = float(payload["pnl"]["gbp"])
+        trade_per_bp = float(t.get("gbp_per_bp", 12.5))
     book_size = None
     if (ROOT / "book.json").is_file():
-        from analyze_book import book_gbp_per_bp, book_size_for_trade, load_book
+        from analyze_book import book_size_for_trade, load_book, trade_book_sizing
 
         book = load_book()
         book_size = book_size_for_trade(t, book)
-        scale = book_gbp_per_bp(book) / float(t.get("gbp_per_bp", 12.5))
-        pnl_gbp = round(pnl_gbp * scale, 2)
+        sizing = trade_book_sizing(t, book)
+        scale = sizing["pnl_per_bp"] / trade_per_bp if trade_per_bp else 1.0
+        pnl_display = round(pnl_display * scale, 2)
     row = {
         "id": t["id"],
         "type": t.get("type", "spread"),
@@ -557,10 +637,13 @@ def index_row(payload: dict) -> dict:
         "position": t["position"],
         "direction": t["direction"],
         "spread_label": t["spread_label"],
+        "market": t.get("market", "sonia_1m"),
+        "currency": currency,
         "entry_locked": t["entry_locked"],
         "detail_page": t["detail_page"],
         "data_file": f"{t['id']}_trade_data.json",
-        "pnl_gbp": pnl_gbp,
+        "pnl_gbp": pnl_display if currency == "GBP" else None,
+        "pnl_usd": pnl_display if currency == "USD" else None,
         "pnl_slope_bp": pnl_bp,
     }
     if book_size:
