@@ -1,0 +1,95 @@
+{
+  "generated_utc": "2026-07-01 12:32 UTC",
+  "trade": {
+    "id": "mar28_mar27_sofr_steepener",
+    "type": "spread",
+    "label": "Mar28\u2212Mar27 3M SOFR steepener",
+    "position": "Long SQH27 (Mar-27) / Short SQH28 (Mar-28)",
+    "direction": "steepener",
+    "spread_label": "Mar28\u2212Mar27",
+    "long_symbol": "SQH27",
+    "short_symbol": "SQH28",
+    "market": "sofr_3m",
+    "currency": "USD",
+    "entry_locked": true,
+    "detail_page": "trade_mar28_mar27_sofr.html",
+    "usd_per_bp": 25.0,
+    "face_value_usd": 1000000.0
+  },
+  "levels": {},
+  "bank_rate_pct": 3.625,
+  "bank_rate_as_of": "2026-06-29",
+  "entry": {
+    "date": "2026-07-01",
+    "label": "1 Jul 2026 EOD close",
+    "short": {
+      "symbol": "SQH28",
+      "date": "2026-07-01",
+      "price": 96.11,
+      "implied_rate_pct": 3.89
+    },
+    "long": {
+      "symbol": "SQH27",
+      "date": "2026-07-01",
+      "price": 95.875,
+      "implied_rate_pct": 4.125
+    },
+    "slope_bp": -23.5,
+    "captured_utc": "2026-07-01 12:31 UTC",
+    "source": "barchart_eod"
+  },
+  "mark": {
+    "date": "2026-07-01",
+    "short": {
+      "symbol": "SQH28",
+      "date": "2026-07-01",
+      "price": 96.105,
+      "implied_rate_pct": 3.895
+    },
+    "long": {
+      "symbol": "SQH27",
+      "date": "2026-07-01",
+      "price": 95.875,
+      "implied_rate_pct": 4.125
+    },
+    "slope_bp": -23.0,
+    "updated_utc": "2026-07-01 12:32 UTC"
+  },
+  "pnl": {
+    "slope_bp": 0.5,
+    "quoted_long_leg_bp": -0.0,
+    "quoted_short_leg_bp": 0.0,
+    "to_stop_bp": null,
+    "to_tp_bp": null,
+    "usd": 12.5,
+    "gbp": 0.0
+  },
+  "trade_path": [
+    {
+      "date": "2026-07-01",
+      "quoted_long_rate": 3.895,
+      "quoted_short_rate": 4.125,
+      "slope_bp": -23.0,
+      "dslope_bp": 0.5,
+      "cum_pnl_gbp": 12.5,
+      "daily_pnl_usd": 12.5
+    }
+  ],
+  "regime_attribution": [],
+  "market_note_url": "",
+  "leg_labels": {
+    "quoted_long": "Mar-28",
+    "quoted_short": "Mar-27"
+  },
+  "live_proxy": null,
+  "book_size": {
+    "contracts_per_leg": 2,
+    "gross_notional_gbp": 4000000.0,
+    "gbp_per_bp": 50.0,
+    "position_size": "2 lots/leg \u00b7 $2.0M face/leg \u00b7 $4.0M gross \u00b7 $50/bp",
+    "currency": "USD",
+    "face_value_usd_per_leg": 2000000.0,
+    "usd_per_bp": 50.0,
+    "gross_notional_usd": 4000000.0
+  }
+}

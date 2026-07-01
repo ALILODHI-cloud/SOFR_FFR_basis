@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:24 UTC",
+  "generated_utc": "2026-07-01 12:32 UTC",
   "book": {
     "id": "supra_stir",
     "label": "Supra STIR Book",
@@ -35,102 +35,141 @@
     "margin_utilisation_pct": 7.7
   },
   "metrics": {
-    "nav_usd": 1000286.65,
-    "total_pnl_usd": 286.65,
-    "total_pnl_gbp": 225.0,
-    "mtd_pnl_usd": 286.65,
-    "ytd_pnl_usd": 286.65,
-    "mtd_return_pct": 0.029,
-    "ytd_return_pct": 0.029,
-    "total_return_pct": 0.029,
+    "nav_usd": 1000311.65,
+    "total_pnl_usd": 311.65,
+    "total_pnl_gbp": 244.62,
+    "mtd_pnl_usd": 25.0,
+    "ytd_pnl_usd": 311.65,
+    "mtd_return_pct": 0.002,
+    "ytd_return_pct": 0.031,
+    "total_return_pct": 0.031,
     "vol_ann_30d_pct": 0.16,
-    "sharpe_ann_30d": -18.97,
+    "sharpe_ann_30d": -19.44,
     "max_drawdown_usd": -207.03,
-    "as_of": "2026-06-30"
+    "as_of": "2026-07-01"
   },
   "trades": [
     {
       "id": "dec27_dec26_steepener",
       "label": "Dec27\u2212Dec26 SONIA steepener",
       "type": "spread",
+      "market": "sonia_1m",
+      "currency": "GBP",
       "position": "Long JUZ26 (Dec-26) / Short JUZ27 (Dec-27)",
       "direction": "steepener",
       "entry_date": "2026-06-05",
       "mark_date": "2026-06-30",
       "contracts_per_leg": 2,
-      "face_value_gbp_per_leg": 1000000.0,
-      "gross_notional_gbp": 2000000.0,
+      "gross_notional": 2000000.0,
       "position_size": "2 lots/leg \u00b7 \u00a31.0M face/leg \u00b7 \u00a32.0M gross \u00b7 \u00a325/bp",
+      "pnl_per_bp": 25.0,
       "margin_ice_gbp": 24144.0,
       "margin_ice_usd": 30759.0,
       "margin_method": "ice_outright_legs",
-      "gbp_per_bp": 25.0,
       "pnl_bp": 2.5,
-      "pnl_gbp": 62.5,
       "pnl_usd": 79.62,
       "return_on_nav_pct": 0.008,
       "return_on_margin_pct": 0.26,
       "detail_page": "trade_dec27_dec26.html",
+      "pnl_gbp": 62.5,
+      "face_value_gbp_per_leg": 1000000.0,
+      "gross_notional_gbp": 2000000.0,
       "entry_level": 3.5,
       "mark_level": 6.0,
       "level_unit": "spread bp",
       "spread_label": "Dec27\u2212Dec26",
-      "pnl_explanation": "Steepener: \u0394spread = +2.5 bp \u00b7 \u00d7 \u00a325.0/bp = +62.50 GBP \u00b7 \u00d7 1.274 FX = $+80"
+      "pnl_explanation": "Steepener: \u0394spread = +2.5 bp \u00b7 \u00d7 \u00a325.0/bp = \u00a3+62.50 \u00b7 \u00d7 1.274 FX = $+80"
     },
     {
       "id": "jun27_dec26_flattener",
       "label": "Jun27\u2212Dec26 SONIA flattener",
       "type": "spread",
+      "market": "sonia_1m",
+      "currency": "GBP",
       "position": "Long JUZ26 (Dec-26) / Short JUM27 (Jun-27)",
       "direction": "flattener",
       "entry_date": "2026-06-23",
       "mark_date": "2026-06-30",
       "contracts_per_leg": 2,
-      "face_value_gbp_per_leg": 1000000.0,
-      "gross_notional_gbp": 2000000.0,
+      "gross_notional": 2000000.0,
       "position_size": "2 lots/leg \u00b7 \u00a31.0M face/leg \u00b7 \u00a32.0M gross \u00b7 \u00a325/bp",
+      "pnl_per_bp": 25.0,
       "margin_ice_gbp": 27170.0,
       "margin_ice_usd": 34615.0,
       "margin_method": "ice_outright_legs",
-      "gbp_per_bp": 25.0,
       "pnl_bp": 1.0,
-      "pnl_gbp": 25.0,
       "pnl_usd": 31.85,
       "return_on_nav_pct": 0.0032,
       "return_on_margin_pct": 0.09,
       "detail_page": "trade_jun27_dec26.html",
+      "pnl_gbp": 25.0,
+      "face_value_gbp_per_leg": 1000000.0,
+      "gross_notional_gbp": 2000000.0,
       "entry_level": 13.0,
       "mark_level": 12.0,
       "level_unit": "spread bp",
       "spread_label": "Jun27\u2212Dec26",
-      "pnl_explanation": "Flattener: \u0394spread = +1.0 bp \u00b7 \u00d7 \u00a325.0/bp = +25.00 GBP \u00b7 \u00d7 1.274 FX = $+32"
+      "pnl_explanation": "Flattener: \u0394spread = +1.0 bp \u00b7 \u00d7 \u00a325.0/bp = \u00a3+25.00 \u00b7 \u00d7 1.274 FX = $+32"
     },
     {
       "id": "jun27_outright_long",
       "label": "Long JUM27 (Jun-27 SONIA)",
       "type": "outright",
+      "market": "sonia_1m",
+      "currency": "GBP",
       "position": "Long JUM27 (Jun-27 1M SONIA)",
       "direction": "long",
       "entry_date": "2026-06-23",
       "mark_date": "2026-06-30",
       "contracts_per_leg": 2,
-      "face_value_gbp_per_leg": 1000000.0,
-      "gross_notional_gbp": 1000000.0,
+      "gross_notional": 1000000.0,
       "position_size": "2 lots \u00b7 \u00a31.0M face \u00b7 \u00a325/bp",
+      "pnl_per_bp": 25.0,
       "margin_ice_gbp": 9282.0,
       "margin_ice_usd": 11825.0,
       "margin_method": "ice_outright_long",
-      "gbp_per_bp": 25.0,
       "pnl_bp": 5.5,
-      "pnl_gbp": 137.5,
       "pnl_usd": 175.18,
       "return_on_nav_pct": 0.0175,
       "return_on_margin_pct": 1.48,
       "detail_page": "trade_jun27_outright.html",
+      "pnl_gbp": 137.5,
+      "face_value_gbp_per_leg": 1000000.0,
+      "gross_notional_gbp": 1000000.0,
       "entry_level": 4.09,
       "mark_level": 4.035,
       "level_unit": "implied %",
-      "pnl_explanation": "Long rates: P&L = (entry \u2212 mark) \u00d7 100 = +5.5 bp \u00b7 \u00d7 \u00a325.0/bp = +137.50 GBP \u00b7 \u00d7 1.274 FX = $+175"
+      "pnl_explanation": "Long rates: P&L = (entry \u2212 mark) \u00d7 100 = +5.5 bp \u00b7 \u00d7 \u00a325.0/bp = \u00a3+137.50 \u00b7 \u00d7 1.274 FX = $+175"
+    },
+    {
+      "id": "mar28_mar27_sofr_steepener",
+      "label": "Mar28\u2212Mar27 3M SOFR steepener",
+      "type": "spread",
+      "market": "sofr_3m",
+      "currency": "USD",
+      "position": "Long SQH27 (Mar-27) / Short SQH28 (Mar-28)",
+      "direction": "steepener",
+      "entry_date": "2026-07-01",
+      "mark_date": "2026-07-01",
+      "contracts_per_leg": 2,
+      "gross_notional": 4000000.0,
+      "position_size": "2 lots/leg \u00b7 $2.0M face/leg \u00b7 $4.0M gross \u00b7 $50/bp",
+      "pnl_per_bp": 50.0,
+      "margin_ice_gbp": 0.0,
+      "margin_ice_usd": 0.0,
+      "margin_method": "cme_not_configured",
+      "pnl_bp": 0.5,
+      "pnl_usd": 25.0,
+      "return_on_nav_pct": 0.0025,
+      "return_on_margin_pct": null,
+      "detail_page": "trade_mar28_mar27_sofr.html",
+      "face_value_usd_per_leg": 2000000.0,
+      "gross_notional_usd": 4000000.0,
+      "entry_level": -23.5,
+      "mark_level": -23.0,
+      "level_unit": "spread bp",
+      "spread_label": "Mar28\u2212Mar27",
+      "pnl_explanation": "Steepener: \u0394spread = +0.5 bp \u00b7 \u00d7 $50.0/bp = $+25"
     }
   ],
   "daily": [
@@ -142,7 +181,8 @@
       "nav_usd": 1000000.0,
       "dec27_dec26_steepener": -0.0,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-08",
@@ -150,9 +190,10 @@
       "daily_pnl_usd": 95.55,
       "cum_pnl_usd": 95.55,
       "nav_usd": 1000095.55,
-      "dec27_dec26_steepener": 75.0,
+      "dec27_dec26_steepener": 95.55,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-09",
@@ -160,9 +201,10 @@
       "daily_pnl_usd": -31.85,
       "cum_pnl_usd": 63.7,
       "nav_usd": 1000063.7,
-      "dec27_dec26_steepener": -25.0,
+      "dec27_dec26_steepener": -31.85,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-10",
@@ -170,9 +212,10 @@
       "daily_pnl_usd": 47.77,
       "cum_pnl_usd": 111.47,
       "nav_usd": 1000111.47,
-      "dec27_dec26_steepener": 37.5,
+      "dec27_dec26_steepener": 47.77,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-11",
@@ -180,9 +223,10 @@
       "daily_pnl_usd": -63.7,
       "cum_pnl_usd": 47.77,
       "nav_usd": 1000047.78,
-      "dec27_dec26_steepener": -50.0,
+      "dec27_dec26_steepener": -63.7,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-12",
@@ -190,9 +234,10 @@
       "daily_pnl_usd": -63.7,
       "cum_pnl_usd": -15.93,
       "nav_usd": 999984.07,
-      "dec27_dec26_steepener": -50.0,
+      "dec27_dec26_steepener": -63.7,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-15",
@@ -200,9 +245,10 @@
       "daily_pnl_usd": -31.85,
       "cum_pnl_usd": -47.78,
       "nav_usd": 999952.22,
-      "dec27_dec26_steepener": -25.0,
+      "dec27_dec26_steepener": -31.85,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-16",
@@ -210,9 +256,10 @@
       "daily_pnl_usd": 79.62,
       "cum_pnl_usd": 31.85,
       "nav_usd": 1000031.85,
-      "dec27_dec26_steepener": 62.5,
+      "dec27_dec26_steepener": 79.62,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-17",
@@ -220,9 +267,10 @@
       "daily_pnl_usd": -127.4,
       "cum_pnl_usd": -95.55,
       "nav_usd": 999904.45,
-      "dec27_dec26_steepener": -100.0,
+      "dec27_dec26_steepener": -127.4,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-18",
@@ -230,9 +278,10 @@
       "daily_pnl_usd": 95.55,
       "cum_pnl_usd": -0.0,
       "nav_usd": 1000000.0,
-      "dec27_dec26_steepener": 75.0,
+      "dec27_dec26_steepener": 95.55,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-19",
@@ -240,9 +289,10 @@
       "daily_pnl_usd": 222.95,
       "cum_pnl_usd": 222.95,
       "nav_usd": 1000222.95,
-      "dec27_dec26_steepener": 175.0,
+      "dec27_dec26_steepener": 222.95,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-22",
@@ -250,9 +300,10 @@
       "daily_pnl_usd": -15.93,
       "cum_pnl_usd": 207.02,
       "nav_usd": 1000207.03,
-      "dec27_dec26_steepener": -12.5,
+      "dec27_dec26_steepener": -15.93,
       "jun27_dec26_flattener": 0.0,
-      "jun27_outright_long": 0.0
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-23",
@@ -260,9 +311,10 @@
       "daily_pnl_usd": -143.32,
       "cum_pnl_usd": 63.7,
       "nav_usd": 1000063.7,
-      "dec27_dec26_steepener": -112.5,
+      "dec27_dec26_steepener": -143.32,
       "jun27_dec26_flattener": -0.0,
-      "jun27_outright_long": -0.0
+      "jun27_outright_long": -0.0,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-24",
@@ -270,9 +322,10 @@
       "daily_pnl_usd": 143.32,
       "cum_pnl_usd": 207.02,
       "nav_usd": 1000207.03,
-      "dec27_dec26_steepener": -87.5,
-      "jun27_dec26_flattener": 75.0,
-      "jun27_outright_long": 125.0
+      "dec27_dec26_steepener": -111.48,
+      "jun27_dec26_flattener": 95.55,
+      "jun27_outright_long": 159.25,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-25",
@@ -280,19 +333,21 @@
       "daily_pnl_usd": 79.62,
       "cum_pnl_usd": 286.65,
       "nav_usd": 1000286.65,
-      "dec27_dec26_steepener": -75.0,
-      "jun27_dec26_flattener": 62.5,
-      "jun27_outright_long": 75.0
+      "dec27_dec26_steepener": -95.55,
+      "jun27_dec26_flattener": 79.62,
+      "jun27_outright_long": 95.55,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-26",
       "daily_pnl_gbp": 87.5,
-      "daily_pnl_usd": 111.48,
+      "daily_pnl_usd": 111.47,
       "cum_pnl_usd": 398.12,
       "nav_usd": 1000398.12,
-      "dec27_dec26_steepener": 62.5,
-      "jun27_dec26_flattener": -12.5,
-      "jun27_outright_long": 37.5
+      "dec27_dec26_steepener": 79.62,
+      "jun27_dec26_flattener": -15.93,
+      "jun27_outright_long": 47.77,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-29",
@@ -300,9 +355,10 @@
       "daily_pnl_usd": -143.32,
       "cum_pnl_usd": 254.8,
       "nav_usd": 1000254.8,
-      "dec27_dec26_steepener": 25.0,
-      "jun27_dec26_flattener": -62.5,
-      "jun27_outright_long": -75.0
+      "dec27_dec26_steepener": 31.85,
+      "jun27_dec26_flattener": -79.62,
+      "jun27_outright_long": -95.55,
+      "mar28_mar27_sofr_steepener": 0.0
     },
     {
       "date": "2026-06-30",
@@ -310,16 +366,28 @@
       "daily_pnl_usd": 31.85,
       "cum_pnl_usd": 286.65,
       "nav_usd": 1000286.65,
-      "dec27_dec26_steepener": 87.5,
-      "jun27_dec26_flattener": -37.5,
-      "jun27_outright_long": -25.0
+      "dec27_dec26_steepener": 111.48,
+      "jun27_dec26_flattener": -47.77,
+      "jun27_outright_long": -31.85,
+      "mar28_mar27_sofr_steepener": 0.0
+    },
+    {
+      "date": "2026-07-01",
+      "daily_pnl_gbp": 19.62,
+      "daily_pnl_usd": 25.0,
+      "cum_pnl_usd": 311.65,
+      "nav_usd": 1000311.65,
+      "dec27_dec26_steepener": 0.0,
+      "jun27_dec26_flattener": 0.0,
+      "jun27_outright_long": 0.0,
+      "mar28_mar27_sofr_steepener": 25.0
     }
   ],
   "pnl_bridge": {
     "starting_nav_usd": 1000000,
-    "total_pnl_usd": 286.65,
-    "ending_nav_usd": 1000286.65,
+    "total_pnl_usd": 311.65,
+    "ending_nav_usd": 1000311.65,
     "fx_gbp_usd": 1.274,
-    "note": "Each 1bp on a 1:1 ICE 1M SONIA calendar spread with 2 contracts/leg (\u00a31,000,000 face) \u2248 \u00a325.0/bp \u2248 $32/bp. P&L GBP \u00d7 1.274 \u2192 USD. Returns vs $1,000,000 starting NAV."
+    "note": "Mixed STIR book: ICE 1M SONIA legs in GBP (\u00d7 FX \u2192 USD); CME 3M SOFR legs in USD-native. SONIA book clip \u2248 2 lots/leg \u00b7 SOFR book clip \u2248 2 lots/leg. Returns vs $1,000,000 starting NAV."
   }
 }

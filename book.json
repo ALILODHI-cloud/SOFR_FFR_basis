@@ -7,6 +7,9 @@
   "gbp_usd_as_of": "2026-06-30",
   "contracts_per_leg": 2,
   "face_value_gbp_per_contract": 500000,
+  "sofr_contracts_per_leg": 2,
+  "sofr_face_value_usd_per_contract": 1000000,
+  "sofr_usd_per_bp_per_contract": 25,
   "risk_free_pct": 3.5,
   "ice_margin_product_id": 910,
   "conventions": {
