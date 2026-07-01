@@ -1,0 +1,52 @@
+{
+  "trade_id": "dec27_dec26_steepener",
+  "trade_type": "spread",
+  "label": "Dec27−Dec26 SONIA steepener",
+  "position": "Long JUZ26 (Dec-26) / Short JUZ27 (Dec-27)",
+  "direction": "steepener",
+  "long_symbol": "JUZ26",
+  "short_symbol": "JUZ27",
+  "long_key": "2026-12",
+  "short_key": "2027-12",
+  "quoted_spread": {
+    "label": "Dec27−Dec26",
+    "long_key": "2027-12",
+    "short_key": "2026-12",
+    "long_label": "Dec-27",
+    "short_label": "Dec-26"
+  },
+  "entry_date": "2026-06-05",
+  "entry_label": "5 Jun 2026 EOD close",
+  "entry_source": "barchart_eod",
+  "entry_locked": true,
+  "gbp_per_bp": 12.5,
+  "face_value_gbp": 500000,
+  "contracts_per_leg": 1,
+  "detail_page": "trade_dec27_dec26.html",
+  "market_note_url": "docs/uk-sonia-front-loaded-hike-pricing.md",
+  "live_proxy": {"enabled": true, "curve": "sonia_3m"},
+  "levels": {
+    "entry_slope_bp": 3.5,
+    "stop_slope_bp": -5.0,
+    "take_profit_slope_bp": 15.0
+  },
+  "entry": {
+    "date": "2026-06-05",
+    "label": "5 Jun 2026 EOD close",
+    "short": {
+      "symbol": "JUZ27",
+      "date": "2026-06-05",
+      "price": 95.79,
+      "implied_rate_pct": 4.21
+    },
+    "long": {
+      "symbol": "JUZ26",
+      "date": "2026-06-05",
+      "price": 95.825,
+      "implied_rate_pct": 4.175
+    },
+    "slope_bp": 3.5,
+    "captured_utc": "2026-06-05",
+    "source": "barchart_eod"
+  }
+}

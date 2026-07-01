@@ -1,0 +1,280 @@
+{
+  "generated_utc": "2026-07-01 11:27 UTC",
+  "trade": {
+    "id": "dec27_dec26_steepener",
+    "type": "spread",
+    "label": "Dec27\u2212Dec26 SONIA steepener",
+    "position": "Long JUZ26 (Dec-26) / Short JUZ27 (Dec-27)",
+    "direction": "steepener",
+    "spread_label": "Dec27\u2212Dec26",
+    "entry_locked": true,
+    "gbp_per_bp": 12.5,
+    "detail_page": "trade_dec27_dec26.html"
+  },
+  "levels": {
+    "entry_slope_bp": 3.5,
+    "stop_slope_bp": -5.0,
+    "take_profit_slope_bp": 15.0
+  },
+  "bank_rate_pct": 3.75,
+  "bank_rate_as_of": "2026-06-18",
+  "entry": {
+    "date": "2026-06-05",
+    "label": "5 Jun 2026 EOD close",
+    "short": {
+      "symbol": "JUZ27",
+      "date": "2026-06-05",
+      "price": 95.79,
+      "implied_rate_pct": 4.21
+    },
+    "long": {
+      "symbol": "JUZ26",
+      "date": "2026-06-05",
+      "price": 95.825,
+      "implied_rate_pct": 4.175
+    },
+    "slope_bp": 3.5,
+    "captured_utc": "2026-06-05",
+    "source": "barchart_eod"
+  },
+  "mark": {
+    "date": "2026-06-30",
+    "short": {
+      "symbol": "JUZ27",
+      "date": "2026-06-30",
+      "price": 96.025,
+      "implied_rate_pct": 3.975
+    },
+    "long": {
+      "symbol": "JUZ26",
+      "date": "2026-06-30",
+      "price": 96.085,
+      "implied_rate_pct": 3.915
+    },
+    "slope_bp": 6.0,
+    "updated_utc": "2026-07-01 11:27 UTC"
+  },
+  "pnl": {
+    "slope_bp": 2.5,
+    "gbp": 31.25,
+    "quoted_long_leg_bp": -0.0,
+    "quoted_short_leg_bp": 0.0,
+    "to_stop_bp": -11.0,
+    "to_tp_bp": 9.0
+  },
+  "trade_path": [
+    {
+      "date": "2026-06-05",
+      "quoted_long_rate": 4.21,
+      "quoted_short_rate": 4.175,
+      "slope_bp": 3.5,
+      "dslope_bp": -0.0,
+      "cum_pnl_gbp": -0.0,
+      "daily_pnl_gbp": -0.0
+    },
+    {
+      "date": "2026-06-08",
+      "quoted_long_rate": 4.26,
+      "quoted_short_rate": 4.195,
+      "slope_bp": 6.5,
+      "dslope_bp": 3.0,
+      "cum_pnl_gbp": 37.5,
+      "daily_pnl_gbp": 37.5
+    },
+    {
+      "date": "2026-06-09",
+      "quoted_long_rate": 4.22,
+      "quoted_short_rate": 4.165,
+      "slope_bp": 5.5,
+      "dslope_bp": 2.0,
+      "cum_pnl_gbp": 25.0,
+      "daily_pnl_gbp": -12.5
+    },
+    {
+      "date": "2026-06-10",
+      "quoted_long_rate": 4.24,
+      "quoted_short_rate": 4.17,
+      "slope_bp": 7.0,
+      "dslope_bp": 3.5,
+      "cum_pnl_gbp": 43.75,
+      "daily_pnl_gbp": 18.75
+    },
+    {
+      "date": "2026-06-11",
+      "quoted_long_rate": 4.215,
+      "quoted_short_rate": 4.165,
+      "slope_bp": 5.0,
+      "dslope_bp": 1.5,
+      "cum_pnl_gbp": 18.75,
+      "daily_pnl_gbp": -25.0
+    },
+    {
+      "date": "2026-06-12",
+      "quoted_long_rate": 4.11,
+      "quoted_short_rate": 4.08,
+      "slope_bp": 3.0,
+      "dslope_bp": -0.5,
+      "cum_pnl_gbp": -6.25,
+      "daily_pnl_gbp": -25.0
+    },
+    {
+      "date": "2026-06-15",
+      "quoted_long_rate": 4.02,
+      "quoted_short_rate": 4.0,
+      "slope_bp": 2.0,
+      "dslope_bp": -1.5,
+      "cum_pnl_gbp": -18.75,
+      "daily_pnl_gbp": -12.5
+    },
+    {
+      "date": "2026-06-16",
+      "quoted_long_rate": 4.05,
+      "quoted_short_rate": 4.005,
+      "slope_bp": 4.5,
+      "dslope_bp": 1.0,
+      "cum_pnl_gbp": 12.5,
+      "daily_pnl_gbp": 31.25
+    },
+    {
+      "date": "2026-06-17",
+      "quoted_long_rate": 3.99,
+      "quoted_short_rate": 3.985,
+      "slope_bp": 0.5,
+      "dslope_bp": -3.0,
+      "cum_pnl_gbp": -37.5,
+      "daily_pnl_gbp": -50.0
+    },
+    {
+      "date": "2026-06-18",
+      "quoted_long_rate": 4.015,
+      "quoted_short_rate": 3.98,
+      "slope_bp": 3.5,
+      "dslope_bp": -0.0,
+      "cum_pnl_gbp": -0.0,
+      "daily_pnl_gbp": 37.5
+    },
+    {
+      "date": "2026-06-19",
+      "quoted_long_rate": 4.12,
+      "quoted_short_rate": 4.015,
+      "slope_bp": 10.5,
+      "dslope_bp": 7.0,
+      "cum_pnl_gbp": 87.5,
+      "daily_pnl_gbp": 87.5
+    },
+    {
+      "date": "2026-06-22",
+      "quoted_long_rate": 4.075,
+      "quoted_short_rate": 3.975,
+      "slope_bp": 10.0,
+      "dslope_bp": 6.5,
+      "cum_pnl_gbp": 81.25,
+      "daily_pnl_gbp": -6.25
+    },
+    {
+      "date": "2026-06-23",
+      "quoted_long_rate": 4.015,
+      "quoted_short_rate": 3.96,
+      "slope_bp": 5.5,
+      "dslope_bp": 2.0,
+      "cum_pnl_gbp": 25.0,
+      "daily_pnl_gbp": -56.25
+    },
+    {
+      "date": "2026-06-24",
+      "quoted_long_rate": 3.96,
+      "quoted_short_rate": 3.94,
+      "slope_bp": 2.0,
+      "dslope_bp": -1.5,
+      "cum_pnl_gbp": -18.75,
+      "daily_pnl_gbp": -43.75
+    },
+    {
+      "date": "2026-06-25",
+      "quoted_long_rate": 3.925,
+      "quoted_short_rate": 3.935,
+      "slope_bp": -1.0,
+      "dslope_bp": -4.5,
+      "cum_pnl_gbp": -56.25,
+      "daily_pnl_gbp": -37.5
+    },
+    {
+      "date": "2026-06-26",
+      "quoted_long_rate": 3.93,
+      "quoted_short_rate": 3.915,
+      "slope_bp": 1.5,
+      "dslope_bp": -2.0,
+      "cum_pnl_gbp": -25.0,
+      "daily_pnl_gbp": 31.25
+    },
+    {
+      "date": "2026-06-29",
+      "quoted_long_rate": 3.945,
+      "quoted_short_rate": 3.92,
+      "slope_bp": 2.5,
+      "dslope_bp": -1.0,
+      "cum_pnl_gbp": -12.5,
+      "daily_pnl_gbp": 12.5
+    },
+    {
+      "date": "2026-06-30",
+      "quoted_long_rate": 3.975,
+      "quoted_short_rate": 3.915,
+      "slope_bp": 6.0,
+      "dslope_bp": 2.5,
+      "cum_pnl_gbp": 31.25,
+      "daily_pnl_gbp": 43.75
+    }
+  ],
+  "regime_attribution": [
+    {
+      "regime": "bull_flattening",
+      "label": "Bull flattening",
+      "days": 9,
+      "pnl_slope_bp": -21.5,
+      "pnl_gbp": -268.75
+    },
+    {
+      "regime": "bear_steepening",
+      "label": "Bear steepening",
+      "days": 5,
+      "pnl_slope_bp": 15.0,
+      "pnl_gbp": 187.5
+    },
+    {
+      "regime": "mixed_steepening",
+      "label": "Mixed steepening",
+      "days": 3,
+      "pnl_slope_bp": 9.0,
+      "pnl_gbp": 112.5
+    }
+  ],
+  "market_note_url": "docs/uk-sonia-front-loaded-hike-pricing.md",
+  "leg_labels": {
+    "quoted_long": "Dec-27",
+    "quoted_short": "Dec-26"
+  },
+  "live_proxy": {
+    "source": "3M SONIA (J8*) \u00b7 change applied to 1M entry",
+    "note": "Indicative only. Official P&L uses 1M EOD (JU*). 3M levels differ from 1M; leg deltas ~0.99 corr (Jun-27).",
+    "entry_3m_date": "2026-06-05",
+    "latest_3m_date": "2026-06-22",
+    "legs": {
+      "2027-12": {
+        "entry_3m_rate_pct": 4.205,
+        "latest_3m_rate_pct": 4.08,
+        "proxy_1m_rate_pct": 4.085,
+        "delta_3m_bp": -12.5
+      },
+      "2026-12": {
+        "entry_3m_rate_pct": 4.225,
+        "latest_3m_rate_pct": 4.07,
+        "proxy_1m_rate_pct": 4.02,
+        "delta_3m_bp": -15.5
+      }
+    },
+    "mark_slope_bp": 6.5,
+    "pnl_bp": 3.0,
+    "pnl_gbp": 37.5
+  }
+}
