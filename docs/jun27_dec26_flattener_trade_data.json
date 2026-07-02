@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 15:06 UTC",
+  "generated_utc": "2026-07-02 11:39 UTC",
   "trade": {
     "id": "jun27_dec26_flattener",
     "type": "spread",
@@ -42,28 +42,28 @@
     "source": "barchart_eod"
   },
   "mark": {
-    "date": "2026-06-30",
+    "date": "2026-07-01",
     "short": {
       "symbol": "JUM27",
-      "date": "2026-06-30",
-      "price": 95.965,
-      "implied_rate_pct": 4.035,
-      "vs_fed_bp": 28.5
+      "date": "2026-07-01",
+      "price": 95.985,
+      "implied_rate_pct": 4.015,
+      "vs_fed_bp": 26.5
     },
     "long": {
       "symbol": "JUZ26",
-      "date": "2026-06-30",
-      "price": 96.085,
-      "implied_rate_pct": 3.915,
-      "vs_fed_bp": 16.5
+      "date": "2026-07-01",
+      "price": 96.105,
+      "implied_rate_pct": 3.895,
+      "vs_fed_bp": 14.5
     },
     "slope_bp": 12.0,
-    "updated_utc": "2026-07-01 15:06 UTC"
+    "updated_utc": "2026-07-02 11:39 UTC"
   },
   "pnl": {
     "slope_bp": 1.0,
     "quoted_long_leg_bp": 0.0,
-    "quoted_short_leg_bp": 0.0,
+    "quoted_short_leg_bp": -0.0,
     "to_stop_bp": 8.0,
     "to_tp_bp": -13.0,
     "gbp": 12.5
@@ -74,9 +74,9 @@
       "quoted_long_rate": 4.09,
       "quoted_short_rate": 3.96,
       "slope_bp": 13.0,
-      "dslope_bp": 0.0,
-      "cum_pnl_gbp": 0.0,
-      "daily_pnl_gbp": 0.0
+      "dslope_bp": -0.0,
+      "cum_pnl_gbp": -0.0,
+      "daily_pnl_gbp": -0.0
     },
     {
       "date": "2026-06-24",
@@ -122,6 +122,15 @@
       "dslope_bp": 1.0,
       "cum_pnl_gbp": 12.5,
       "daily_pnl_gbp": -18.75
+    },
+    {
+      "date": "2026-07-01",
+      "quoted_long_rate": 4.015,
+      "quoted_short_rate": 3.895,
+      "slope_bp": 12.0,
+      "dslope_bp": 1.0,
+      "cum_pnl_gbp": 12.5,
+      "daily_pnl_gbp": -0.0
     }
   ],
   "regime_attribution": [
@@ -152,6 +161,13 @@
       "days": 1,
       "pnl_slope_bp": -0.5,
       "pnl_gbp": -6.25
+    },
+    {
+      "regime": "unchanged",
+      "label": "Unchanged",
+      "days": 1,
+      "pnl_slope_bp": -0.0,
+      "pnl_gbp": -0.0
     }
   ],
   "market_note_url": "",
