@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:32 UTC",
+  "generated_utc": "2026-07-01 12:37 UTC",
   "book": {
     "id": "supra_stir",
     "label": "Supra STIR Book",
@@ -35,16 +35,16 @@
     "margin_utilisation_pct": 7.7
   },
   "metrics": {
-    "nav_usd": 1000311.65,
-    "total_pnl_usd": 311.65,
-    "total_pnl_gbp": 244.62,
-    "mtd_pnl_usd": 25.0,
-    "ytd_pnl_usd": 311.65,
-    "mtd_return_pct": 0.002,
-    "ytd_return_pct": 0.031,
-    "total_return_pct": 0.031,
+    "nav_usd": 1000286.65,
+    "total_pnl_usd": 286.65,
+    "total_pnl_gbp": 225.0,
+    "mtd_pnl_usd": 0.0,
+    "ytd_pnl_usd": 286.65,
+    "mtd_return_pct": 0.0,
+    "ytd_return_pct": 0.029,
+    "total_return_pct": 0.029,
     "vol_ann_30d_pct": 0.16,
-    "sharpe_ann_30d": -19.44,
+    "sharpe_ann_30d": -19.64,
     "max_drawdown_usd": -207.03,
     "as_of": "2026-07-01"
   },
@@ -158,18 +158,18 @@
       "margin_ice_gbp": 0.0,
       "margin_ice_usd": 0.0,
       "margin_method": "cme_not_configured",
-      "pnl_bp": 0.5,
-      "pnl_usd": 25.0,
-      "return_on_nav_pct": 0.0025,
+      "pnl_bp": 0.0,
+      "pnl_usd": 0.0,
+      "return_on_nav_pct": 0.0,
       "return_on_margin_pct": null,
       "detail_page": "trade_mar28_mar27_sofr.html",
       "face_value_usd_per_leg": 2000000.0,
       "gross_notional_usd": 4000000.0,
       "entry_level": -23.5,
-      "mark_level": -23.0,
+      "mark_level": -23.5,
       "level_unit": "spread bp",
       "spread_label": "Mar28\u2212Mar27",
-      "pnl_explanation": "Steepener: \u0394spread = +0.5 bp \u00b7 \u00d7 $50.0/bp = $+25"
+      "pnl_explanation": "Steepener: \u0394spread = +0.0 bp \u00b7 \u00d7 $50.0/bp = $+0"
     }
   ],
   "daily": [
@@ -373,20 +373,20 @@
     },
     {
       "date": "2026-07-01",
-      "daily_pnl_gbp": 19.62,
-      "daily_pnl_usd": 25.0,
-      "cum_pnl_usd": 311.65,
-      "nav_usd": 1000311.65,
+      "daily_pnl_gbp": 0.0,
+      "daily_pnl_usd": 0.0,
+      "cum_pnl_usd": 286.65,
+      "nav_usd": 1000286.65,
       "dec27_dec26_steepener": 0.0,
       "jun27_dec26_flattener": 0.0,
       "jun27_outright_long": 0.0,
-      "mar28_mar27_sofr_steepener": 25.0
+      "mar28_mar27_sofr_steepener": 0.0
     }
   ],
   "pnl_bridge": {
     "starting_nav_usd": 1000000,
-    "total_pnl_usd": 311.65,
-    "ending_nav_usd": 1000311.65,
+    "total_pnl_usd": 286.65,
+    "ending_nav_usd": 1000286.65,
     "fx_gbp_usd": 1.274,
     "note": "Mixed STIR book: ICE 1M SONIA legs in GBP (\u00d7 FX \u2192 USD); CME 3M SOFR legs in USD-native. SONIA book clip \u2248 2 lots/leg \u00b7 SOFR book clip \u2248 2 lots/leg. Returns vs $1,000,000 starting NAV."
   }
