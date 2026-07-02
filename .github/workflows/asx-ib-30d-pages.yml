@@ -1,0 +1,68 @@
+name: ASX 30-day cash rate — fetch, build, deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analyze_asx_ib_30d.py'
+      - 'analyze_sonia.py'
+      - 'analyze_stir_curves.py'
+      - 'build_asx_ib_30d_dashboard.py'
+      - 'requirements-sonia.txt'
+      - '.github/workflows/asx-ib-30d-pages.yml'
+  schedule:
+    # Weekdays: ~10:00 London + ~18:30 London (post SFE close)
+    - cron: "0 9 * * 1-5"
+    - cron: "30 17 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: asx-ib-30d-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-sonia.txt
+          playwright install chromium
+
+      - name: Fetch Barchart + rebuild ASX 30-day dashboard
+        run: |
+          python analyze_asx_ib_30d.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
+          python build_asx_ib_30d_dashboard.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Commit refreshed data (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add asx_ib_30d_data.json asx_ib_30d_dashboard.html docs/asx_ib_30d_dashboard.html portal.html docs/portal.html
+          git diff --staged --quiet || git commit -m "Auto-refresh ASX 30-day cash rate curve $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push || true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
