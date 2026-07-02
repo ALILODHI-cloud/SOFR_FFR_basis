@@ -36,9 +36,8 @@ h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
 <header>
   <div class="eyebrow">Supra Fund Management</div>
   <h1>Live trade tracker</h1>
-  <div class="sub" id="bookLine">Loading book…</div>
+  <div class="sub">SONIA + SOFR positions · Barchart marks weekdays</div>
 </header>
-<div id="bookBar" class="card" style="display:none;margin-bottom:14px;padding:14px"></div>
 <div id="loading" class="loading">Loading trades…</div>
 <div class="grid" id="tradeGrid"></div>
 <p class="foot" id="foot"></p>
@@ -52,16 +51,6 @@ function fmtPnl(t){
   return fmtGbp(t.pnl_gbp);
 }
 function cls(v){ return v>0.5?'good':v<-0.5?'bad':''; }
-
-fetch('book_summary.json').then(r=>r.json()).then(B=>{
-  const m = B.metrics;
-  document.getElementById('bookLine').textContent =
-    'Book NAV $'+m.nav_usd.toLocaleString()+' · MTD '+fmtPct(m.mtd_return_pct)+' · YTD '+fmtPct(m.ytd_return_pct);
-  const bar = document.getElementById('bookBar');
-  bar.style.display='block';
-  bar.innerHTML = '<div class="row"><span>Total P&amp;L</span><span class="'+cls(m.total_pnl_usd)+'">'+(m.total_pnl_usd>=0?'+':'')+'$'+Math.abs(m.total_pnl_usd).toLocaleString()+'</span></div>'
-    +'<div class="row"><span>30d ann. vol</span><span>'+(m.vol_ann_30d_pct!=null?m.vol_ann_30d_pct.toFixed(1)+'%':'—')+'</span></div>';
-}).catch(()=>{ document.getElementById('bookLine').textContent = 'Barchart marks weekdays'; });
 
 fetch('trades_index.json').then(r=>{
   if(!r.ok) throw new Error(r.statusText);
@@ -82,7 +71,6 @@ fetch('trades_index.json').then(r=>{
       ? '<div class="row"><span>Mark</span><span>'+fmtPct(t.mark_rate_pct)+'</span></div>'
       : '<div class="row"><span>Mark spread</span><span>'+fmtBp(t.mark_slope_bp)+'</span></div>';
     grid.innerHTML += '<a class="card" href="'+t.detail_page+'"><h2>'+t.label+'</h2><p>'+t.position+'</p>'
-      + (t.position_size ? '<p style="font-size:12px;color:var(--mut);margin:0 0 8px">'+t.position_size+'</p>' : '')
       + '<span class="pill">'+t.direction+'</span>'
       + entryRow + markRow
       + '<div class="row"><span>P&amp;L</span><span class="'+pnlCls+'">'+fmtPnl(t)+'</span></div></a>';

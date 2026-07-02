@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:32 UTC",
+  "generated_utc": "2026-07-01 15:06 UTC",
   "trade": {
     "id": "jun27_dec26_flattener",
     "type": "spread",
@@ -47,20 +47,22 @@
       "symbol": "JUM27",
       "date": "2026-06-30",
       "price": 95.965,
-      "implied_rate_pct": 4.035
+      "implied_rate_pct": 4.035,
+      "vs_fed_bp": 28.5
     },
     "long": {
       "symbol": "JUZ26",
       "date": "2026-06-30",
       "price": 96.085,
-      "implied_rate_pct": 3.915
+      "implied_rate_pct": 3.915,
+      "vs_fed_bp": 16.5
     },
     "slope_bp": 12.0,
-    "updated_utc": "2026-07-01 12:32 UTC"
+    "updated_utc": "2026-07-01 15:06 UTC"
   },
   "pnl": {
     "slope_bp": 1.0,
-    "quoted_long_leg_bp": -0.0,
+    "quoted_long_leg_bp": 0.0,
     "quoted_short_leg_bp": 0.0,
     "to_stop_bp": 8.0,
     "to_tp_bp": -13.0,
@@ -72,9 +74,9 @@
       "quoted_long_rate": 4.09,
       "quoted_short_rate": 3.96,
       "slope_bp": 13.0,
-      "dslope_bp": -0.0,
-      "cum_pnl_gbp": -0.0,
-      "daily_pnl_gbp": -0.0
+      "dslope_bp": 0.0,
+      "cum_pnl_gbp": 0.0,
+      "daily_pnl_gbp": 0.0
     },
     {
       "date": "2026-06-24",
@@ -179,13 +181,5 @@
     "mark_slope_bp": 13.0,
     "pnl_bp": 0.0,
     "pnl_gbp": 0.0
-  },
-  "book_size": {
-    "contracts_per_leg": 2,
-    "gross_notional_gbp": 2000000.0,
-    "gbp_per_bp": 25.0,
-    "position_size": "2 lots/leg \u00b7 \u00a31.0M face/leg \u00b7 \u00a32.0M gross \u00b7 \u00a325/bp",
-    "currency": "GBP",
-    "face_value_gbp_per_leg": 1000000.0
   }
 }

@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-01 12:32 UTC",
+  "generated_utc": "2026-07-01 15:06 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -16,23 +16,31 @@
     "usd_per_bp": 25.0,
     "face_value_usd": 1000000.0
   },
-  "levels": {},
+  "levels": {
+    "entry_slope_bp": -23.5
+  },
   "bank_rate_pct": 3.625,
   "bank_rate_as_of": "2026-06-29",
   "entry": {
     "date": "2026-07-01",
     "label": "1 Jul 2026 EOD close",
+    "fed_funds_mid_pct": 3.625,
+    "fed_funds_as_of": "2026-06-29",
     "short": {
       "symbol": "SQH28",
+      "label": "Mar-28",
       "date": "2026-07-01",
       "price": 96.11,
-      "implied_rate_pct": 3.89
+      "implied_rate_pct": 3.89,
+      "vs_fed_bp": 26.5
     },
     "long": {
       "symbol": "SQH27",
+      "label": "Mar-27",
       "date": "2026-07-01",
       "price": 95.875,
-      "implied_rate_pct": 4.125
+      "implied_rate_pct": 4.125,
+      "vs_fed_bp": 50.0
     },
     "slope_bp": -23.5,
     "captured_utc": "2026-07-01 12:31 UTC",
@@ -43,36 +51,39 @@
     "short": {
       "symbol": "SQH28",
       "date": "2026-07-01",
-      "price": 96.105,
-      "implied_rate_pct": 3.895
+      "price": 96.115,
+      "implied_rate_pct": 3.885,
+      "vs_fed_bp": 26.0
     },
     "long": {
       "symbol": "SQH27",
       "date": "2026-07-01",
-      "price": 95.875,
-      "implied_rate_pct": 4.125
+      "price": 95.88,
+      "implied_rate_pct": 4.12,
+      "vs_fed_bp": 49.5
     },
-    "slope_bp": -23.0,
-    "updated_utc": "2026-07-01 12:32 UTC"
+    "slope_bp": -23.5,
+    "updated_utc": "2026-07-01 15:06 UTC"
   },
   "pnl": {
-    "slope_bp": 0.5,
-    "quoted_long_leg_bp": -0.0,
+    "slope_bp": -0.0,
+    "quoted_long_leg_bp": 0.0,
     "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 12.5,
+    "usd": -0.0,
     "gbp": 0.0
   },
   "trade_path": [
     {
       "date": "2026-07-01",
-      "quoted_long_rate": 3.895,
-      "quoted_short_rate": 4.125,
-      "slope_bp": -23.0,
-      "dslope_bp": 0.5,
-      "cum_pnl_gbp": 12.5,
-      "daily_pnl_usd": 12.5
+      "quoted_long_rate": 3.885,
+      "quoted_short_rate": 4.12,
+      "slope_bp": -23.5,
+      "dslope_bp": -0.0,
+      "cum_pnl_gbp": -0.0,
+      "daily_pnl_usd": -0.0,
+      "cum_pnl_usd": -0.0
     }
   ],
   "regime_attribution": [],
@@ -81,15 +92,5 @@
     "quoted_long": "Mar-28",
     "quoted_short": "Mar-27"
   },
-  "live_proxy": null,
-  "book_size": {
-    "contracts_per_leg": 2,
-    "gross_notional_gbp": 4000000.0,
-    "gbp_per_bp": 50.0,
-    "position_size": "2 lots/leg \u00b7 $2.0M face/leg \u00b7 $4.0M gross \u00b7 $50/bp",
-    "currency": "USD",
-    "face_value_usd_per_leg": 2000000.0,
-    "usd_per_bp": 50.0,
-    "gross_notional_usd": 4000000.0
-  }
+  "live_proxy": null
 }

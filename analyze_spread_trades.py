@@ -273,6 +273,13 @@ def ensure_spread_entry(
     return cfg
 
 
+def leg_vs_fed(leg: dict, policy_rate: float | None) -> dict:
+    out = dict(leg)
+    if policy_rate is not None and leg.get("implied_rate_pct") is not None:
+        out["vs_fed_bp"] = round((float(leg["implied_rate_pct"]) - policy_rate) * 100, 1)
+    return out
+
+
 def build_spread_path(
     tail: pd.DataFrame,
     entry_slope: float,
@@ -291,17 +298,18 @@ def build_spread_path(
         cum = dslope * pnl_per_bp
         daily = cum if i == 0 else cum - prev_cum
         prev_cum = cum
-        path.append(
-            {
-                "date": str(dt.date()),
-                "quoted_long_rate": round(leg_rates[q_long_key], 4),
-                "quoted_short_rate": round(leg_rates[q_short_key], 4),
-                "slope_bp": round(q_slope, 2),
-                "dslope_bp": round(dslope, 2),
-                "cum_pnl_gbp": round(cum, 2),
-                daily_pnl_key: round(daily, 2),
-            }
-        )
+        row = {
+            "date": str(dt.date()),
+            "quoted_long_rate": round(leg_rates[q_long_key], 4),
+            "quoted_short_rate": round(leg_rates[q_short_key], 4),
+            "slope_bp": round(q_slope, 2),
+            "dslope_bp": round(dslope, 2),
+            "cum_pnl_gbp": round(cum, 2),
+            daily_pnl_key: round(daily, 2),
+        }
+        if daily_pnl_key == "daily_pnl_usd":
+            row["cum_pnl_usd"] = round(cum, 2)
+        path.append(row)
     return path
 
 
@@ -577,17 +585,26 @@ def analyze_spread(cfg_path: Path) -> dict:
     else:
         pnl_row["gbp"] = round(pnl_native, 2)
 
+    entry_out = dict(entry)
+    if market == "sofr_3m" and policy_rate is not None:
+        entry_out["fed_funds_mid_pct"] = policy_rate
+        entry_out["fed_funds_as_of"] = policy_as_of
+        if entry.get("long"):
+            entry_out["long"] = leg_vs_fed(entry["long"], policy_rate)
+        if entry.get("short"):
+            entry_out["short"] = leg_vs_fed(entry["short"], policy_rate)
+
     return {
         "generated_utc": utc_now(),
         "trade": trade_row,
         "levels": levels,
         "bank_rate_pct": policy_rate,
         "bank_rate_as_of": policy_as_of,
-        "entry": entry,
+        "entry": entry_out,
         "mark": {
             "date": str(tail.index[-1].date()),
-            "short": short_snap,
-            "long": long_snap,
+            "short": leg_vs_fed(short_snap, policy_rate),
+            "long": leg_vs_fed(long_snap, policy_rate),
             "slope_bp": round(mark_slope, 2),
             "updated_utc": utc_now(),
         },
@@ -693,9 +710,14 @@ def main() -> None:
                 f"P&L {payload['pnl']['gbp']:+.1f} GBP → {out.name}"
             )
         else:
+            pnl = payload["pnl"]
+            if payload["trade"].get("currency") == "USD":
+                pnl_txt = f"{pnl.get('usd', 0):+.1f} USD"
+            else:
+                pnl_txt = f"{pnl.get('gbp', 0):+.1f} GBP"
             print(
                 f"  Entry {payload['entry']['slope_bp']:+.1f} bp → mark {payload['mark']['slope_bp']:+.1f} bp | "
-                f"P&L {payload['pnl']['gbp']:+.1f} GBP → {out.name}"
+                f"P&L {pnl_txt} → {out.name}"
             )
         index["trades"].append(index_row(payload))
 

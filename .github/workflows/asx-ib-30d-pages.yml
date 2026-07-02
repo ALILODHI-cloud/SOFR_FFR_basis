@@ -1,20 +1,17 @@
-name: 3M SOFR curve — fetch, build, deploy
+name: ASX 30-day cash rate — fetch, build, deploy
 
 on:
   push:
     branches: [main]
     paths:
-      - 'analyze_sofr_3m.py'
+      - 'analyze_asx_ib_30d.py'
       - 'analyze_sonia.py'
       - 'analyze_stir_curves.py'
-      - 'analyze_spread_trades.py'
-      - 'trades/**'
-      - 'build_sofr_3m_dashboard.py'
-      - 'build_trade_tracker.py'
+      - 'build_asx_ib_30d_dashboard.py'
       - 'requirements-sonia.txt'
-      - '.github/workflows/sofr-3m-pages.yml'
+      - '.github/workflows/asx-ib-30d-pages.yml'
   schedule:
-    # Weekdays: ~10:00 London + ~18:30 London (post CME close)
+    # Weekdays: ~10:00 London + ~18:30 London (post SFE close)
     - cron: "0 9 * * 1-5"
     - cron: "30 17 * * 1-5"
   workflow_dispatch:
@@ -25,7 +22,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: sofr-3m-pages
+  group: asx-ib-30d-pages
   cancel-in-progress: false
 
 jobs:
@@ -43,12 +40,10 @@ jobs:
           pip install -r requirements-sonia.txt
           playwright install chromium
 
-      - name: Fetch Barchart + rebuild 3M SOFR dashboard
+      - name: Fetch Barchart + rebuild ASX 30-day dashboard
         run: |
-          python analyze_sofr_3m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
-          python build_sofr_3m_dashboard.py
-          python analyze_spread_trades.py || echo "::warning::Trade mark failed"
-          python build_trade_tracker.py
+          python analyze_asx_ib_30d.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
+          python build_asx_ib_30d_dashboard.py
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -58,8 +53,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sofr_3m_data.json sofr_3m_dashboard.html docs/sofr_3m_dashboard.html docs/portal.html portal.html docs/trades_index.json trades_index.json docs/*_trade_data.json *_trade_data.json trade_tracker.html docs/trade_tracker.html trade_*.html docs/trade_*.html
-          git diff --staged --quiet || git commit -m "Auto-refresh 3M SOFR curve $(date -u +%Y-%m-%dT%H:%MZ)"
+          git add asx_ib_30d_data.json asx_ib_30d_dashboard.html docs/asx_ib_30d_dashboard.html portal.html docs/portal.html
+          git diff --staged --quiet || git commit -m "Auto-refresh ASX 30-day cash rate curve $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 
   deploy:
