@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-02 13:02 UTC",
+  "generated_utc": "2026-07-02 13:04 UTC",
   "trade": {
     "id": "jun27_outright_long",
     "type": "outright",
@@ -42,7 +42,7 @@
       "implied_rate_pct": 4.015
     },
     "slope_bp": null,
-    "updated_utc": "2026-07-02 13:02 UTC"
+    "updated_utc": "2026-07-02 13:04 UTC"
   },
   "pnl": {
     "slope_bp": 7.5,
