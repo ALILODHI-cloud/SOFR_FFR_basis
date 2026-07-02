@@ -60,8 +60,13 @@ RBA_PRICING_NOTE = (
 
 CASH_RATE_FALLBACK_PCT = 4.35
 CASH_RATE_FALLBACK_AS_OF = "2026-05-05"
-# Barchart default ~64 sessions; request more EOD for evolution slider / change matrix.
-BARCHART_HISTORY_LIMIT = 500
+# YTD window + buffer for Barchart EOD fetch.
+BARCHART_HISTORY_LIMIT = 200
+
+
+def history_start_date() -> date:
+    """Curve evolution + change matrix from 1 Jan of the current calendar year."""
+    return date(date.today().year, 1, 1)
 
 
 def symbol_to_meta(symbol: str) -> dict | None:
@@ -272,7 +277,7 @@ def _compute_curve_evolution(
 
     max_legs = max(len(h["points"]) for h in history)
     note = (
-        f"Rolling strip evolution: {len(history)} sessions "
+        f"Rolling strip evolution (YTD): {len(history)} sessions "
         f"({history[0]['date']} → {history[-1]['date']}). "
         f"Up to {len(keys_all)} contracts on latest date; back months join as they list."
     )
@@ -348,6 +353,8 @@ def build_payload() -> dict:
         raise RuntimeError("No ASX IB contracts fetched")
 
     wide = pd.DataFrame(series).sort_index(axis=1)
+    ytd_start = pd.Timestamp(history_start_date())
+    wide = wide.loc[wide.index >= ytd_start]
     records = []
     for dt, row in wide.iterrows():
         rec = {"date": str(dt.date())}
@@ -367,6 +374,7 @@ def build_payload() -> dict:
         "cash_rate_pct": cash_rate,
         "cash_rate_as_of": cash_as_of,
         "cash_rate_source": cash_info.get("cash_rate_source", "RBA"),
+        "history_start": str(history_start_date()),
         "n_contracts": len(contracts),
         "contracts": contracts,
         "timeseries": {
