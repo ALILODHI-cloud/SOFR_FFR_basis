@@ -135,6 +135,7 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 <body>
 <div class="wrap">
 <header>
+  <p style="margin:0 0 10px;font-size:13px"><a href="portal.html" style="color:#93a1b5;text-decoration:none">← Markets portal</a></p>
   <h1>ASX 30-day cash rate curve · frozen reference + time travel</h1>
   <div class="sub" id="asof"></div>
   <div>
@@ -638,9 +639,9 @@ function renderHeader(status) {
   if (isLiveMode()) document.getElementById('livePill').style.display = 'inline-block';
 }
 
-function renderMpcPanel() {
-  const mpc = DATA.rba_meeting_pricing;
-  if (!mpc?.meetings?.length) return;
+function renderRbaPanel() {
+  const rba = DATA.rba_meeting_pricing;
+  if (!rba?.meetings?.length) return;
 
   document.getElementById('rbaNote').textContent = rba.note || '';
 
@@ -828,7 +829,7 @@ function renderAll(status, rebuildChart = false) {
     applySlider(true);
   }
   renderTable();
-  renderMpcPanel();
+  renderRbaPanel();
   renderChgTable();
 }
 
