@@ -122,7 +122,11 @@ def _parse_barchart_hist(hist: dict, symbol: str) -> pd.DataFrame:
     return df
 
 
-def fetch_barchart_batch(symbols: list[str], timeout_ms: int = 60_000) -> dict[str, pd.DataFrame]:
+def fetch_barchart_batch(
+    symbols: list[str],
+    timeout_ms: int = 60_000,
+    history_limit: int | None = None,
+) -> dict[str, pd.DataFrame]:
     """Fetch EOD history for many symbols in one browser session."""
     from playwright.sync_api import sync_playwright
 
@@ -130,6 +134,20 @@ def fetch_barchart_batch(symbols: list[str], timeout_ms: int = 60_000) -> dict[s
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_context(user_agent=UA["User-Agent"]).new_page()
+
+        if history_limit is not None:
+
+            def _bump_limit(route) -> None:
+                url = route.request.url
+                if "historical/get" in url:
+                    route.continue_(
+                        url=re.sub(r"limit=\d+", f"limit={history_limit}", url)
+                    )
+                else:
+                    route.continue_()
+
+            page.route("**/*", _bump_limit)
+
         for i, sym in enumerate(symbols, 1):
             try:
                 with page.expect_response(

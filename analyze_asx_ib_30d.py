@@ -60,6 +60,8 @@ RBA_PRICING_NOTE = (
 
 CASH_RATE_FALLBACK_PCT = 4.35
 CASH_RATE_FALLBACK_AS_OF = "2026-05-05"
+# Barchart default ~64 sessions; request more EOD for evolution slider / change matrix.
+BARCHART_HISTORY_LIMIT = 500
 
 
 def symbol_to_meta(symbol: str) -> dict | None:
@@ -234,28 +236,18 @@ def compute_rba_meeting_pricing(
 def _compute_curve_evolution(
     wide: pd.DataFrame, contracts: list[dict], cash: float
 ) -> dict:
+    """Rolling strip: each session shows every contract that has EOD on that date."""
     keys_all = [c["key"] for c in contracts]
     label_map = {c["key"]: c for c in contracts}
 
-    core_keys = [k for k in keys_all if k <= "2027-12"]
-    full_common = wide[keys_all].dropna(how="any")
-    core_common = wide[core_keys].dropna(how="any")
-
-    if len(core_common) >= len(full_common):
-        use_keys, use_df = core_keys, core_common
-        note = (
-            f"Longest common history for {len(core_keys)} contracts "
-            f"through Dec-27. Far months list later on Barchart."
-        )
-    else:
-        use_keys, use_df = keys_all, full_common
-        note = f"Common history for all {len(keys_all)} listed contracts."
-
     history: list[dict] = []
-    for dt, row in use_df.iterrows():
+    for dt, row in wide.iterrows():
         pts = []
-        for k in use_keys:
-            rate = float(row[k])
+        for k in keys_all:
+            v = row.get(k)
+            if pd.isna(v):
+                continue
+            rate = float(v)
             pts.append({
                 "key": k,
                 "label": label_map[k]["label"],
@@ -263,14 +255,34 @@ def _compute_curve_evolution(
                 "implied_rate_pct": round(rate, 4),
                 "vs_cash_bp": round((rate - cash) * 100, 1),
             })
-        history.append({"date": str(dt.date()), "points": pts})
+        if pts:
+            history.append({"date": str(dt.date()), "points": pts})
+
+    if not history:
+        return {
+            "n_contracts": len(keys_all),
+            "contract_keys": keys_all,
+            "n_sessions": 0,
+            "start": None,
+            "end": None,
+            "note": "No overlapping EOD history.",
+            "history": [],
+            "watch_legs": {},
+        }
+
+    max_legs = max(len(h["points"]) for h in history)
+    note = (
+        f"Rolling strip evolution: {len(history)} sessions "
+        f"({history[0]['date']} → {history[-1]['date']}). "
+        f"Up to {len(keys_all)} contracts on latest date; back months join as they list."
+    )
 
     watch = ["2026-12", "2027-06", "2027-12"]
     legs: dict = {}
     for k in watch:
-        if k not in use_df.columns:
+        if k not in wide.columns:
             continue
-        s = use_df[k]
+        s = wide[k].dropna()
         legs[k] = {
             "label": label_map[k]["label"],
             "rows": [
@@ -284,11 +296,12 @@ def _compute_curve_evolution(
         }
 
     return {
-        "n_contracts": len(use_keys),
-        "contract_keys": use_keys,
-        "n_sessions": int(len(use_df)),
-        "start": str(use_df.index.min().date()),
-        "end": str(use_df.index.max().date()),
+        "n_contracts": len(keys_all),
+        "contract_keys": keys_all,
+        "n_sessions": len(history),
+        "max_legs_on_strip": max_legs,
+        "start": history[0]["date"],
+        "end": history[-1]["date"],
         "note": note,
         "history": history,
         "watch_legs": legs,
@@ -303,7 +316,7 @@ def build_payload() -> dict:
 
     symbols = discover_iq_chain()
     print(f"Fetching EOD for {len(symbols)} contracts…")
-    batch = fetch_barchart_batch(symbols)
+    batch = fetch_barchart_batch(symbols, history_limit=BARCHART_HISTORY_LIMIT)
 
     contracts: list[dict] = []
     series: dict[str, pd.Series] = {}
