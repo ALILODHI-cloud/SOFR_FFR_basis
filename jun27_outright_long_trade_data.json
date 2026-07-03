@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-02 13:04 UTC",
+  "generated_utc": "2026-07-03 11:37 UTC",
   "trade": {
     "id": "jun27_outright_long",
     "type": "outright",
@@ -33,22 +33,22 @@
     "slope_bp": null
   },
   "mark": {
-    "date": "2026-07-01",
-    "rate_pct": 4.015,
+    "date": "2026-07-02",
+    "rate_pct": 3.98,
     "leg": {
       "symbol": "JUM27",
-      "date": "2026-07-01",
-      "price": 95.985,
-      "implied_rate_pct": 4.015
+      "date": "2026-07-02",
+      "price": 96.02,
+      "implied_rate_pct": 3.98
     },
     "slope_bp": null,
-    "updated_utc": "2026-07-02 13:04 UTC"
+    "updated_utc": "2026-07-03 11:37 UTC"
   },
   "pnl": {
-    "slope_bp": 7.5,
-    "gbp": 93.75,
-    "to_stop_bp": 14.5,
-    "to_tp_bp": -6.5
+    "slope_bp": 11.0,
+    "gbp": 137.5,
+    "to_stop_bp": 18.0,
+    "to_tp_bp": -3.0
   },
   "trade_path": [
     {
@@ -99,6 +99,13 @@
       "pnl_bp": 7.5,
       "cum_pnl_gbp": 93.75,
       "daily_pnl_gbp": 25.0
+    },
+    {
+      "date": "2026-07-02",
+      "rate_pct": 3.98,
+      "pnl_bp": 11.0,
+      "cum_pnl_gbp": 137.5,
+      "daily_pnl_gbp": 43.75
     }
   ],
   "regime_attribution": [],
