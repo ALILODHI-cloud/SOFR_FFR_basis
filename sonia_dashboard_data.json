@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-02 11:30 UTC",
+  "generated_utc": "2026-07-03 11:28 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -16,32 +16,32 @@
     "sonia": "Bank of England IUDSOIA",
     "brent": "Yahoo Finance BZ=F"
   },
-  "data_end": "2026-07-01",
-  "fetched_on": "2026-07-02",
+  "data_end": "2026-07-02",
+  "fetched_on": "2026-07-03",
   "policy_pricing": {
     "bank_rate_pct": 3.75,
     "bank_rate_as_of": "2026-06-18",
-    "spot_sonia_pct": 3.7318,
-    "spot_vs_bank_bp": -1.82,
+    "spot_sonia_pct": 3.7309,
+    "spot_vs_bank_bp": -1.91,
     "dec26": {
       "contract": "JUZ26",
       "label": "Dec-2026",
-      "implied_rate_pct": 3.895,
-      "vs_bank_bp": 14.5,
-      "summary": "14.5 bp above Bank Rate \u2014 fewer cuts / higher SONIA priced"
+      "implied_rate_pct": 3.88,
+      "vs_bank_bp": 13.0,
+      "summary": "13.0 bp above Bank Rate \u2014 fewer cuts / higher SONIA priced"
     },
     "dec27": {
       "contract": "JUZ27",
       "label": "Dec-2027",
-      "implied_rate_pct": 3.965,
-      "vs_bank_bp": 21.5,
-      "summary": "21.5 bp above Bank Rate \u2014 fewer cuts / higher SONIA priced"
+      "implied_rate_pct": 3.935,
+      "vs_bank_bp": 18.5,
+      "summary": "18.5 bp above Bank Rate \u2014 fewer cuts / higher SONIA priced"
     },
-    "incremental_dec27_over_dec26_bp": 7.0,
-    "incremental_summary": "Dec-27 implied +21.5 bp vs Bank Rate; Dec-26 +14.5 bp \u2014 back-end +7.0 bp above front.",
+    "incremental_dec27_over_dec26_bp": 5.5,
+    "incremental_summary": "Dec-27 implied +18.5 bp vs Bank Rate; Dec-26 +13.0 bp \u2014 back-end +5.5 bp above front.",
     "change_since_entry": {
-      "dec26_vs_bank_bp": -28.0,
-      "dec27_vs_bank_bp": -24.5,
+      "dec26_vs_bank_bp": -29.5,
+      "dec27_vs_bank_bp": -27.5,
       "entry_dec26_vs_bank_bp": 42.5,
       "entry_dec27_vs_bank_bp": 46.0
     }
@@ -50,15 +50,15 @@
     "definition": "Total hiking/cuts priced through Dec-27 = Dec-27 implied minus Bank Rate. Split: Dec-26 portion (Dec-26 vs Bank) + Dec27\u2212Dec26 increment (calendar slope).",
     "bank_rate_pct": 3.75,
     "current": {
-      "total_through_dec27_bp": 21.5,
-      "dec26_portion_bp": 14.5,
-      "dec27_increment_bp": 7.0,
-      "dec26_share_pct": 67.4,
-      "dec27_increment_share_pct": 32.6,
-      "summary": "+21.5 bp through Dec-27: Dec-26 +14.5 bp (67.4% of total) + Dec27\u2212Dec26 +7.0 bp (32.6%).",
-      "date": "2026-07-01",
-      "dec27_rate_pct": 3.965,
-      "dec26_rate_pct": 3.895
+      "total_through_dec27_bp": 18.5,
+      "dec26_portion_bp": 13.0,
+      "dec27_increment_bp": 5.5,
+      "dec26_share_pct": 70.3,
+      "dec27_increment_share_pct": 29.7,
+      "summary": "+18.5 bp through Dec-27: Dec-26 +13.0 bp (70.3% of total) + Dec27\u2212Dec26 +5.5 bp (29.7%).",
+      "date": "2026-07-02",
+      "dec27_rate_pct": 3.935,
+      "dec26_rate_pct": 3.88
     },
     "entry": {
       "total_through_dec27_bp": 46.0,
@@ -72,10 +72,10 @@
       "dec26_rate_pct": 4.175
     },
     "change": {
-      "total_through_dec27_bp": -24.5,
-      "dec26_portion_bp": -28.0,
-      "dec27_increment_bp": 3.5,
-      "summary": "Total -24.5 bp \u00b7 Dec-26 portion -28.0 bp \u00b7 Dec27\u2212Dec26 +3.5 bp."
+      "total_through_dec27_bp": -27.5,
+      "dec26_portion_bp": -29.5,
+      "dec27_increment_bp": 2.0,
+      "summary": "Total -27.5 bp \u00b7 Dec-26 portion -29.5 bp \u00b7 Dec27\u2212Dec26 +2.0 bp."
     }
   },
   "trade_entry": {
@@ -88,21 +88,21 @@
     "dec26_vs_bank_bp": 42.5,
     "dec27_vs_bank_bp": 46.0,
     "in_window": true,
-    "pnl_slope_bp": 3.5,
+    "pnl_slope_bp": 2.0,
     "stats": {
       "entry_date": "2026-06-05",
-      "exit_date": "2026-07-01",
-      "session_days": 18,
-      "calendar_days": 26,
-      "pnl_slope_bp": 3.5,
-      "pnl_gbp_per_pair": 43.75,
-      "return_gross_pct": 0.0044,
-      "return_margin_pct": 0.36,
-      "margin_ice_gbp": 12072.0,
+      "exit_date": "2026-07-02",
+      "session_days": 19,
+      "calendar_days": 27,
+      "pnl_slope_bp": 2.0,
+      "pnl_gbp_per_pair": 25.0,
+      "return_gross_pct": 0.0025,
+      "return_margin_pct": 0.21,
+      "margin_ice_gbp": 11952.0,
       "margin_method": "ice_outright_legs",
-      "cagr_margin_pct": 5.2,
-      "vol_ann_margin_pct": 5.1,
-      "sharpe_ann": 0.31,
+      "cagr_margin_pct": 2.9,
+      "vol_ann_margin_pct": 5.0,
+      "sharpe_ann": -0.14,
       "risk_free_pct": 3.5000000000000004,
       "max_drawdown_gbp": -143.75,
       "legs": {
@@ -111,38 +111,38 @@
           "label": "Dec-26",
           "side": "Long",
           "entry_rate_pct": 4.175,
-          "exit_rate_pct": 3.895,
-          "rate_chg_bp": -28.0,
+          "exit_rate_pct": 3.88,
+          "rate_chg_bp": -29.5,
           "entry_px": 95.825,
-          "exit_px": 96.105,
-          "px_chg": 0.28,
-          "price_return_pct": 0.2922,
-          "spread_pnl_bp": 28.0,
-          "spread_pnl_gbp": 350.0
+          "exit_px": 96.12,
+          "px_chg": 0.295,
+          "price_return_pct": 0.3079,
+          "spread_pnl_bp": 29.5,
+          "spread_pnl_gbp": 368.75
         },
         "dec27": {
           "contract": "JUZ27",
           "label": "Dec-27",
           "side": "Short",
           "entry_rate_pct": 4.21,
-          "exit_rate_pct": 3.965,
-          "rate_chg_bp": -24.5,
+          "exit_rate_pct": 3.935,
+          "rate_chg_bp": -27.5,
           "entry_px": 95.79,
-          "exit_px": 96.035,
-          "px_chg": 0.245,
-          "price_return_pct": 0.2558,
-          "spread_pnl_bp": -24.5,
-          "spread_pnl_gbp": -306.25
+          "exit_px": 96.065,
+          "px_chg": 0.275,
+          "price_return_pct": 0.2871,
+          "spread_pnl_bp": -27.5,
+          "spread_pnl_gbp": -343.75
         }
       },
       "leg_pnl_bp": {
-        "long_dec26": 28.0,
-        "short_dec27": -24.5
+        "long_dec26": 29.5,
+        "short_dec27": -27.5
       },
       "slope_reconciliation": {
-        "dec27_minus_dec26_bp": 3.5,
+        "dec27_minus_dec26_bp": 2.0,
         "entry_slope_bp": 3.5,
-        "exit_slope_bp": 7.0
+        "exit_slope_bp": 5.5
       },
       "trade_path": [
         {
@@ -277,24 +277,31 @@
           "dec27_rate": 3.965,
           "slope_bp": 7.0,
           "cum_pnl_gbp": 43.75
+        },
+        {
+          "date": "2026-07-02",
+          "dec26_rate": 3.88,
+          "dec27_rate": 3.935,
+          "slope_bp": 5.5,
+          "cum_pnl_gbp": 25.0
         }
       ],
       "overall_move": {
         "regime": "bull_steepening",
         "label": "Bull steepening",
-        "dec26_bp": -28.0,
-        "dec27_bp": -24.5,
-        "slope_bp": 3.5
+        "dec26_bp": -29.5,
+        "dec27_bp": -27.5,
+        "slope_bp": 2.0
       },
       "pnl_from_steepening_bp": 25.0,
-      "pnl_from_flattening_bp": -21.5,
+      "pnl_from_flattening_bp": -23.0,
       "regime_attribution": [
         {
           "regime": "bull_flattening",
           "label": "Bull flattening",
-          "days": 9,
-          "pnl_slope_bp": -21.5,
-          "pnl_gbp": -268.75
+          "days": 10,
+          "pnl_slope_bp": -23.0,
+          "pnl_gbp": -287.5
         },
         {
           "regime": "bear_steepening",
@@ -321,41 +328,41 @@
       "dominant_regime": {
         "regime": "bull_flattening",
         "label": "Bull flattening",
-        "days": 9,
-        "pnl_slope_bp": -21.5,
-        "pnl_gbp": -268.75
+        "days": 10,
+        "pnl_slope_bp": -23.0,
+        "pnl_gbp": -287.5
       }
     }
   },
   "summary": {
-    "slope_bp": 7.0,
-    "basis_bp": 16.32,
-    "roll_corr_30": 0.258,
-    "basis_vol_ann": 60.41,
-    "brent": 71.57,
-    "dec26_rate": 3.895,
-    "dec27_rate": 3.965,
-    "dec26_vs_bank_bp": 14.5,
-    "dec27_vs_bank_bp": 21.5,
-    "slope_mean_50d": -0.6,
-    "slope_std_50d": 8.22,
-    "basis_mean_50d": 43.46,
+    "slope_bp": 5.5,
+    "basis_bp": 14.91,
+    "roll_corr_30": 0.201,
+    "basis_vol_ann": 53.78,
+    "brent": 71.8,
+    "dec26_rate": 3.88,
+    "dec27_rate": 3.935,
+    "dec26_vs_bank_bp": 13.0,
+    "dec27_vs_bank_bp": 18.5,
+    "slope_mean_50d": -0.21,
+    "slope_std_50d": 8.03,
+    "basis_mean_50d": 42.94,
     "n_days": 50,
-    "start": "2026-04-21",
-    "end": "2026-07-01"
+    "start": "2026-04-22",
+    "end": "2026-07-02"
   },
   "corr_history": {
     "n_days": 64,
     "n_valid_corr": 34,
-    "start": "2026-03-30",
-    "end": "2026-07-01",
-    "overlap_start": "2026-03-30",
+    "start": "2026-03-31",
+    "end": "2026-07-02",
+    "overlap_start": "2026-03-31",
     "note": "Full JUZ26\u2229JUZ27 overlap (64 sessions). First 29 sessions have no 30d rolling correlation."
   },
   "slope_history": {
     "n_days": 64,
-    "start": "2026-03-30",
-    "end": "2026-07-01",
+    "start": "2026-03-31",
+    "end": "2026-07-02",
     "peak": {
       "date": "2026-05-19",
       "slope_bp": 13.5,
@@ -366,32 +373,32 @@
       "brent_ret_pct": -0.73
     },
     "trough": {
-      "date": "2026-03-31",
-      "slope_bp": -20.5,
-      "slope_chg_bp": 0.5,
-      "dec26_chg_bp": null,
-      "dec27_chg_bp": null,
-      "brent": 118.35,
-      "brent_ret_pct": 4.94
+      "date": "2026-04-07",
+      "slope_bp": -15.5,
+      "slope_chg_bp": -0.5,
+      "dec26_chg_bp": 12.5,
+      "dec27_chg_bp": 12.0,
+      "brent": 109.27,
+      "brent_ret_pct": 0.22
     }
   },
   "leg_correlations": {
     "n_sessions": 63,
-    "slope_chg_vs_brent": 0.071,
-    "dec26_chg_vs_brent": 0.773,
-    "dec27_chg_vs_brent": 0.709,
-    "dec26_chg_vs_dec27_chg": 0.914,
-    "dec26_chg_vs_slope_chg": 0.084,
-    "dec27_chg_vs_slope_chg": 0.482,
-    "roll_10d_slope_chg_vs_brent": 0.147,
-    "roll_10d_dec26_chg_vs_brent": 0.576,
-    "roll_10d_dec27_chg_vs_brent": 0.332,
-    "roll_20d_slope_chg_vs_brent": 0.141,
-    "roll_20d_dec26_chg_vs_brent": 0.535,
-    "roll_20d_dec27_chg_vs_brent": 0.387,
-    "roll_30d_slope_chg_vs_brent": 0.258,
-    "roll_30d_dec26_chg_vs_brent": 0.663,
-    "roll_30d_dec27_chg_vs_brent": 0.575
+    "slope_chg_vs_brent": 0.069,
+    "dec26_chg_vs_brent": 0.8,
+    "dec27_chg_vs_brent": 0.73,
+    "dec26_chg_vs_dec27_chg": 0.913,
+    "dec26_chg_vs_slope_chg": 0.085,
+    "dec27_chg_vs_slope_chg": 0.485,
+    "roll_10d_slope_chg_vs_brent": 0.061,
+    "roll_10d_dec26_chg_vs_brent": 0.541,
+    "roll_10d_dec27_chg_vs_brent": 0.259,
+    "roll_20d_slope_chg_vs_brent": 0.131,
+    "roll_20d_dec26_chg_vs_brent": 0.526,
+    "roll_20d_dec27_chg_vs_brent": 0.375,
+    "roll_30d_slope_chg_vs_brent": 0.201,
+    "roll_30d_dec26_chg_vs_brent": 0.608,
+    "roll_30d_dec27_chg_vs_brent": 0.505
   },
   "notable_slope_days": {
     "steepest_days": [
@@ -417,8 +424,8 @@
         "date": "2026-04-01",
         "slope_bp": -13.5,
         "slope_chg_bp": 7.0,
-        "dec26_chg_bp": -12.5,
-        "dec27_chg_bp": -5.5,
+        "dec26_chg_bp": null,
+        "dec27_chg_bp": null,
         "brent": 101.16,
         "brent_ret_pct": -14.52
       },
@@ -498,35 +505,16 @@
       "brent_ret_pct": -0.73
     },
     "trough_slope": {
-      "date": "2026-03-31",
-      "slope_bp": -20.5,
-      "slope_chg_bp": 0.5,
-      "dec26_chg_bp": null,
-      "dec27_chg_bp": null,
-      "brent": 118.35,
-      "brent_ret_pct": 4.94
+      "date": "2026-04-07",
+      "slope_bp": -15.5,
+      "slope_chg_bp": -0.5,
+      "dec26_chg_bp": 12.5,
+      "dec27_chg_bp": 12.0,
+      "brent": 109.27,
+      "brent_ret_pct": 0.22
     }
   },
   "daily": [
-    {
-      "date": "2026-04-21",
-      "dec26_px": 95.86,
-      "dec27_px": 96.0,
-      "dec26_rate": 4.14,
-      "dec27_rate": 4.0,
-      "slope_bp": -14.0,
-      "dec26_vs_bank_bp": 39.0,
-      "dec27_vs_bank_bp": 25.0,
-      "sonia_pct": 3.7307,
-      "basis_bp": 40.93,
-      "brent": 98.48,
-      "slope_chg_bp": -1.0,
-      "dec26_chg_bp": 10.0,
-      "dec27_chg_bp": 9.0,
-      "brent_ret_pct": 3.14,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
     {
       "date": "2026-04-22",
       "dec26_px": 95.8,
@@ -828,8 +816,8 @@
       "dec26_chg_bp": -5.5,
       "dec27_chg_bp": -7.0,
       "brent_ret_pct": 0.09,
-      "roll_corr_30": -0.16,
-      "basis_vol_ann": 144.78
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-05-15",
@@ -1448,37 +1436,37 @@
       "slope_bp": 7.0,
       "dec26_vs_bank_bp": 14.5,
       "dec27_vs_bank_bp": 21.5,
-      "sonia_pct": 3.7318,
-      "basis_bp": 16.32,
+      "sonia_pct": 3.7309,
+      "basis_bp": 16.41,
       "brent": 71.57,
       "slope_chg_bp": 1.0,
       "dec26_chg_bp": -2.0,
       "dec27_chg_bp": -1.0,
       "brent_ret_pct": -1.85,
       "roll_corr_30": 0.258,
-      "basis_vol_ann": 60.41
+      "basis_vol_ann": 60.4
+    },
+    {
+      "date": "2026-07-02",
+      "dec26_px": 96.12,
+      "dec27_px": 96.065,
+      "dec26_rate": 3.88,
+      "dec27_rate": 3.935,
+      "slope_bp": 5.5,
+      "dec26_vs_bank_bp": 13.0,
+      "dec27_vs_bank_bp": 18.5,
+      "sonia_pct": 3.7309,
+      "basis_bp": 14.91,
+      "brent": 71.8,
+      "slope_chg_bp": -1.5,
+      "dec26_chg_bp": -1.5,
+      "dec27_chg_bp": -3.0,
+      "brent_ret_pct": 0.32,
+      "roll_corr_30": 0.201,
+      "basis_vol_ann": 53.78
     }
   ],
   "daily_corr": [
-    {
-      "date": "2026-03-30",
-      "dec26_px": 95.62,
-      "dec27_px": 95.83,
-      "dec26_rate": 4.38,
-      "dec27_rate": 4.17,
-      "slope_bp": -21.0,
-      "dec26_vs_bank_bp": 63.0,
-      "dec27_vs_bank_bp": 42.0,
-      "sonia_pct": 3.7281,
-      "basis_bp": 65.19,
-      "brent": 112.78,
-      "slope_chg_bp": null,
-      "dec26_chg_bp": null,
-      "dec27_chg_bp": null,
-      "brent_ret_pct": null,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
     {
       "date": "2026-03-31",
       "dec26_px": 95.67,
@@ -1491,10 +1479,10 @@
       "sonia_pct": 3.7296,
       "basis_bp": 60.04,
       "brent": 118.35,
-      "slope_chg_bp": 0.5,
-      "dec26_chg_bp": -5.0,
-      "dec27_chg_bp": -4.5,
-      "brent_ret_pct": 4.94,
+      "slope_chg_bp": null,
+      "dec26_chg_bp": null,
+      "dec27_chg_bp": null,
+      "brent_ret_pct": null,
       "roll_corr_30": null,
       "basis_vol_ann": null
     },
@@ -2046,8 +2034,8 @@
       "dec26_chg_bp": -5.5,
       "dec27_chg_bp": -7.0,
       "brent_ret_pct": 0.09,
-      "roll_corr_30": -0.16,
-      "basis_vol_ann": 144.78
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-05-15",
@@ -2666,15 +2654,34 @@
       "slope_bp": 7.0,
       "dec26_vs_bank_bp": 14.5,
       "dec27_vs_bank_bp": 21.5,
-      "sonia_pct": 3.7318,
-      "basis_bp": 16.32,
+      "sonia_pct": 3.7309,
+      "basis_bp": 16.41,
       "brent": 71.57,
       "slope_chg_bp": 1.0,
       "dec26_chg_bp": -2.0,
       "dec27_chg_bp": -1.0,
       "brent_ret_pct": -1.85,
       "roll_corr_30": 0.258,
-      "basis_vol_ann": 60.41
+      "basis_vol_ann": 60.4
+    },
+    {
+      "date": "2026-07-02",
+      "dec26_px": 96.12,
+      "dec27_px": 96.065,
+      "dec26_rate": 3.88,
+      "dec27_rate": 3.935,
+      "slope_bp": 5.5,
+      "dec26_vs_bank_bp": 13.0,
+      "dec27_vs_bank_bp": 18.5,
+      "sonia_pct": 3.7309,
+      "basis_bp": 14.91,
+      "brent": 71.8,
+      "slope_chg_bp": -1.5,
+      "dec26_chg_bp": -1.5,
+      "dec27_chg_bp": -3.0,
+      "brent_ret_pct": 0.32,
+      "roll_corr_30": 0.201,
+      "basis_vol_ann": 53.78
     }
   ]
 }
