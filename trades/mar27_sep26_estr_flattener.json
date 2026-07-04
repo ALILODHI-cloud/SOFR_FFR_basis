@@ -1,15 +1,15 @@
 {
-  "trade_id": "mar27_sep26_estr_steepener",
+  "trade_id": "mar27_sep26_estr_flattener",
   "trade_type": "spread",
   "market": "estr_1m",
   "currency": "EUR",
-  "label": "Mar27\u2212Sep26 1M ESTR steepener",
-  "position": "Long IJH27 (Mar-27) / Short IJU26 (Sep-26)",
-  "direction": "steepener",
-  "long_symbol": "IJH27",
-  "short_symbol": "IJU26",
-  "long_key": "2027-03",
-  "short_key": "2026-09",
+  "label": "Mar27\u2212Sep26 1M ESTR flattener",
+  "position": "Long IJU26 (Sep-26) / Short IJH27 (Mar-27)",
+  "direction": "flattener",
+  "long_symbol": "IJU26",
+  "short_symbol": "IJH27",
+  "long_key": "2026-09",
+  "short_key": "2027-03",
   "quoted_spread": {
     "label": "Mar27\u2212Sep26",
     "long_key": "2027-03",
@@ -38,7 +38,7 @@
     "label": "3 Jul 2026 EOD close",
     "ecb_deposit_pct": 2.0,
     "ecb_deposit_as_of": "2026-06-12",
-    "short": {
+    "long": {
       "symbol": "IJU26",
       "label": "Sep-26",
       "date": "2026-07-03",
@@ -46,7 +46,7 @@
       "implied_rate_pct": 2.26,
       "vs_fed_bp": 26.0
     },
-    "long": {
+    "short": {
       "symbol": "IJH27",
       "label": "Mar-27",
       "date": "2026-07-03",
@@ -55,7 +55,7 @@
       "vs_fed_bp": 41.5
     },
     "slope_bp": 15.5,
-    "captured_utc": "2026-07-04 17:50 UTC",
+    "captured_utc": "2026-07-04 18:00 UTC",
     "source": "barchart_eod"
   }
 }

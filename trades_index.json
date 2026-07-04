@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-04 17:52 UTC",
+  "generated_utc": "2026-07-04 18:00 UTC",
   "trades": [
     {
       "id": "jun27_outright_long",
@@ -25,21 +25,21 @@
       "mark_slope_bp": null
     },
     {
-      "id": "mar27_sep26_estr_steepener",
+      "id": "mar27_sep26_estr_flattener",
       "type": "spread",
-      "label": "Mar27\u2212Sep26 1M ESTR steepener",
-      "position": "Long IJH27 (Mar-27) / Short IJU26 (Sep-26)",
-      "direction": "steepener",
+      "label": "Mar27\u2212Sep26 1M ESTR flattener",
+      "position": "Long IJU26 (Sep-26) / Short IJH27 (Mar-27)",
+      "direction": "flattener",
       "spread_label": "Mar27\u2212Sep26",
       "market": "estr_1m",
       "currency": "EUR",
       "entry_locked": true,
       "detail_page": "trade_mar27_sep26_estr.html",
-      "data_file": "mar27_sep26_estr_steepener_trade_data.json",
+      "data_file": "mar27_sep26_estr_flattener_trade_data.json",
       "pnl_gbp": null,
       "pnl_usd": null,
-      "pnl_eur": 0.0,
-      "pnl_slope_bp": 0.0,
+      "pnl_eur": -0.0,
+      "pnl_slope_bp": -0.0,
       "entry_slope_bp": 15.5,
       "mark_slope_bp": 15.5,
       "stop_slope_bp": null,
