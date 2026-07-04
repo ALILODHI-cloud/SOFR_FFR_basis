@@ -377,7 +377,7 @@ h2{margin:0 0 8px;font-size:16px}
 
 <div class="section">Open positions</div>
 <div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 SONIA outright · Mar28−Mar27 SOFR · Mar27−Sep26 ESTR</p></a>
+  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 SONIA outright · Mar28−Mar27 SOFR · Mar27−Sep26 ESTR flattener</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
 </div>
 
@@ -443,6 +443,7 @@ def main() -> None:
         "jul27_dec27_flattener_trade_data.json",
         "dec27_dec26_steepener_trade_data.json",
         "jun27_dec26_flattener_trade_data.json",
+        "mar27_sep26_estr_steepener_trade_data.json",
         "book_summary.json",
         "book.json",
     ]
