@@ -1,0 +1,96 @@
+{
+  "generated_utc": "2026-07-04 17:52 UTC",
+  "trade": {
+    "id": "mar27_sep26_estr_steepener",
+    "type": "spread",
+    "label": "Mar27\u2212Sep26 1M ESTR steepener",
+    "position": "Long IJH27 (Mar-27) / Short IJU26 (Sep-26)",
+    "direction": "steepener",
+    "spread_label": "Mar27\u2212Sep26",
+    "long_symbol": "IJH27",
+    "short_symbol": "IJU26",
+    "market": "estr_1m",
+    "currency": "EUR",
+    "entry_locked": true,
+    "detail_page": "trade_mar27_sep26_estr.html",
+    "eur_per_bp": 25.0,
+    "face_value_eur": 250000.0
+  },
+  "levels": {
+    "entry_slope_bp": 15.5
+  },
+  "bank_rate_pct": 2.0,
+  "bank_rate_as_of": "2026-06-12",
+  "entry": {
+    "date": "2026-07-03",
+    "label": "3 Jul 2026 EOD close",
+    "ecb_deposit_pct": 2.0,
+    "ecb_deposit_as_of": "2026-06-12",
+    "short": {
+      "symbol": "IJU26",
+      "label": "Sep-26",
+      "date": "2026-07-03",
+      "price": 97.74,
+      "implied_rate_pct": 2.26,
+      "vs_fed_bp": 26.0
+    },
+    "long": {
+      "symbol": "IJH27",
+      "label": "Mar-27",
+      "date": "2026-07-03",
+      "price": 97.585,
+      "implied_rate_pct": 2.415,
+      "vs_fed_bp": 41.5
+    },
+    "slope_bp": 15.5,
+    "captured_utc": "2026-07-04 17:50 UTC",
+    "source": "barchart_eod"
+  },
+  "mark": {
+    "date": "2026-07-03",
+    "short": {
+      "symbol": "IJU26",
+      "date": "2026-07-03",
+      "price": 97.74,
+      "implied_rate_pct": 2.26,
+      "vs_fed_bp": 26.0
+    },
+    "long": {
+      "symbol": "IJH27",
+      "date": "2026-07-03",
+      "price": 97.585,
+      "implied_rate_pct": 2.415,
+      "vs_fed_bp": 41.5
+    },
+    "slope_bp": 15.5,
+    "updated_utc": "2026-07-04 17:52 UTC"
+  },
+  "pnl": {
+    "slope_bp": 0.0,
+    "quoted_long_leg_bp": 0.0,
+    "quoted_short_leg_bp": 0.0,
+    "to_stop_bp": null,
+    "to_tp_bp": null,
+    "eur": 0.0,
+    "gbp": 0.0
+  },
+  "trade_path": [
+    {
+      "date": "2026-07-03",
+      "quoted_long_rate": 2.415,
+      "quoted_short_rate": 2.26,
+      "slope_bp": 15.5,
+      "dslope_bp": 0.0,
+      "cum_pnl_gbp": 0.0,
+      "daily_pnl_eur": 0.0,
+      "cum_pnl_eur": 0.0
+    }
+  ],
+  "regime_attribution": [],
+  "market_note_url": "",
+  "leg_labels": {
+    "quoted_long": "Mar-27",
+    "quoted_short": "Sep-26"
+  },
+  "live_proxy": null
+}

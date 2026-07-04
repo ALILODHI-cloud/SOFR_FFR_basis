@@ -81,14 +81,16 @@ function fmtGbp(v){ return (v>=0?'+':'')+'£'+Math.abs(v).toLocaleString('en-GB'
 function cls(v){ return v>0.5?'good':v<-0.5?'bad':'neu'; }
 
 function fmtUsd(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+'$'+Math.abs(v).toLocaleString('en-US',{maximumFractionDigits:0}); }
+function fmtEur(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+'€'+Math.abs(v).toLocaleString('de-DE',{maximumFractionDigits:0}); }
 function fmtFedBp(v){ if(v==null||isNaN(v)) return '—'; return (v>=0?'+':'')+Number(v).toFixed(1)+' bp'; }
 
 function render(D){
   const isUsd = D.trade.currency === 'USD';
-  const perBp = isUsd ? (D.trade.usd_per_bp || 25) : (D.trade.gbp_per_bp || 12.5);
-  const fmtPnl = isUsd ? fmtUsd : fmtGbp;
-  const pnlAmt = isUsd ? (D.pnl.usd != null ? D.pnl.usd : 0) : D.pnl.gbp;
-  const policyLbl = isUsd ? 'FFR mid' : 'Bank';
+  const isEur = D.trade.currency === 'EUR';
+  const perBp = isUsd ? (D.trade.usd_per_bp || 25) : isEur ? (D.trade.eur_per_bp || 25) : (D.trade.gbp_per_bp || 12.5);
+  const fmtPnl = isUsd ? fmtUsd : isEur ? fmtEur : fmtGbp;
+  const pnlAmt = isUsd ? (D.pnl.usd != null ? D.pnl.usd : 0) : isEur ? (D.pnl.eur != null ? D.pnl.eur : 0) : D.pnl.gbp;
+  const policyLbl = isUsd ? 'FFR mid' : isEur ? 'ECB dep' : 'Bank';
   const isOutright = D.trade.type === 'outright';
   const L = D.levels || {};
   const pnl = D.pnl;
@@ -154,10 +156,10 @@ function render(D){
 
   const path = D.trade_path || [];
   const labels = path.map(r=>r.date);
-  const cumKey = isUsd ? 'cum_pnl_usd' : 'cum_pnl_gbp';
-  const dailyKey = isUsd ? 'daily_pnl_usd' : 'daily_pnl_gbp';
+  const cumKey = isUsd ? 'cum_pnl_usd' : isEur ? 'cum_pnl_eur' : 'cum_pnl_gbp';
+  const dailyKey = isUsd ? 'daily_pnl_usd' : isEur ? 'daily_pnl_eur' : 'daily_pnl_gbp';
   const cum = path.map(r=>r[cumKey] != null ? r[cumKey] : r.cum_pnl_gbp);
-  const pnlLbl = isUsd ? 'Cum P&L ($)' : 'Cumulative P&L (£)';
+  const pnlLbl = isUsd ? 'Cum P&L ($)' : isEur ? 'Cum P&L (€)' : 'Cumulative P&L (£)';
   new Chart(document.getElementById('pnlChart'), {
     type:'line',
     data:{labels,datasets:[{label:pnlLbl,data:cum,borderColor:'#39d98a',backgroundColor:'rgba(57,217,138,.08)',fill:true,tension:.2}]},
@@ -199,20 +201,20 @@ function render(D){
     });
     const rt = document.querySelector('#regimeTbl tbody');
     (D.regime_attribution||[]).forEach(r=>{
-      const rgPnl = isUsd ? fmtUsd(r.pnl_usd != null ? r.pnl_usd : r.pnl_gbp) : fmtGbp(r.pnl_gbp);
+      const rgPnl = isUsd ? fmtUsd(r.pnl_usd != null ? r.pnl_usd : r.pnl_gbp) : isEur ? fmtEur(r.pnl_eur != null ? r.pnl_eur : r.pnl_gbp) : fmtGbp(r.pnl_gbp);
       rt.innerHTML += '<tr><td>'+r.label+'</td><td class="num">'+r.days+'</td><td class="num">'+fmtBp(r.pnl_slope_bp)+'</td><td class="num">'+rgPnl+'</td></tr>';
     });
     document.getElementById('pathHead').innerHTML = '<th>Date</th><th>'+D.leg_labels.quoted_short+'</th><th>'+D.leg_labels.quoted_long+'</th><th>Spread</th><th>Δ day</th><th>Cum</th>';
     const pt = document.querySelector('#pathTbl tbody');
-    const cumFmt = isUsd ? fmtUsd : fmtGbp;
-    const dayFmt = isUsd ? (v=>fmtUsd(v)) : fmtGbp;
+    const cumFmt = isUsd ? fmtUsd : isEur ? fmtEur : fmtGbp;
+    const dayFmt = isUsd ? (v=>fmtUsd(v)) : isEur ? (v=>fmtEur(v)) : fmtGbp;
     [...path].reverse().forEach(r=>{
       const day = r[dailyKey] != null ? r[dailyKey] : r.daily_pnl_gbp;
       const c = r[cumKey] != null ? r[cumKey] : r.cum_pnl_gbp;
       pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.quoted_short_rate.toFixed(3)+'</td><td class="num">'+r.quoted_long_rate.toFixed(3)+'</td><td class="num">'+r.slope_bp.toFixed(1)+'</td><td class="num">'+dayFmt(day)+'</td><td class="num">'+cumFmt(c)+'</td></tr>';
     });
   }
-  const unit = isUsd ? '$'+perBp+'/bp' : '£'+perBp+'/bp';
+  const unit = isUsd ? '$'+perBp+'/bp' : isEur ? '€'+perBp+'/bp' : '£'+perBp+'/bp';
   document.getElementById('foot').textContent = D.trade.position + ' · '+unit+' · Barchart EOD. Not investment advice.';
 
   const px = D.live_proxy;

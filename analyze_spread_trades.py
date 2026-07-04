@@ -309,6 +309,8 @@ def build_spread_path(
         }
         if daily_pnl_key == "daily_pnl_usd":
             row["cum_pnl_usd"] = round(cum, 2)
+        elif daily_pnl_key == "daily_pnl_eur":
+            row["cum_pnl_eur"] = round(cum, 2)
         path.append(row)
     return path
 
@@ -493,6 +495,12 @@ def analyze_spread(cfg_path: Path) -> dict:
                 sofr_meta = json.load(f)
             policy_rate = sofr_meta.get("fed_funds_pct")
             policy_as_of = sofr_meta.get("fed_funds_as_of")
+    elif market == "estr_1m":
+        pnl_per_bp = float(cfg["eur_per_bp"])
+        daily_pnl_key = "daily_pnl_eur"
+        series_fn = lambda _keys: None
+        policy_rate = float(cfg.get("ecb_deposit_pct", 2.0))
+        policy_as_of = cfg.get("ecb_deposit_as_of")
     else:
         pnl_per_bp = float(cfg["gbp_per_bp"])
         daily_pnl_key = "daily_pnl_gbp"
@@ -547,7 +555,7 @@ def analyze_spread(cfg_path: Path) -> dict:
         q_short_key: float(leg_by_key[q_short_key]["implied_rate_pct"]),
     }
     live_proxy = None
-    if market != "sofr_3m":
+    if market == "sonia_1m":
         live_proxy = build_live_proxy(
             cfg, entry_date, entry_1m_rates, q_long_key, q_short_key, direction, pnl_per_bp, "spread"
         )
@@ -569,6 +577,9 @@ def analyze_spread(cfg_path: Path) -> dict:
     if market == "sofr_3m":
         trade_row["usd_per_bp"] = pnl_per_bp
         trade_row["face_value_usd"] = float(cfg.get("face_value_usd", 1_000_000))
+    elif market == "estr_1m":
+        trade_row["eur_per_bp"] = pnl_per_bp
+        trade_row["face_value_eur"] = float(cfg.get("face_value_eur", 250_000))
     else:
         trade_row["gbp_per_bp"] = pnl_per_bp
 
@@ -582,6 +593,9 @@ def analyze_spread(cfg_path: Path) -> dict:
     if currency == "USD":
         pnl_row["usd"] = round(pnl_native, 2)
         pnl_row["gbp"] = 0.0
+    elif currency == "EUR":
+        pnl_row["eur"] = round(pnl_native, 2)
+        pnl_row["gbp"] = 0.0
     else:
         pnl_row["gbp"] = round(pnl_native, 2)
 
@@ -589,6 +603,13 @@ def analyze_spread(cfg_path: Path) -> dict:
     if market == "sofr_3m" and policy_rate is not None:
         entry_out["fed_funds_mid_pct"] = policy_rate
         entry_out["fed_funds_as_of"] = policy_as_of
+        if entry.get("long"):
+            entry_out["long"] = leg_vs_fed(entry["long"], policy_rate)
+        if entry.get("short"):
+            entry_out["short"] = leg_vs_fed(entry["short"], policy_rate)
+    elif market == "estr_1m" and policy_rate is not None:
+        entry_out["ecb_deposit_pct"] = policy_rate
+        entry_out["ecb_deposit_as_of"] = policy_as_of
         if entry.get("long"):
             entry_out["long"] = leg_vs_fed(entry["long"], policy_rate)
         if entry.get("short"):
@@ -635,6 +656,9 @@ def index_row(payload: dict) -> dict:
     if currency == "USD":
         pnl_display = float(payload["pnl"].get("usd", 0))
         trade_per_bp = float(t.get("usd_per_bp", 25))
+    elif currency == "EUR":
+        pnl_display = float(payload["pnl"].get("eur", 0))
+        trade_per_bp = float(t.get("eur_per_bp", 25))
     else:
         pnl_display = float(payload["pnl"]["gbp"])
         trade_per_bp = float(t.get("gbp_per_bp", 12.5))
@@ -661,6 +685,7 @@ def index_row(payload: dict) -> dict:
         "data_file": f"{t['id']}_trade_data.json",
         "pnl_gbp": pnl_display if currency == "GBP" else None,
         "pnl_usd": pnl_display if currency == "USD" else None,
+        "pnl_eur": pnl_display if currency == "EUR" else None,
         "pnl_slope_bp": pnl_bp,
     }
     if book_size:
@@ -713,6 +738,8 @@ def main() -> None:
             pnl = payload["pnl"]
             if payload["trade"].get("currency") == "USD":
                 pnl_txt = f"{pnl.get('usd', 0):+.1f} USD"
+            elif payload["trade"].get("currency") == "EUR":
+                pnl_txt = f"{pnl.get('eur', 0):+.1f} EUR"
             else:
                 pnl_txt = f"{pnl.get('gbp', 0):+.1f} GBP"
             print(
