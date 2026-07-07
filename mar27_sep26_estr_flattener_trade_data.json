@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-07 03:51 UTC",
+  "generated_utc": "2026-07-07 11:43 UTC",
   "trade": {
     "id": "mar27_sep26_estr_flattener",
     "type": "spread",
@@ -63,7 +63,7 @@
       "vs_fed_bp": 27.0
     },
     "slope_bp": 17.5,
-    "updated_utc": "2026-07-07 03:51 UTC"
+    "updated_utc": "2026-07-07 11:43 UTC"
   },
   "pnl": {
     "slope_bp": -2.0,
