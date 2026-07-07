@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-07 11:57 UTC",
+  "generated_utc": "2026-07-07 19:22 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -51,27 +51,27 @@
     "short": {
       "symbol": "SQH28",
       "date": "2026-07-07",
-      "price": 96.13,
-      "implied_rate_pct": 3.87,
-      "vs_fed_bp": 24.5
+      "price": 96.085,
+      "implied_rate_pct": 3.915,
+      "vs_fed_bp": 29.0
     },
     "long": {
       "symbol": "SQH27",
       "date": "2026-07-07",
-      "price": 95.945,
-      "implied_rate_pct": 4.055,
-      "vs_fed_bp": 43.0
+      "price": 95.89,
+      "implied_rate_pct": 4.11,
+      "vs_fed_bp": 48.5
     },
-    "slope_bp": -18.5,
-    "updated_utc": "2026-07-07 11:57 UTC"
+    "slope_bp": -19.5,
+    "updated_utc": "2026-07-07 19:22 UTC"
   },
   "pnl": {
-    "slope_bp": 5.0,
+    "slope_bp": 4.0,
     "quoted_long_leg_bp": 0.0,
-    "quoted_short_leg_bp": 0.0,
+    "quoted_short_leg_bp": -0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 125.0,
+    "usd": 100.0,
     "gbp": 0.0
   },
   "trade_path": [
@@ -107,13 +107,13 @@
     },
     {
       "date": "2026-07-07",
-      "quoted_long_rate": 3.87,
-      "quoted_short_rate": 4.055,
-      "slope_bp": -18.5,
-      "dslope_bp": 5.0,
-      "cum_pnl_gbp": 125.0,
-      "daily_pnl_usd": 25.0,
-      "cum_pnl_usd": 125.0
+      "quoted_long_rate": 3.915,
+      "quoted_short_rate": 4.11,
+      "slope_bp": -19.5,
+      "dslope_bp": 4.0,
+      "cum_pnl_gbp": 100.0,
+      "daily_pnl_usd": 0.0,
+      "cum_pnl_usd": 100.0
     }
   ],
   "regime_attribution": [
@@ -125,18 +125,18 @@
       "pnl_gbp": 100.0
     },
     {
-      "regime": "bear_steepening",
-      "label": "Bear steepening",
-      "days": 1,
-      "pnl_slope_bp": 1.0,
-      "pnl_gbp": 25.0
-    },
-    {
       "regime": "bull_flattening",
       "label": "Bull flattening",
       "days": 1,
       "pnl_slope_bp": -0.5,
       "pnl_gbp": -12.5
+    },
+    {
+      "regime": "unchanged",
+      "label": "Unchanged",
+      "days": 1,
+      "pnl_slope_bp": 0.0,
+      "pnl_gbp": 0.0
     }
   ],
   "market_note_url": "",
