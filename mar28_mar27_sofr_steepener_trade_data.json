@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-09 02:17 UTC",
+  "generated_utc": "2026-07-09 03:22 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -51,23 +51,23 @@
     "short": {
       "symbol": "SQH28",
       "date": "2026-07-09",
-      "price": 96.03,
-      "implied_rate_pct": 3.97,
-      "vs_fed_bp": 34.5
+      "price": 96.035,
+      "implied_rate_pct": 3.965,
+      "vs_fed_bp": 34.0
     },
     "long": {
       "symbol": "SQH27",
       "date": "2026-07-09",
-      "price": 95.86,
-      "implied_rate_pct": 4.14,
-      "vs_fed_bp": 51.5
+      "price": 95.865,
+      "implied_rate_pct": 4.135,
+      "vs_fed_bp": 51.0
     },
     "slope_bp": -17.0,
-    "updated_utc": "2026-07-09 02:17 UTC"
+    "updated_utc": "2026-07-09 03:22 UTC"
   },
   "pnl": {
     "slope_bp": 6.5,
-    "quoted_long_leg_bp": -0.0,
+    "quoted_long_leg_bp": 0.0,
     "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
@@ -127,8 +127,8 @@
     },
     {
       "date": "2026-07-09",
-      "quoted_long_rate": 3.97,
-      "quoted_short_rate": 4.14,
+      "quoted_long_rate": 3.965,
+      "quoted_short_rate": 4.135,
       "slope_bp": -17.0,
       "dslope_bp": 6.5,
       "cum_pnl_gbp": 162.5,

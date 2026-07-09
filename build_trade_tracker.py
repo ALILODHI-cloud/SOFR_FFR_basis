@@ -292,7 +292,7 @@ h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
 <header>
   <div class="eyebrow">Supra Fund Management</div>
   <h1>Live trade tracker</h1>
-  <div class="sub">SONIA + SOFR positions · Barchart marks weekdays</div>
+  <div class="sub">Live SOFR position · Barchart marks weekdays</div>
 </header>
 <div id="loading" class="loading">Loading trades…</div>
 <div class="grid" id="tradeGrid"></div>
@@ -377,7 +377,7 @@ h2{margin:0 0 8px;font-size:16px}
 
 <div class="section">Open positions</div>
 <div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Jun-27 SONIA outright · Mar28−Mar27 SOFR · Mar27−Sep26 ESTR flattener</p></a>
+  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Mar28−Mar27 SOFR steepener · live P&amp;L</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
 </div>
 
@@ -445,6 +445,10 @@ def main() -> None:
         "dec27_dec26_steepener_trade_data.json",
         "jun27_dec26_flattener_trade_data.json",
         "mar27_sep26_estr_steepener_trade_data.json",
+        "trade_jun27_outright.html",
+        "trade_mar27_sep26_estr.html",
+        "jun27_outright_long_trade_data.json",
+        "mar27_sep26_estr_flattener_trade_data.json",
         "book_summary.json",
         "book.json",
     ]
