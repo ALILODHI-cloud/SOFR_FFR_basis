@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-09 12:16 UTC",
+  "generated_utc": "2026-07-10 02:32 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -47,31 +47,31 @@
     "source": "barchart_eod"
   },
   "mark": {
-    "date": "2026-07-09",
+    "date": "2026-07-10",
     "short": {
       "symbol": "SQH28",
-      "date": "2026-07-09",
-      "price": 96.045,
-      "implied_rate_pct": 3.955,
-      "vs_fed_bp": 33.0
+      "date": "2026-07-10",
+      "price": 96.085,
+      "implied_rate_pct": 3.915,
+      "vs_fed_bp": 29.0
     },
     "long": {
       "symbol": "SQH27",
-      "date": "2026-07-09",
-      "price": 95.885,
-      "implied_rate_pct": 4.115,
-      "vs_fed_bp": 49.0
+      "date": "2026-07-10",
+      "price": 95.91,
+      "implied_rate_pct": 4.09,
+      "vs_fed_bp": 46.5
     },
-    "slope_bp": -16.0,
-    "updated_utc": "2026-07-09 12:16 UTC"
+    "slope_bp": -17.5,
+    "updated_utc": "2026-07-10 02:32 UTC"
   },
   "pnl": {
-    "slope_bp": 7.5,
-    "quoted_long_leg_bp": -0.0,
-    "quoted_short_leg_bp": -0.0,
+    "slope_bp": 6.0,
+    "quoted_long_leg_bp": 0.0,
+    "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 187.5,
+    "usd": 150.0,
     "gbp": 0.0
   },
   "trade_path": [
@@ -127,13 +127,23 @@
     },
     {
       "date": "2026-07-09",
-      "quoted_long_rate": 3.955,
-      "quoted_short_rate": 4.115,
-      "slope_bp": -16.0,
-      "dslope_bp": 7.5,
-      "cum_pnl_gbp": 187.5,
-      "daily_pnl_usd": 25.0,
-      "cum_pnl_usd": 187.5
+      "quoted_long_rate": 3.915,
+      "quoted_short_rate": 4.085,
+      "slope_bp": -17.0,
+      "dslope_bp": 6.5,
+      "cum_pnl_gbp": 162.5,
+      "daily_pnl_usd": 0.0,
+      "cum_pnl_usd": 162.5
+    },
+    {
+      "date": "2026-07-10",
+      "quoted_long_rate": 3.915,
+      "quoted_short_rate": 4.09,
+      "slope_bp": -17.5,
+      "dslope_bp": 6.0,
+      "cum_pnl_gbp": 150.0,
+      "daily_pnl_usd": -12.5,
+      "cum_pnl_usd": 150.0
     }
   ],
   "regime_attribution": [
@@ -152,18 +162,25 @@
       "pnl_gbp": 62.5
     },
     {
-      "regime": "mixed_steepening",
-      "label": "Mixed steepening",
-      "days": 1,
-      "pnl_slope_bp": 1.0,
-      "pnl_gbp": 25.0
-    },
-    {
       "regime": "bull_flattening",
       "label": "Bull flattening",
       "days": 1,
       "pnl_slope_bp": -0.5,
       "pnl_gbp": -12.5
+    },
+    {
+      "regime": "mixed_flattening",
+      "label": "Mixed flattening",
+      "days": 1,
+      "pnl_slope_bp": -0.5,
+      "pnl_gbp": -12.5
+    },
+    {
+      "regime": "unchanged",
+      "label": "Unchanged",
+      "days": 1,
+      "pnl_slope_bp": 0.0,
+      "pnl_gbp": 0.0
     }
   ],
   "market_note_url": "",
