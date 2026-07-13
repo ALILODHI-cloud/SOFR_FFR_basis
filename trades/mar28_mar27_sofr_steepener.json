@@ -25,6 +25,7 @@
   "face_value_usd": 1000000,
   "contracts_per_leg": 1,
   "detail_page": "trade_mar28_mar27_sofr.html",
+  "market_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_16/body.md",
   "live_proxy": {
     "enabled": false
   },
