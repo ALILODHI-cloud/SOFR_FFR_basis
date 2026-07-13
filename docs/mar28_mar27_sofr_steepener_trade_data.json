@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-13 13:10 UTC",
+  "generated_utc": "2026-07-13 18:56 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -51,27 +51,27 @@
     "short": {
       "symbol": "SQH28",
       "date": "2026-07-13",
-      "price": 96.015,
-      "implied_rate_pct": 3.985,
-      "vs_fed_bp": 36.0
+      "price": 95.98,
+      "implied_rate_pct": 4.02,
+      "vs_fed_bp": 39.5
     },
     "long": {
       "symbol": "SQH27",
       "date": "2026-07-13",
-      "price": 95.855,
-      "implied_rate_pct": 4.145,
-      "vs_fed_bp": 52.0
+      "price": 95.8,
+      "implied_rate_pct": 4.2,
+      "vs_fed_bp": 57.5
     },
-    "slope_bp": -16.0,
-    "updated_utc": "2026-07-13 13:10 UTC"
+    "slope_bp": -18.0,
+    "updated_utc": "2026-07-13 18:56 UTC"
   },
   "pnl": {
-    "slope_bp": 7.5,
+    "slope_bp": 5.5,
     "quoted_long_leg_bp": -0.0,
-    "quoted_short_leg_bp": -0.0,
+    "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 187.5,
+    "usd": 137.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -147,13 +147,13 @@
     },
     {
       "date": "2026-07-13",
-      "quoted_long_rate": 3.985,
-      "quoted_short_rate": 4.145,
-      "slope_bp": -16.0,
-      "dslope_bp": 7.5,
-      "cum_pnl_gbp": 187.5,
-      "daily_pnl_usd": 0.0,
-      "cum_pnl_usd": 187.5
+      "quoted_long_rate": 4.02,
+      "quoted_short_rate": 4.2,
+      "slope_bp": -18.0,
+      "dslope_bp": 5.5,
+      "cum_pnl_gbp": 137.5,
+      "daily_pnl_usd": -50.0,
+      "cum_pnl_usd": 137.5
     }
   ],
   "regime_attribution": [
@@ -172,6 +172,13 @@
       "pnl_gbp": 87.5
     },
     {
+      "regime": "bear_flattening",
+      "label": "Bear flattening",
+      "days": 1,
+      "pnl_slope_bp": -2.0,
+      "pnl_gbp": -50.0
+    },
+    {
       "regime": "bull_flattening",
       "label": "Bull flattening",
       "days": 1,
@@ -181,7 +188,7 @@
     {
       "regime": "unchanged",
       "label": "Unchanged",
-      "days": 2,
+      "days": 1,
       "pnl_slope_bp": 0.0,
       "pnl_gbp": 0.0
     }
