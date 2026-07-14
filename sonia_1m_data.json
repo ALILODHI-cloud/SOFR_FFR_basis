@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-13 18:56 UTC",
+  "generated_utc": "2026-07-14 10:52 UTC",
   "source": "Barchart EOD settles",
   "contract": "ICE 1M SONIA (JU*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
