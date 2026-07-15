@@ -113,8 +113,62 @@ def yahoo_range_for_span(start: date, end: date) -> str:
     return "5y"
 
 
+def drop_incomplete_barchart_session(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    """Remove the latest bar when it is still an in-progress session print.
+
+    Barchart historical ``lastPrice`` is EOD for completed sessions, but the
+    current session can appear early as a live/thin bar. Heuristics (either
+    enough to drop):
+    1. Bar date is today in US/Eastern and local time is before ~5pm ET.
+    2. Volume on the last bar is < 25% of the median of the prior 10 sessions.
+    """
+    if df.empty:
+        return df
+
+    try:
+        from zoneinfo import ZoneInfo
+
+        now_et = datetime.now(ZoneInfo("America/New_York"))
+        pre_eod = now_et.hour < 17
+        today = pd.Timestamp(now_et.date())
+    except Exception:
+        now_et = datetime.now(timezone.utc)
+        pre_eod = now_et.hour < 21
+        today = pd.Timestamp(now_et.date())
+
+    last_dt = pd.Timestamp(df.index[-1]).normalize()
+    drop = False
+    reason = ""
+
+    if last_dt == today and pre_eod:
+        drop = True
+        reason = f"in-progress session {last_dt.date()} (pre-EOD cutoff)"
+
+    if not drop and "volume" in df.columns and len(df) >= 6:
+        prior = df["volume"].iloc[-11:-1].dropna()
+        last_vol = df["volume"].iloc[-1]
+        if len(prior) >= 5 and pd.notna(last_vol):
+            med = float(prior.median())
+            if med > 0 and float(last_vol) < 0.25 * med:
+                drop = True
+                reason = (
+                    f"thin volume on {last_dt.date()} "
+                    f"({float(last_vol):.0f} vs median {med:.0f})"
+                )
+
+    if drop:
+        print(f"    {symbol}: dropping incomplete bar — {reason}")
+        return df.iloc[:-1]
+    return df
+
+
 def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame:
-    """Pull EOD history + latest Barchart quote for one contract."""
+    """Pull finalized daily history from Barchart (completed sessions only).
+
+    Uses Barchart ``historical/get`` ``lastPrice``. That field is EOD for completed
+    sessions; a live/incomplete same-day bar is dropped. Live quote overlay is not
+    merged into the EOD series.
+    """
     from playwright.sync_api import sync_playwright
 
     with sync_playwright() as p:
@@ -130,26 +184,6 @@ def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame
                 timeout=90_000,
             )
         hist = hist_resp.value.json()
-        page.goto(
-            f"https://www.barchart.com/futures/quotes/{symbol}",
-            wait_until="domcontentloaded",
-            timeout=90_000,
-        )
-        quote = page.evaluate(
-            """() => {
-              const html = document.documentElement.innerHTML;
-              const m = html.match(/"symbol":"SYMBOL"[^}]{0,800}/);
-              const block = m ? m[0] : '';
-              const price = block.match(/"lastPrice":([0-9.]+)/);
-              const t = block.match(/"tradeTime":"([^"]+)"/);
-              const session = html.match(/sessionDateDisplayLong[^A-Za-z0-9]+([A-Za-z]{3}, [^<]+)/);
-              return {
-                lastPrice: price ? +price[1] : null,
-                tradeTime: t ? t[1] : null,
-                sessionLabel: session ? session[1] : null,
-              };
-            }""".replace("SYMBOL", symbol)
-        )
         browser.close()
 
     if not hist or "data" not in hist:
@@ -164,19 +198,30 @@ def fetch_barchart_eod(symbol: str, limit: int = BARCHART_LIMIT) -> pd.DataFrame
         px = raw.get("lastPrice")
         if px is None:
             px = float(str(row.get("lastPrice", "")).replace(",", ""))
-        recs.append({"date": pd.to_datetime(d), "price": float(px)})
-
-    if quote.get("lastPrice") and quote.get("tradeTime"):
-        qd = pd.to_datetime(quote["tradeTime"])
-        recs.append({"date": qd, "price": float(quote["lastPrice"])})
+        vol = raw.get("volume")
+        if vol is None and row.get("volume") not in (None, ""):
+            try:
+                vol = float(str(row.get("volume")).replace(",", ""))
+            except ValueError:
+                vol = None
+        recs.append(
+            {
+                "date": pd.to_datetime(d),
+                "price": float(px),
+                "volume": float(vol) if vol is not None else float("nan"),
+            }
+        )
 
     df = pd.DataFrame(recs).drop_duplicates("date", keep="last").set_index("date").sort_index()
     df.index = df.index.normalize()
+    df = drop_incomplete_barchart_session(df, symbol)
+    df = df[["price"]]
     print(
         f"  {symbol}: {len(df)} rows, {df.index.min().date()} → {df.index.max().date()}"
-        + (f" (quote session: {quote.get('sessionLabel')})" if quote.get("sessionLabel") else "")
     )
     return df
+
+
 
 
 def price_to_rate(price: pd.Series) -> pd.Series:

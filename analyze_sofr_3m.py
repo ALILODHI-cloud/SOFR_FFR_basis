@@ -325,7 +325,7 @@ def build_payload() -> dict:
 
     return {
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-        "source": "Barchart EOD settles",
+        "source": "Barchart historical lastPrice (finalized EOD sessions only)",
         "contract": "CME 3M SOFR (SQ*)",
         "quote_convention": "price = 100 − implied rate (%)",
         **fed,

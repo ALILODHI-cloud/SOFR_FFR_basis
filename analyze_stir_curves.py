@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from analyze_sonia import UA, price_to_rate
+from analyze_sonia import UA, price_to_rate, drop_incomplete_barchart_session
 
 ROOT = Path(__file__).resolve().parent
 
@@ -105,6 +105,13 @@ def discover_chain_symbols(prefix: str, chain_url: str) -> list[str]:
 
 
 def _parse_barchart_hist(hist: dict, symbol: str) -> pd.DataFrame:
+    """Parse Barchart historical/get payload into a daily price series.
+
+    Barchart's historical API exposes ``lastPrice`` (not a separate settle field).
+    For *completed* sessions that is the EOD print we want. For the *current*
+    session it can be a live/incomplete bar — those are dropped so curve
+    dashboards and trade marks only use finalized EOD rows.
+    """
     if not hist or "data" not in hist:
         raise RuntimeError(f"No Barchart history for {symbol}")
     recs = []
@@ -116,10 +123,25 @@ def _parse_barchart_hist(hist: dict, symbol: str) -> pd.DataFrame:
         px = raw.get("lastPrice")
         if px is None:
             px = float(str(row.get("lastPrice", "")).replace(",", ""))
-        recs.append({"date": pd.to_datetime(d), "price": float(px)})
+        vol = raw.get("volume")
+        if vol is None:
+            vol_raw = row.get("volume")
+            if vol_raw not in (None, ""):
+                try:
+                    vol = float(str(vol_raw).replace(",", ""))
+                except ValueError:
+                    vol = None
+        recs.append(
+            {
+                "date": pd.to_datetime(d),
+                "price": float(px),
+                "volume": float(vol) if vol is not None else float("nan"),
+            }
+        )
     df = pd.DataFrame(recs).drop_duplicates("date", keep="last").set_index("date").sort_index()
     df.index = df.index.normalize()
-    return df
+    df = drop_incomplete_barchart_session(df, symbol)
+    return df[["price"]]
 
 
 def fetch_barchart_batch(
@@ -255,7 +277,7 @@ def build_payload() -> dict:
 
     payload: dict = {
         "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-        "source": "Barchart EOD settles",
+        "source": "Barchart historical lastPrice (finalized EOD sessions only)",
         "quote_convention": "price = 100 − implied rate (%)",
         "curve_months": [],
         "curves": {},
