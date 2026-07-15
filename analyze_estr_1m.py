@@ -33,24 +33,25 @@ MONTH_LABEL = {
     7: "Jul", 8: "Aug", 9: "Sep", 10: "Oct", 11: "Nov", 12: "Dec",
 }
 
-# ECB Governing Council — policy announcement dates.
+# ECB Governing Council — monetary policy decision dates (announcement / Day 2).
+# Source: https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html
 ECB_GOVERNING_COUNCIL = [
-    {"date": "2026-02-06", "label": "Feb ECB"},
-    {"date": "2026-03-12", "label": "Mar ECB"},
-    {"date": "2026-04-16", "label": "Apr ECB"},
+    {"date": "2026-02-05", "label": "Feb ECB"},
+    {"date": "2026-03-19", "label": "Mar ECB"},
+    {"date": "2026-04-30", "label": "Apr ECB"},
     {"date": "2026-06-11", "label": "Jun ECB"},
     {"date": "2026-07-23", "label": "Jul ECB"},
     {"date": "2026-09-10", "label": "Sep ECB"},
     {"date": "2026-10-29", "label": "Oct ECB"},
-    {"date": "2026-12-10", "label": "Dec ECB"},
+    {"date": "2026-12-17", "label": "Dec ECB"},
     {"date": "2027-02-04", "label": "Feb ECB"},
-    {"date": "2027-03-11", "label": "Mar ECB"},
-    {"date": "2027-04-22", "label": "Apr ECB"},
+    {"date": "2027-03-18", "label": "Mar ECB"},
+    {"date": "2027-04-29", "label": "Apr ECB"},
     {"date": "2027-06-10", "label": "Jun ECB"},
     {"date": "2027-07-22", "label": "Jul ECB"},
     {"date": "2027-09-09", "label": "Sep ECB"},
     {"date": "2027-10-28", "label": "Oct ECB"},
-    {"date": "2027-12-09", "label": "Dec ECB"},
+    {"date": "2027-12-16", "label": "Dec ECB"},
 ]
 
 ECB_PRICING_NOTE = (

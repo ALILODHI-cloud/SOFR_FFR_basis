@@ -26146,7 +26146,7 @@
         "hike_pct": 6.0
       },
       {
-        "meeting_date": "2026-12-10",
+        "meeting_date": "2026-12-17",
         "meeting_label": "Dec ECB",
         "status": "upcoming",
         "ref_contract_key": "2027-01",
@@ -26174,7 +26174,7 @@
         "hike_pct": 56.0
       },
       {
-        "meeting_date": "2027-03-11",
+        "meeting_date": "2027-03-18",
         "meeting_label": "Mar ECB",
         "status": "upcoming",
         "ref_contract_key": "2027-04",
@@ -26188,7 +26188,7 @@
         "hike_pct": 2.0
       },
       {
-        "meeting_date": "2027-04-22",
+        "meeting_date": "2027-04-29",
         "meeting_label": "Apr ECB",
         "status": "upcoming",
         "ref_contract_key": "2027-05",
@@ -26258,7 +26258,7 @@
         "hike_pct": 0.0
       },
       {
-        "meeting_date": "2027-12-09",
+        "meeting_date": "2027-12-16",
         "meeting_label": "Dec ECB",
         "status": "upcoming",
         "ref_contract_key": "2028-01",

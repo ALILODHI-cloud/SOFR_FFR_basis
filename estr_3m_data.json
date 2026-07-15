@@ -1,0 +1,774 @@
+{
+  "generated_utc": "2026-07-15 17:12 UTC",
+  "source": "Barchart historical lastPrice (finalized EOD sessions only)",
+  "contract": "CME 3M \u20acSTR (EB*)",
+  "quote_convention": "price = 100 \u2212 implied rate (%)",
+  "deposit_facility_pct": 2.25,
+  "deposit_facility_as_of": "2026-07-15",
+  "n_contracts": 25,
+  "contracts": [
+    {
+      "key": "2026-06",
+      "label": "Jun-26",
+      "symbol": "EBM26",
+      "delivery_ym": "2026-06",
+      "sort_key": [
+        2026,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.795,
+      "implied_rate_pct": 2.205,
+      "vs_deposit_bp": -4.5,
+      "vs_deposit_hikes_25bp": -0.18
+    },
+    {
+      "key": "2026-09",
+      "label": "Sep-26",
+      "symbol": "EBU26",
+      "delivery_ym": "2026-09",
+      "sort_key": [
+        2026,
+        9
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.54,
+      "implied_rate_pct": 2.46,
+      "vs_deposit_bp": 21.0,
+      "vs_deposit_hikes_25bp": 0.84
+    },
+    {
+      "key": "2026-12",
+      "label": "Dec-26",
+      "symbol": "EBZ26",
+      "delivery_ym": "2026-12",
+      "sort_key": [
+        2026,
+        12
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.4025,
+      "implied_rate_pct": 2.5975,
+      "vs_deposit_bp": 34.8,
+      "vs_deposit_hikes_25bp": 1.39
+    },
+    {
+      "key": "2027-03",
+      "label": "Mar-27",
+      "symbol": "EBH27",
+      "delivery_ym": "2027-03",
+      "sort_key": [
+        2027,
+        3
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.325,
+      "implied_rate_pct": 2.675,
+      "vs_deposit_bp": 42.5,
+      "vs_deposit_hikes_25bp": 1.7
+    },
+    {
+      "key": "2027-06",
+      "label": "Jun-27",
+      "symbol": "EBM27",
+      "delivery_ym": "2027-06",
+      "sort_key": [
+        2027,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.3075,
+      "implied_rate_pct": 2.6925,
+      "vs_deposit_bp": 44.2,
+      "vs_deposit_hikes_25bp": 1.77
+    },
+    {
+      "key": "2027-09",
+      "label": "Sep-27",
+      "symbol": "EBU27",
+      "delivery_ym": "2027-09",
+      "sort_key": [
+        2027,
+        9
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.325,
+      "implied_rate_pct": 2.675,
+      "vs_deposit_bp": 42.5,
+      "vs_deposit_hikes_25bp": 1.7
+    },
+    {
+      "key": "2027-12",
+      "label": "Dec-27",
+      "symbol": "EBZ27",
+      "delivery_ym": "2027-12",
+      "sort_key": [
+        2027,
+        12
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.3575,
+      "implied_rate_pct": 2.6425,
+      "vs_deposit_bp": 39.3,
+      "vs_deposit_hikes_25bp": 1.57
+    },
+    {
+      "key": "2028-03",
+      "label": "Mar-28",
+      "symbol": "EBH28",
+      "delivery_ym": "2028-03",
+      "sort_key": [
+        2028,
+        3
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.37,
+      "implied_rate_pct": 2.63,
+      "vs_deposit_bp": 38.0,
+      "vs_deposit_hikes_25bp": 1.52
+    },
+    {
+      "key": "2028-06",
+      "label": "Jun-28",
+      "symbol": "EBM28",
+      "delivery_ym": "2028-06",
+      "sort_key": [
+        2028,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.3675,
+      "implied_rate_pct": 2.6325,
+      "vs_deposit_bp": 38.2,
+      "vs_deposit_hikes_25bp": 1.53
+    },
+    {
+      "key": "2028-09",
+      "label": "Sep-28",
+      "symbol": "EBU28",
+      "delivery_ym": "2028-09",
+      "sort_key": [
+        2028,
+        9
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.36,
+      "implied_rate_pct": 2.64,
+      "vs_deposit_bp": 39.0,
+      "vs_deposit_hikes_25bp": 1.56
+    },
+    {
+      "key": "2028-12",
+      "label": "Dec-28",
+      "symbol": "EBZ28",
+      "delivery_ym": "2028-12",
+      "sort_key": [
+        2028,
+        12
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.3425,
+      "implied_rate_pct": 2.6575,
+      "vs_deposit_bp": 40.8,
+      "vs_deposit_hikes_25bp": 1.63
+    },
+    {
+      "key": "2029-03",
+      "label": "Mar-29",
+      "symbol": "EBH29",
+      "delivery_ym": "2029-03",
+      "sort_key": [
+        2029,
+        3
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.325,
+      "implied_rate_pct": 2.675,
+      "vs_deposit_bp": 42.5,
+      "vs_deposit_hikes_25bp": 1.7
+    },
+    {
+      "key": "2029-06",
+      "label": "Jun-29",
+      "symbol": "EBM29",
+      "delivery_ym": "2029-06",
+      "sort_key": [
+        2029,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.31,
+      "implied_rate_pct": 2.69,
+      "vs_deposit_bp": 44.0,
+      "vs_deposit_hikes_25bp": 1.76
+    },
+    {
+      "key": "2029-09",
+      "label": "Sep-29",
+      "symbol": "EBU29",
+      "delivery_ym": "2029-09",
+      "sort_key": [
+        2029,
+        9
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.29,
+      "implied_rate_pct": 2.71,
+      "vs_deposit_bp": 46.0,
+      "vs_deposit_hikes_25bp": 1.84
+    },
+    {
+      "key": "2029-12",
+      "label": "Dec-29",
+      "symbol": "EBZ29",
+      "delivery_ym": "2029-12",
+      "sort_key": [
+        2029,
+        12
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.2675,
+      "implied_rate_pct": 2.7325,
+      "vs_deposit_bp": 48.2,
+      "vs_deposit_hikes_25bp": 1.93
+    },
+    {
+      "key": "2030-03",
+      "label": "Mar-30",
+      "symbol": "EBH30",
+      "delivery_ym": "2030-03",
+      "sort_key": [
+        2030,
+        3
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.245,
+      "implied_rate_pct": 2.755,
+      "vs_deposit_bp": 50.5,
+      "vs_deposit_hikes_25bp": 2.02
+    },
+    {
+      "key": "2030-06",
+      "label": "Jun-30",
+      "symbol": "EBM30",
+      "delivery_ym": "2030-06",
+      "sort_key": [
+        2030,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.2225,
+      "implied_rate_pct": 2.7775,
+      "vs_deposit_bp": 52.7,
+      "vs_deposit_hikes_25bp": 2.11
+    },
+    {
+      "key": "2030-09",
+      "label": "Sep-30",
+      "symbol": "EBU30",
+      "delivery_ym": "2030-09",
+      "sort_key": [
+        2030,
+        9
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.1975,
+      "implied_rate_pct": 2.8025,
+      "vs_deposit_bp": 55.3,
+      "vs_deposit_hikes_25bp": 2.21
+    },
+    {
+      "key": "2030-12",
+      "label": "Dec-30",
+      "symbol": "EBZ30",
+      "delivery_ym": "2030-12",
+      "sort_key": [
+        2030,
+        12
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.1725,
+      "implied_rate_pct": 2.8275,
+      "vs_deposit_bp": 57.8,
+      "vs_deposit_hikes_25bp": 2.31
+    },
+    {
+      "key": "2031-03",
+      "label": "Mar-31",
+      "symbol": "EBH31",
+      "delivery_ym": "2031-03",
+      "sort_key": [
+        2031,
+        3
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.145,
+      "implied_rate_pct": 2.855,
+      "vs_deposit_bp": 60.5,
+      "vs_deposit_hikes_25bp": 2.42
+    },
+    {
+      "key": "2031-06",
+      "label": "Jun-31",
+      "symbol": "EBM31",
+      "delivery_ym": "2031-06",
+      "sort_key": [
+        2031,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.1175,
+      "implied_rate_pct": 2.8825,
+      "vs_deposit_bp": 63.2,
+      "vs_deposit_hikes_25bp": 2.53
+    },
+    {
+      "key": "2031-09",
+      "label": "Sep-31",
+      "symbol": "EBU31",
+      "delivery_ym": "2031-09",
+      "sort_key": [
+        2031,
+        9
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.0925,
+      "implied_rate_pct": 2.9075,
+      "vs_deposit_bp": 65.8,
+      "vs_deposit_hikes_25bp": 2.63
+    },
+    {
+      "key": "2031-12",
+      "label": "Dec-31",
+      "symbol": "EBZ31",
+      "delivery_ym": "2031-12",
+      "sort_key": [
+        2031,
+        12
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.0875,
+      "implied_rate_pct": 2.9125,
+      "vs_deposit_bp": 66.3,
+      "vs_deposit_hikes_25bp": 2.65
+    },
+    {
+      "key": "2032-03",
+      "label": "Mar-32",
+      "symbol": "EBH32",
+      "delivery_ym": "2032-03",
+      "sort_key": [
+        2032,
+        3
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.085,
+      "implied_rate_pct": 2.915,
+      "vs_deposit_bp": 66.5,
+      "vs_deposit_hikes_25bp": 2.66
+    },
+    {
+      "key": "2032-06",
+      "label": "Jun-32",
+      "symbol": "EBM32",
+      "delivery_ym": "2032-06",
+      "sort_key": [
+        2032,
+        6
+      ],
+      "latest_date": "2026-07-14",
+      "price": 97.0825,
+      "implied_rate_pct": 2.9175,
+      "vs_deposit_bp": 66.8,
+      "vs_deposit_hikes_25bp": 2.67
+    }
+  ],
+  "curve": {
+    "label": "3M \u20acSTR",
+    "exchange": "CME",
+    "prefix": "EB",
+    "chain_url": "https://www.barchart.com/futures/quotes/EB*0/futures-prices",
+    "tenor": "3M compounded \u20acSTR",
+    "contracts": [
+      {
+        "key": "2026-06",
+        "label": "Jun-26",
+        "symbol": "EBM26",
+        "delivery_ym": "2026-06",
+        "sort_key": [
+          2026,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.795,
+        "implied_rate_pct": 2.205,
+        "vs_deposit_bp": -4.5,
+        "vs_deposit_hikes_25bp": -0.18
+      },
+      {
+        "key": "2026-09",
+        "label": "Sep-26",
+        "symbol": "EBU26",
+        "delivery_ym": "2026-09",
+        "sort_key": [
+          2026,
+          9
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.54,
+        "implied_rate_pct": 2.46,
+        "vs_deposit_bp": 21.0,
+        "vs_deposit_hikes_25bp": 0.84
+      },
+      {
+        "key": "2026-12",
+        "label": "Dec-26",
+        "symbol": "EBZ26",
+        "delivery_ym": "2026-12",
+        "sort_key": [
+          2026,
+          12
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.4025,
+        "implied_rate_pct": 2.5975,
+        "vs_deposit_bp": 34.8,
+        "vs_deposit_hikes_25bp": 1.39
+      },
+      {
+        "key": "2027-03",
+        "label": "Mar-27",
+        "symbol": "EBH27",
+        "delivery_ym": "2027-03",
+        "sort_key": [
+          2027,
+          3
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.325,
+        "implied_rate_pct": 2.675,
+        "vs_deposit_bp": 42.5,
+        "vs_deposit_hikes_25bp": 1.7
+      },
+      {
+        "key": "2027-06",
+        "label": "Jun-27",
+        "symbol": "EBM27",
+        "delivery_ym": "2027-06",
+        "sort_key": [
+          2027,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.3075,
+        "implied_rate_pct": 2.6925,
+        "vs_deposit_bp": 44.2,
+        "vs_deposit_hikes_25bp": 1.77
+      },
+      {
+        "key": "2027-09",
+        "label": "Sep-27",
+        "symbol": "EBU27",
+        "delivery_ym": "2027-09",
+        "sort_key": [
+          2027,
+          9
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.325,
+        "implied_rate_pct": 2.675,
+        "vs_deposit_bp": 42.5,
+        "vs_deposit_hikes_25bp": 1.7
+      },
+      {
+        "key": "2027-12",
+        "label": "Dec-27",
+        "symbol": "EBZ27",
+        "delivery_ym": "2027-12",
+        "sort_key": [
+          2027,
+          12
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.3575,
+        "implied_rate_pct": 2.6425,
+        "vs_deposit_bp": 39.3,
+        "vs_deposit_hikes_25bp": 1.57
+      },
+      {
+        "key": "2028-03",
+        "label": "Mar-28",
+        "symbol": "EBH28",
+        "delivery_ym": "2028-03",
+        "sort_key": [
+          2028,
+          3
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.37,
+        "implied_rate_pct": 2.63,
+        "vs_deposit_bp": 38.0,
+        "vs_deposit_hikes_25bp": 1.52
+      },
+      {
+        "key": "2028-06",
+        "label": "Jun-28",
+        "symbol": "EBM28",
+        "delivery_ym": "2028-06",
+        "sort_key": [
+          2028,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.3675,
+        "implied_rate_pct": 2.6325,
+        "vs_deposit_bp": 38.2,
+        "vs_deposit_hikes_25bp": 1.53
+      },
+      {
+        "key": "2028-09",
+        "label": "Sep-28",
+        "symbol": "EBU28",
+        "delivery_ym": "2028-09",
+        "sort_key": [
+          2028,
+          9
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.36,
+        "implied_rate_pct": 2.64,
+        "vs_deposit_bp": 39.0,
+        "vs_deposit_hikes_25bp": 1.56
+      },
+      {
+        "key": "2028-12",
+        "label": "Dec-28",
+        "symbol": "EBZ28",
+        "delivery_ym": "2028-12",
+        "sort_key": [
+          2028,
+          12
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.3425,
+        "implied_rate_pct": 2.6575,
+        "vs_deposit_bp": 40.8,
+        "vs_deposit_hikes_25bp": 1.63
+      },
+      {
+        "key": "2029-03",
+        "label": "Mar-29",
+        "symbol": "EBH29",
+        "delivery_ym": "2029-03",
+        "sort_key": [
+          2029,
+          3
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.325,
+        "implied_rate_pct": 2.675,
+        "vs_deposit_bp": 42.5,
+        "vs_deposit_hikes_25bp": 1.7
+      },
+      {
+        "key": "2029-06",
+        "label": "Jun-29",
+        "symbol": "EBM29",
+        "delivery_ym": "2029-06",
+        "sort_key": [
+          2029,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.31,
+        "implied_rate_pct": 2.69,
+        "vs_deposit_bp": 44.0,
+        "vs_deposit_hikes_25bp": 1.76
+      },
+      {
+        "key": "2029-09",
+        "label": "Sep-29",
+        "symbol": "EBU29",
+        "delivery_ym": "2029-09",
+        "sort_key": [
+          2029,
+          9
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.29,
+        "implied_rate_pct": 2.71,
+        "vs_deposit_bp": 46.0,
+        "vs_deposit_hikes_25bp": 1.84
+      },
+      {
+        "key": "2029-12",
+        "label": "Dec-29",
+        "symbol": "EBZ29",
+        "delivery_ym": "2029-12",
+        "sort_key": [
+          2029,
+          12
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.2675,
+        "implied_rate_pct": 2.7325,
+        "vs_deposit_bp": 48.2,
+        "vs_deposit_hikes_25bp": 1.93
+      },
+      {
+        "key": "2030-03",
+        "label": "Mar-30",
+        "symbol": "EBH30",
+        "delivery_ym": "2030-03",
+        "sort_key": [
+          2030,
+          3
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.245,
+        "implied_rate_pct": 2.755,
+        "vs_deposit_bp": 50.5,
+        "vs_deposit_hikes_25bp": 2.02
+      },
+      {
+        "key": "2030-06",
+        "label": "Jun-30",
+        "symbol": "EBM30",
+        "delivery_ym": "2030-06",
+        "sort_key": [
+          2030,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.2225,
+        "implied_rate_pct": 2.7775,
+        "vs_deposit_bp": 52.7,
+        "vs_deposit_hikes_25bp": 2.11
+      },
+      {
+        "key": "2030-09",
+        "label": "Sep-30",
+        "symbol": "EBU30",
+        "delivery_ym": "2030-09",
+        "sort_key": [
+          2030,
+          9
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.1975,
+        "implied_rate_pct": 2.8025,
+        "vs_deposit_bp": 55.3,
+        "vs_deposit_hikes_25bp": 2.21
+      },
+      {
+        "key": "2030-12",
+        "label": "Dec-30",
+        "symbol": "EBZ30",
+        "delivery_ym": "2030-12",
+        "sort_key": [
+          2030,
+          12
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.1725,
+        "implied_rate_pct": 2.8275,
+        "vs_deposit_bp": 57.8,
+        "vs_deposit_hikes_25bp": 2.31
+      },
+      {
+        "key": "2031-03",
+        "label": "Mar-31",
+        "symbol": "EBH31",
+        "delivery_ym": "2031-03",
+        "sort_key": [
+          2031,
+          3
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.145,
+        "implied_rate_pct": 2.855,
+        "vs_deposit_bp": 60.5,
+        "vs_deposit_hikes_25bp": 2.42
+      },
+      {
+        "key": "2031-06",
+        "label": "Jun-31",
+        "symbol": "EBM31",
+        "delivery_ym": "2031-06",
+        "sort_key": [
+          2031,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.1175,
+        "implied_rate_pct": 2.8825,
+        "vs_deposit_bp": 63.2,
+        "vs_deposit_hikes_25bp": 2.53
+      },
+      {
+        "key": "2031-09",
+        "label": "Sep-31",
+        "symbol": "EBU31",
+        "delivery_ym": "2031-09",
+        "sort_key": [
+          2031,
+          9
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.0925,
+        "implied_rate_pct": 2.9075,
+        "vs_deposit_bp": 65.8,
+        "vs_deposit_hikes_25bp": 2.63
+      },
+      {
+        "key": "2031-12",
+        "label": "Dec-31",
+        "symbol": "EBZ31",
+        "delivery_ym": "2031-12",
+        "sort_key": [
+          2031,
+          12
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.0875,
+        "implied_rate_pct": 2.9125,
+        "vs_deposit_bp": 66.3,
+        "vs_deposit_hikes_25bp": 2.65
+      },
+      {
+        "key": "2032-03",
+        "label": "Mar-32",
+        "symbol": "EBH32",
+        "delivery_ym": "2032-03",
+        "sort_key": [
+          2032,
+          3
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.085,
+        "implied_rate_pct": 2.915,
+        "vs_deposit_bp": 66.5,
+        "vs_deposit_hikes_25bp": 2.66
+      },
+      {
+        "key": "2032-06",
+        "label": "Jun-32",
+        "symbol": "EBM32",
+        "delivery_ym": "2032-06",
+        "sort_key": [
+          2032,
+          6
+        ],
+        "latest_date": "2026-07-14",
+        "price": 97.0825,
+        "implied_rate_pct": 2.9175,
+        "vs_deposit_bp": 66.8,
+        "vs_deposit_hikes_25bp": 2.67
+      }
+    ],
+    "n_contracts": 25,
+    "history_start": "2026-04-16",
+    "history_end": "2026-07-14",
+    "n_sessions": 63
+  }
+}
