@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-15 07:39 UTC",
+  "generated_utc": "2026-07-15 09:31 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -20,12 +20,12 @@
     "entry_slope_bp": -23.5
   },
   "bank_rate_pct": 3.625,
-  "bank_rate_as_of": "2026-07-10",
+  "bank_rate_as_of": "2026-07-13",
   "entry": {
     "date": "2026-07-01",
     "label": "1 Jul 2026 EOD close",
     "fed_funds_mid_pct": 3.625,
-    "fed_funds_as_of": "2026-07-10",
+    "fed_funds_as_of": "2026-07-13",
     "short": {
       "symbol": "SQH28",
       "label": "Mar-28",
@@ -58,20 +58,20 @@
     "long": {
       "symbol": "SQH27",
       "date": "2026-07-15",
-      "price": 95.885,
-      "implied_rate_pct": 4.115,
-      "vs_fed_bp": 49.0
+      "price": 95.895,
+      "implied_rate_pct": 4.105,
+      "vs_fed_bp": 48.0
     },
-    "slope_bp": -11.0,
-    "updated_utc": "2026-07-15 07:39 UTC"
+    "slope_bp": -10.0,
+    "updated_utc": "2026-07-15 09:31 UTC"
   },
   "pnl": {
-    "slope_bp": 12.5,
+    "slope_bp": 13.5,
     "quoted_long_leg_bp": -0.0,
-    "quoted_short_leg_bp": -0.0,
+    "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 312.5,
+    "usd": 337.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -168,12 +168,12 @@
     {
       "date": "2026-07-15",
       "quoted_long_rate": 4.005,
-      "quoted_short_rate": 4.115,
-      "slope_bp": -11.0,
-      "dslope_bp": 12.5,
-      "cum_pnl_gbp": 312.5,
-      "daily_pnl_usd": -25.0,
-      "cum_pnl_usd": 312.5
+      "quoted_short_rate": 4.105,
+      "slope_bp": -10.0,
+      "dslope_bp": 13.5,
+      "cum_pnl_gbp": 337.5,
+      "daily_pnl_usd": 0.0,
+      "cum_pnl_usd": 337.5
     }
   ],
   "regime_attribution": [
@@ -194,9 +194,9 @@
     {
       "regime": "bear_flattening",
       "label": "Bear flattening",
-      "days": 2,
-      "pnl_slope_bp": -3.0,
-      "pnl_gbp": -75.0
+      "days": 1,
+      "pnl_slope_bp": -2.0,
+      "pnl_gbp": -50.0
     },
     {
       "regime": "bull_flattening",
@@ -208,7 +208,7 @@
     {
       "regime": "unchanged",
       "label": "Unchanged",
-      "days": 1,
+      "days": 2,
       "pnl_slope_bp": 0.0,
       "pnl_gbp": 0.0
     }
