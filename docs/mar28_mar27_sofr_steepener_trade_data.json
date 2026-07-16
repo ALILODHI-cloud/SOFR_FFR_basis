@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-16 10:54 UTC",
+  "generated_utc": "2026-07-16 11:04 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -63,7 +63,7 @@
       "vs_fed_bp": 39.0
     },
     "slope_bp": -10.0,
-    "updated_utc": "2026-07-16 10:54 UTC"
+    "updated_utc": "2026-07-16 11:04 UTC"
   },
   "pnl": {
     "slope_bp": 13.5,
