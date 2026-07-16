@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-16 10:51 UTC",
+  "generated_utc": "2026-07-16 18:39 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -97,10 +97,10 @@
       "pnl_slope_bp": 12.0,
       "pnl_gbp_per_pair": 150.0,
       "return_gross_pct": 0.015,
-      "return_margin_pct": 1.23,
-      "margin_ice_gbp": 12225.0,
+      "return_margin_pct": 1.22,
+      "margin_ice_gbp": 12308.0,
       "margin_method": "ice_outright_legs",
-      "cagr_margin_pct": 11.8,
+      "cagr_margin_pct": 11.7,
       "vol_ann_margin_pct": 4.3,
       "sharpe_ann": 1.73,
       "risk_free_pct": 3.5000000000000004,
@@ -422,16 +422,16 @@
     "end": "2026-07-15"
   },
   "corr_history": {
-    "n_days": 64,
-    "n_valid_corr": 34,
-    "start": "2026-04-15",
+    "n_days": 63,
+    "n_valid_corr": 33,
+    "start": "2026-04-16",
     "end": "2026-07-15",
-    "overlap_start": "2026-04-15",
-    "note": "Full JUZ26\u2229JUZ27 overlap (64 sessions). First 29 sessions have no 30d rolling correlation."
+    "overlap_start": "2026-04-16",
+    "note": "Full JUZ26\u2229JUZ27 overlap (63 sessions). First 29 sessions have no 30d rolling correlation."
   },
   "slope_history": {
-    "n_days": 64,
-    "start": "2026-04-15",
+    "n_days": 63,
+    "start": "2026-04-16",
     "end": "2026-07-15",
     "peak": {
       "date": "2026-07-15",
@@ -446,19 +446,19 @@
       "date": "2026-04-17",
       "slope_bp": -15.0,
       "slope_chg_bp": -2.5,
-      "dec26_chg_bp": -11.5,
-      "dec27_chg_bp": -14.0,
+      "dec26_chg_bp": null,
+      "dec27_chg_bp": null,
       "brent": 90.38,
       "brent_ret_pct": -9.07
     }
   },
   "leg_correlations": {
-    "n_sessions": 63,
-    "slope_chg_vs_brent": 0.402,
-    "dec26_chg_vs_brent": 0.795,
-    "dec27_chg_vs_brent": 0.768,
-    "dec26_chg_vs_dec27_chg": 0.923,
-    "dec26_chg_vs_slope_chg": 0.403,
+    "n_sessions": 62,
+    "slope_chg_vs_brent": 0.398,
+    "dec26_chg_vs_brent": 0.812,
+    "dec27_chg_vs_brent": 0.779,
+    "dec26_chg_vs_dec27_chg": 0.924,
+    "dec26_chg_vs_slope_chg": 0.405,
     "dec27_chg_vs_slope_chg": 0.724,
     "roll_10d_slope_chg_vs_brent": 0.648,
     "roll_10d_dec26_chg_vs_brent": 0.847,
@@ -578,8 +578,8 @@
       "date": "2026-04-17",
       "slope_bp": -15.0,
       "slope_chg_bp": -2.5,
-      "dec26_chg_bp": -11.5,
-      "dec27_chg_bp": -14.0,
+      "dec26_chg_bp": null,
+      "dec27_chg_bp": null,
       "brent": 90.38,
       "brent_ret_pct": -9.07
     }
@@ -905,8 +905,8 @@
       "dec26_chg_bp": -4.0,
       "dec27_chg_bp": -4.0,
       "brent_ret_pct": -1.77,
-      "roll_corr_30": 0.464,
-      "basis_vol_ann": 101.69
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-06-01",
@@ -1538,25 +1538,6 @@
   ],
   "daily_corr": [
     {
-      "date": "2026-04-15",
-      "dec26_px": 95.895,
-      "dec27_px": 96.04,
-      "dec26_rate": 4.105,
-      "dec27_rate": 3.96,
-      "slope_bp": -14.5,
-      "dec26_vs_bank_bp": 35.5,
-      "dec27_vs_bank_bp": 21.0,
-      "sonia_pct": 3.7301,
-      "basis_bp": 37.49,
-      "brent": 94.93,
-      "slope_chg_bp": null,
-      "dec26_chg_bp": null,
-      "dec27_chg_bp": null,
-      "brent_ret_pct": null,
-      "roll_corr_30": null,
-      "basis_vol_ann": null
-    },
-    {
       "date": "2026-04-16",
       "dec26_px": 95.905,
       "dec27_px": 96.03,
@@ -1568,10 +1549,10 @@
       "sonia_pct": 3.7301,
       "basis_bp": 36.49,
       "brent": 99.39,
-      "slope_chg_bp": 2.0,
-      "dec26_chg_bp": -1.0,
-      "dec27_chg_bp": 1.0,
-      "brent_ret_pct": 4.7,
+      "slope_chg_bp": null,
+      "dec26_chg_bp": null,
+      "dec27_chg_bp": null,
+      "brent_ret_pct": null,
       "roll_corr_30": null,
       "basis_vol_ann": null
     },
@@ -2123,8 +2104,8 @@
       "dec26_chg_bp": -4.0,
       "dec27_chg_bp": -4.0,
       "brent_ret_pct": -1.77,
-      "roll_corr_30": 0.464,
-      "basis_vol_ann": 101.69
+      "roll_corr_30": null,
+      "basis_vol_ann": null
     },
     {
       "date": "2026-06-01",
