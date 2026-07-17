@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-16 11:04 UTC",
+  "generated_utc": "2026-07-17 10:42 UTC",
   "trades": [
     {
       "id": "mar28_mar27_sofr_steepener",
@@ -14,11 +14,11 @@
       "detail_page": "trade_mar28_mar27_sofr.html",
       "data_file": "mar28_mar27_sofr_steepener_trade_data.json",
       "pnl_gbp": null,
-      "pnl_usd": 337.5,
+      "pnl_usd": 312.5,
       "pnl_eur": null,
-      "pnl_slope_bp": 13.5,
+      "pnl_slope_bp": 12.5,
       "entry_slope_bp": -23.5,
-      "mark_slope_bp": -10.0,
+      "mark_slope_bp": -11.0,
       "stop_slope_bp": null,
       "take_profit_slope_bp": null,
       "entry_rate_pct": null,
