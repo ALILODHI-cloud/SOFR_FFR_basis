@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>3M €STR Curve · ECB schedule</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--hist:#ffb84a;--policy:#4aa8ff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:16px 16px 48px}
+header{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--card);margin-bottom:16px}
+h1{margin:4px 0;font-size:clamp(20px,4vw,28px)}
+.sub{color:var(--mut);font-size:14px;line-height:1.5}
+.pill{display:inline-block;background:#1b2536;border:1px solid var(--line);padding:5px 10px;border-radius:20px;font-size:12px;color:var(--mut);margin:4px 6px 0 0}
+.pill.next{border-color:var(--acc);color:var(--acc)}
+.pill.policy{border-color:var(--policy);color:var(--policy)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 4px}
+.hint{color:var(--mut);font-size:12px;margin:0 0 10px;line-height:1.45}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.kpi .k{font-size:11px;color:var(--mut)}
+.kpi .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.chartbox{position:relative;height:380px}
+.tblwrap{overflow:auto;max-height:520px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+th{color:var(--mut);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.pos{color:var(--acc)}.neg{color:#f87171}
+tr.ecb-next td{background:rgba(57,217,138,.06)}
+tr.ecb-past td{color:var(--mut)}
+.ecb-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:#1b2536;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--mut)}
+.chip.next{border-color:var(--acc);color:var(--acc)}
+.foot{color:var(--mut);font-size:12px;margin-top:16px;line-height:1.6}
+a{color:var(--policy);text-decoration:none}
+.probbar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#1b2536;min-width:90px}
+.probbar span{display:block;height:100%}
+.prob-cut{background:#39d98a}
+.prob-hold{background:#64748b}
+.prob-hike{background:#f87171}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p style="margin:0 0 10px;font-size:13px"><a href="portal.html" style="color:#93a1b5">← Markets portal</a> · <a href="estr_1m_dashboard.html" style="color:#93a1b5">1M €STR</a></p>
+  <h1>3M €STR curve · ECB schedule</h1>
+  <div class="sub" id="asof"></div>
+  <div>
+    <span class="pill policy" id="policyPill"></span>
+    <span class="pill next" id="nextPill"></span>
+  </div>
+</header>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="card">
+  <h2>Implied rate curve (%)</h2>
+  <p class="hint">CME EB* quarterly. Implied = 100 − price. Amber dashed line = deposit facility.</p>
+  <div class="chartbox"><canvas id="curve"></canvas></div>
+</div>
+
+<div class="card">
+  <h2>ECB Governing Council decision dates</h2>
+  <p class="hint">Official Day-2 monetary-policy announcements. Source: <a href="https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html" target="_blank" rel="noopener">ECB calendar</a>.</p>
+  <div class="ecb-chips" id="ecbChips"></div>
+</div>
+
+<div class="card">
+  <h2>ECB meeting path (approx. from 3M strip)</h2>
+  <p class="hint" id="ecbNote"></p>
+  <div class="tblwrap">
+    <table>
+      <thead><tr>
+        <th>Meeting</th><th>Status</th><th>Proxy</th><th class="num">Implied %</th>
+        <th class="num">Cum vs dep (bp)</th><th class="num">Δ (bp)</th><th>25bp odds</th>
+      </tr></thead>
+      <tbody id="ecbRows"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Full 3M €STR strip</h2>
+  <div class="tblwrap">
+    <table>
+      <thead><tr>
+        <th>Contract</th><th>Month</th><th class="num">Price</th><th class="num">Implied %</th>
+        <th class="num">Vs deposit (bp)</th><th class="num">QoQ (bp)</th>
+      </tr></thead>
+      <tbody id="stripRows"></tbody>
+    </table>
+  </div>
+</div>
+
+<p class="foot">Barchart finalized EOD lastPrice only · Not investment advice.</p>
+</div>
+<script>
+const DATA = {"generated_utc": "2026-07-15 17:12 UTC", "source": "Barchart historical lastPrice (finalized EOD sessions only)", "contract": "CME 3M \u20acSTR (EB*)", "quote_convention": "price = 100 \u2212 implied rate (%)", "deposit_facility_pct": 2.25, "deposit_facility_as_of": "2026-07-15", "n_contracts": 25, "contracts": [{"key": "2026-06", "label": "Jun-26", "symbol": "EBM26", "delivery_ym": "2026-06", "sort_key": [2026, 6], "latest_date": "2026-07-14", "price": 97.795, "implied_rate_pct": 2.205, "vs_deposit_bp": -4.5, "vs_deposit_hikes_25bp": -0.18, "bp_change": null}, {"key": "2026-09", "label": "Sep-26", "symbol": "EBU26", "delivery_ym": "2026-09", "sort_key": [2026, 9], "latest_date": "2026-07-14", "price": 97.54, "implied_rate_pct": 2.46, "vs_deposit_bp": 21.0, "vs_deposit_hikes_25bp": 0.84, "bp_change": 25.5}, {"key": "2026-12", "label": "Dec-26", "symbol": "EBZ26", "delivery_ym": "2026-12", "sort_key": [2026, 12], "latest_date": "2026-07-14", "price": 97.4025, "implied_rate_pct": 2.5975, "vs_deposit_bp": 34.8, "vs_deposit_hikes_25bp": 1.39, "bp_change": 13.8}, {"key": "2027-03", "label": "Mar-27", "symbol": "EBH27", "delivery_ym": "2027-03", "sort_key": [2027, 3], "latest_date": "2026-07-14", "price": 97.325, "implied_rate_pct": 2.675, "vs_deposit_bp": 42.5, "vs_deposit_hikes_25bp": 1.7, "bp_change": 7.7}, {"key": "2027-06", "label": "Jun-27", "symbol": "EBM27", "delivery_ym": "2027-06", "sort_key": [2027, 6], "latest_date": "2026-07-14", "price": 97.3075, "implied_rate_pct": 2.6925, "vs_deposit_bp": 44.2, "vs_deposit_hikes_25bp": 1.77, "bp_change": 1.8}, {"key": "2027-09", "label": "Sep-27", "symbol": "EBU27", "delivery_ym": "2027-09", "sort_key": [2027, 9], "latest_date": "2026-07-14", "price": 97.325, "implied_rate_pct": 2.675, "vs_deposit_bp": 42.5, "vs_deposit_hikes_25bp": 1.7, "bp_change": -1.8}, {"key": "2027-12", "label": "Dec-27", "symbol": "EBZ27", "delivery_ym": "2027-12", "sort_key": [2027, 12], "latest_date": "2026-07-14", "price": 97.3575, "implied_rate_pct": 2.6425, "vs_deposit_bp": 39.3, "vs_deposit_hikes_25bp": 1.57, "bp_change": -3.2}, {"key": "2028-03", "label": "Mar-28", "symbol": "EBH28", "delivery_ym": "2028-03", "sort_key": [2028, 3], "latest_date": "2026-07-14", "price": 97.37, "implied_rate_pct": 2.63, "vs_deposit_bp": 38.0, "vs_deposit_hikes_25bp": 1.52, "bp_change": -1.3}, {"key": "2028-06", "label": "Jun-28", "symbol": "EBM28", "delivery_ym": "2028-06", "sort_key": [2028, 6], "latest_date": "2026-07-14", "price": 97.3675, "implied_rate_pct": 2.6325, "vs_deposit_bp": 38.2, "vs_deposit_hikes_25bp": 1.53, "bp_change": 0.2}, {"key": "2028-09", "label": "Sep-28", "symbol": "EBU28", "delivery_ym": "2028-09", "sort_key": [2028, 9], "latest_date": "2026-07-14", "price": 97.36, "implied_rate_pct": 2.64, "vs_deposit_bp": 39.0, "vs_deposit_hikes_25bp": 1.56, "bp_change": 0.8}, {"key": "2028-12", "label": "Dec-28", "symbol": "EBZ28", "delivery_ym": "2028-12", "sort_key": [2028, 12], "latest_date": "2026-07-14", "price": 97.3425, "implied_rate_pct": 2.6575, "vs_deposit_bp": 40.8, "vs_deposit_hikes_25bp": 1.63, "bp_change": 1.8}, {"key": "2029-03", "label": "Mar-29", "symbol": "EBH29", "delivery_ym": "2029-03", "sort_key": [2029, 3], "latest_date": "2026-07-14", "price": 97.325, "implied_rate_pct": 2.675, "vs_deposit_bp": 42.5, "vs_deposit_hikes_25bp": 1.7, "bp_change": 1.7}, {"key": "2029-06", "label": "Jun-29", "symbol": "EBM29", "delivery_ym": "2029-06", "sort_key": [2029, 6], "latest_date": "2026-07-14", "price": 97.31, "implied_rate_pct": 2.69, "vs_deposit_bp": 44.0, "vs_deposit_hikes_25bp": 1.76, "bp_change": 1.5}, {"key": "2029-09", "label": "Sep-29", "symbol": "EBU29", "delivery_ym": "2029-09", "sort_key": [2029, 9], "latest_date": "2026-07-14", "price": 97.29, "implied_rate_pct": 2.71, "vs_deposit_bp": 46.0, "vs_deposit_hikes_25bp": 1.84, "bp_change": 2.0}, {"key": "2029-12", "label": "Dec-29", "symbol": "EBZ29", "delivery_ym": "2029-12", "sort_key": [2029, 12], "latest_date": "2026-07-14", "price": 97.2675, "implied_rate_pct": 2.7325, "vs_deposit_bp": 48.2, "vs_deposit_hikes_25bp": 1.93, "bp_change": 2.2}, {"key": "2030-03", "label": "Mar-30", "symbol": "EBH30", "delivery_ym": "2030-03", "sort_key": [2030, 3], "latest_date": "2026-07-14", "price": 97.245, "implied_rate_pct": 2.755, "vs_deposit_bp": 50.5, "vs_deposit_hikes_25bp": 2.02, "bp_change": 2.2}, {"key": "2030-06", "label": "Jun-30", "symbol": "EBM30", "delivery_ym": "2030-06", "sort_key": [2030, 6], "latest_date": "2026-07-14", "price": 97.2225, "implied_rate_pct": 2.7775, "vs_deposit_bp": 52.7, "vs_deposit_hikes_25bp": 2.11, "bp_change": 2.2}, {"key": "2030-09", "label": "Sep-30", "symbol": "EBU30", "delivery_ym": "2030-09", "sort_key": [2030, 9], "latest_date": "2026-07-14", "price": 97.1975, "implied_rate_pct": 2.8025, "vs_deposit_bp": 55.3, "vs_deposit_hikes_25bp": 2.21, "bp_change": 2.5}, {"key": "2030-12", "label": "Dec-30", "symbol": "EBZ30", "delivery_ym": "2030-12", "sort_key": [2030, 12], "latest_date": "2026-07-14", "price": 97.1725, "implied_rate_pct": 2.8275, "vs_deposit_bp": 57.8, "vs_deposit_hikes_25bp": 2.31, "bp_change": 2.5}, {"key": "2031-03", "label": "Mar-31", "symbol": "EBH31", "delivery_ym": "2031-03", "sort_key": [2031, 3], "latest_date": "2026-07-14", "price": 97.145, "implied_rate_pct": 2.855, "vs_deposit_bp": 60.5, "vs_deposit_hikes_25bp": 2.42, "bp_change": 2.7}, {"key": "2031-06", "label": "Jun-31", "symbol": "EBM31", "delivery_ym": "2031-06", "sort_key": [2031, 6], "latest_date": "2026-07-14", "price": 97.1175, "implied_rate_pct": 2.8825, "vs_deposit_bp": 63.2, "vs_deposit_hikes_25bp": 2.53, "bp_change": 2.7}, {"key": "2031-09", "label": "Sep-31", "symbol": "EBU31", "delivery_ym": "2031-09", "sort_key": [2031, 9], "latest_date": "2026-07-14", "price": 97.0925, "implied_rate_pct": 2.9075, "vs_deposit_bp": 65.8, "vs_deposit_hikes_25bp": 2.63, "bp_change": 2.5}, {"key": "2031-12", "label": "Dec-31", "symbol": "EBZ31", "delivery_ym": "2031-12", "sort_key": [2031, 12], "latest_date": "2026-07-14", "price": 97.0875, "implied_rate_pct": 2.9125, "vs_deposit_bp": 66.3, "vs_deposit_hikes_25bp": 2.65, "bp_change": 0.5}, {"key": "2032-03", "label": "Mar-32", "symbol": "EBH32", "delivery_ym": "2032-03", "sort_key": [2032, 3], "latest_date": "2026-07-14", "price": 97.085, "implied_rate_pct": 2.915, "vs_deposit_bp": 66.5, "vs_deposit_hikes_25bp": 2.66, "bp_change": 0.2}, {"key": "2032-06", "label": "Jun-32", "symbol": "EBM32", "delivery_ym": "2032-06", "sort_key": [2032, 6], "latest_date": "2026-07-14", "price": 97.0825, "implied_rate_pct": 2.9175, "vs_deposit_bp": 66.8, "vs_deposit_hikes_25bp": 2.67, "bp_change": 0.2}], "curve": {"label": "3M \u20acSTR", "exchange": "CME", "prefix": "EB", "chain_url": "https://www.barchart.com/futures/quotes/EB*0/futures-prices", "tenor": "3M compounded \u20acSTR", "contracts": [{"key": "2026-06", "label": "Jun-26", "symbol": "EBM26", "delivery_ym": "2026-06", "sort_key": [2026, 6], "latest_date": "2026-07-14", "price": 97.795, "implied_rate_pct": 2.205, "vs_deposit_bp": -4.5, "vs_deposit_hikes_25bp": -0.18}, {"key": "2026-09", "label": "Sep-26", "symbol": "EBU26", "delivery_ym": "2026-09", "sort_key": [2026, 9], "latest_date": "2026-07-14", "price": 97.54, "implied_rate_pct": 2.46, "vs_deposit_bp": 21.0, "vs_deposit_hikes_25bp": 0.84}, {"key": "2026-12", "label": "Dec-26", "symbol": "EBZ26", "delivery_ym": "2026-12", "sort_key": [2026, 12], "latest_date": "2026-07-14", "price": 97.4025, "implied_rate_pct": 2.5975, "vs_deposit_bp": 34.8, "vs_deposit_hikes_25bp": 1.39}, {"key": "2027-03", "label": "Mar-27", "symbol": "EBH27", "delivery_ym": "2027-03", "sort_key": [2027, 3], "latest_date": "2026-07-14", "price": 97.325, "implied_rate_pct": 2.675, "vs_deposit_bp": 42.5, "vs_deposit_hikes_25bp": 1.7}, {"key": "2027-06", "label": "Jun-27", "symbol": "EBM27", "delivery_ym": "2027-06", "sort_key": [2027, 6], "latest_date": "2026-07-14", "price": 97.3075, "implied_rate_pct": 2.6925, "vs_deposit_bp": 44.2, "vs_deposit_hikes_25bp": 1.77}, {"key": "2027-09", "label": "Sep-27", "symbol": "EBU27", "delivery_ym": "2027-09", "sort_key": [2027, 9], "latest_date": "2026-07-14", "price": 97.325, "implied_rate_pct": 2.675, "vs_deposit_bp": 42.5, "vs_deposit_hikes_25bp": 1.7}, {"key": "2027-12", "label": "Dec-27", "symbol": "EBZ27", "delivery_ym": "2027-12", "sort_key": [2027, 12], "latest_date": "2026-07-14", "price": 97.3575, "implied_rate_pct": 2.6425, "vs_deposit_bp": 39.3, "vs_deposit_hikes_25bp": 1.57}, {"key": "2028-03", "label": "Mar-28", "symbol": "EBH28", "delivery_ym": "2028-03", "sort_key": [2028, 3], "latest_date": "2026-07-14", "price": 97.37, "implied_rate_pct": 2.63, "vs_deposit_bp": 38.0, "vs_deposit_hikes_25bp": 1.52}, {"key": "2028-06", "label": "Jun-28", "symbol": "EBM28", "delivery_ym": "2028-06", "sort_key": [2028, 6], "latest_date": "2026-07-14", "price": 97.3675, "implied_rate_pct": 2.6325, "vs_deposit_bp": 38.2, "vs_deposit_hikes_25bp": 1.53}, {"key": "2028-09", "label": "Sep-28", "symbol": "EBU28", "delivery_ym": "2028-09", "sort_key": [2028, 9], "latest_date": "2026-07-14", "price": 97.36, "implied_rate_pct": 2.64, "vs_deposit_bp": 39.0, "vs_deposit_hikes_25bp": 1.56}, {"key": "2028-12", "label": "Dec-28", "symbol": "EBZ28", "delivery_ym": "2028-12", "sort_key": [2028, 12], "latest_date": "2026-07-14", "price": 97.3425, "implied_rate_pct": 2.6575, "vs_deposit_bp": 40.8, "vs_deposit_hikes_25bp": 1.63}, {"key": "2029-03", "label": "Mar-29", "symbol": "EBH29", "delivery_ym": "2029-03", "sort_key": [2029, 3], "latest_date": "2026-07-14", "price": 97.325, "implied_rate_pct": 2.675, "vs_deposit_bp": 42.5, "vs_deposit_hikes_25bp": 1.7}, {"key": "2029-06", "label": "Jun-29", "symbol": "EBM29", "delivery_ym": "2029-06", "sort_key": [2029, 6], "latest_date": "2026-07-14", "price": 97.31, "implied_rate_pct": 2.69, "vs_deposit_bp": 44.0, "vs_deposit_hikes_25bp": 1.76}, {"key": "2029-09", "label": "Sep-29", "symbol": "EBU29", "delivery_ym": "2029-09", "sort_key": [2029, 9], "latest_date": "2026-07-14", "price": 97.29, "implied_rate_pct": 2.71, "vs_deposit_bp": 46.0, "vs_deposit_hikes_25bp": 1.84}, {"key": "2029-12", "label": "Dec-29", "symbol": "EBZ29", "delivery_ym": "2029-12", "sort_key": [2029, 12], "latest_date": "2026-07-14", "price": 97.2675, "implied_rate_pct": 2.7325, "vs_deposit_bp": 48.2, "vs_deposit_hikes_25bp": 1.93}, {"key": "2030-03", "label": "Mar-30", "symbol": "EBH30", "delivery_ym": "2030-03", "sort_key": [2030, 3], "latest_date": "2026-07-14", "price": 97.245, "implied_rate_pct": 2.755, "vs_deposit_bp": 50.5, "vs_deposit_hikes_25bp": 2.02}, {"key": "2030-06", "label": "Jun-30", "symbol": "EBM30", "delivery_ym": "2030-06", "sort_key": [2030, 6], "latest_date": "2026-07-14", "price": 97.2225, "implied_rate_pct": 2.7775, "vs_deposit_bp": 52.7, "vs_deposit_hikes_25bp": 2.11}, {"key": "2030-09", "label": "Sep-30", "symbol": "EBU30", "delivery_ym": "2030-09", "sort_key": [2030, 9], "latest_date": "2026-07-14", "price": 97.1975, "implied_rate_pct": 2.8025, "vs_deposit_bp": 55.3, "vs_deposit_hikes_25bp": 2.21}, {"key": "2030-12", "label": "Dec-30", "symbol": "EBZ30", "delivery_ym": "2030-12", "sort_key": [2030, 12], "latest_date": "2026-07-14", "price": 97.1725, "implied_rate_pct": 2.8275, "vs_deposit_bp": 57.8, "vs_deposit_hikes_25bp": 2.31}, {"key": "2031-03", "label": "Mar-31", "symbol": "EBH31", "delivery_ym": "2031-03", "sort_key": [2031, 3], "latest_date": "2026-07-14", "price": 97.145, "implied_rate_pct": 2.855, "vs_deposit_bp": 60.5, "vs_deposit_hikes_25bp": 2.42}, {"key": "2031-06", "label": "Jun-31", "symbol": "EBM31", "delivery_ym": "2031-06", "sort_key": [2031, 6], "latest_date": "2026-07-14", "price": 97.1175, "implied_rate_pct": 2.8825, "vs_deposit_bp": 63.2, "vs_deposit_hikes_25bp": 2.53}, {"key": "2031-09", "label": "Sep-31", "symbol": "EBU31", "delivery_ym": "2031-09", "sort_key": [2031, 9], "latest_date": "2026-07-14", "price": 97.0925, "implied_rate_pct": 2.9075, "vs_deposit_bp": 65.8, "vs_deposit_hikes_25bp": 2.63}, {"key": "2031-12", "label": "Dec-31", "symbol": "EBZ31", "delivery_ym": "2031-12", "sort_key": [2031, 12], "latest_date": "2026-07-14", "price": 97.0875, "implied_rate_pct": 2.9125, "vs_deposit_bp": 66.3, "vs_deposit_hikes_25bp": 2.65}, {"key": "2032-03", "label": "Mar-32", "symbol": "EBH32", "delivery_ym": "2032-03", "sort_key": [2032, 3], "latest_date": "2026-07-14", "price": 97.085, "implied_rate_pct": 2.915, "vs_deposit_bp": 66.5, "vs_deposit_hikes_25bp": 2.66}, {"key": "2032-06", "label": "Jun-32", "symbol": "EBM32", "delivery_ym": "2032-06", "sort_key": [2032, 6], "latest_date": "2026-07-14", "price": 97.0825, "implied_rate_pct": 2.9175, "vs_deposit_bp": 66.8, "vs_deposit_hikes_25bp": 2.67}], "n_contracts": 25, "history_start": "2026-04-16", "history_end": "2026-07-14", "n_sessions": 63}, "ecb_meeting_pricing": {"note": "Approximate meeting path from CME 3M \u20acSTR futures (not ECB-dated OIS / WIRP). Each meeting maps to the next quarterly contract after the decision as a post-meeting rate proxy. Probabilities assume 25bp steps. Standard 3M futures can span multiple meetings \u2014 use Bloomberg WIRP for precise per-meeting OIS pricing.", "as_of": "2026-07-15", "deposit_facility_pct": 2.25, "total_easing_priced_bp": 38.0, "next_meeting": {"meeting_date": "2026-07-23", "meeting_label": "Jul ECB", "status": "next", "ref_contract_key": "2026-09", "ref_contract_label": "Sep-26", "ref_symbol": "EBU26", "implied_rate_pct": 2.46, "cumulative_vs_deposit_bp": 21.0, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, "meetings": [{"meeting_date": "2026-03-19", "meeting_label": "Mar ECB", "status": "past", "ref_contract_key": "2026-06", "ref_contract_label": "Jun-26", "ref_symbol": "EBM26", "implied_rate_pct": 2.205, "cumulative_vs_deposit_bp": -4.5, "incremental_bp": -4.5, "cut_pct": 18.0, "hold_pct": 82.0, "hike_pct": 0.0}, {"meeting_date": "2026-04-30", "meeting_label": "Apr ECB", "status": "past", "ref_contract_key": "2026-06", "ref_contract_label": "Jun-26", "ref_symbol": "EBM26", "implied_rate_pct": 2.205, "cumulative_vs_deposit_bp": -4.5, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2026-06-11", "meeting_label": "Jun ECB", "status": "past", "ref_contract_key": "2026-09", "ref_contract_label": "Sep-26", "ref_symbol": "EBU26", "implied_rate_pct": 2.46, "cumulative_vs_deposit_bp": 21.0, "incremental_bp": 25.5, "cut_pct": 0.0, "hold_pct": 0.0, "hike_pct": 100.0}, {"meeting_date": "2026-07-23", "meeting_label": "Jul ECB", "status": "next", "ref_contract_key": "2026-09", "ref_contract_label": "Sep-26", "ref_symbol": "EBU26", "implied_rate_pct": 2.46, "cumulative_vs_deposit_bp": 21.0, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2026-09-10", "meeting_label": "Sep ECB", "status": "upcoming", "ref_contract_key": "2026-12", "ref_contract_label": "Dec-26", "ref_symbol": "EBZ26", "implied_rate_pct": 2.5975, "cumulative_vs_deposit_bp": 34.8, "incremental_bp": 13.8, "cut_pct": 0.0, "hold_pct": 44.8, "hike_pct": 55.2}, {"meeting_date": "2026-10-29", "meeting_label": "Oct ECB", "status": "upcoming", "ref_contract_key": "2026-12", "ref_contract_label": "Dec-26", "ref_symbol": "EBZ26", "implied_rate_pct": 2.5975, "cumulative_vs_deposit_bp": 34.8, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2026-12-17", "meeting_label": "Dec ECB", "status": "upcoming", "ref_contract_key": "2027-03", "ref_contract_label": "Mar-27", "ref_symbol": "EBH27", "implied_rate_pct": 2.675, "cumulative_vs_deposit_bp": 42.5, "incremental_bp": 7.7, "cut_pct": 0.0, "hold_pct": 69.2, "hike_pct": 30.8}, {"meeting_date": "2027-02-04", "meeting_label": "Feb ECB", "status": "upcoming", "ref_contract_key": "2027-03", "ref_contract_label": "Mar-27", "ref_symbol": "EBH27", "implied_rate_pct": 2.675, "cumulative_vs_deposit_bp": 42.5, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2027-03-18", "meeting_label": "Mar ECB", "status": "upcoming", "ref_contract_key": "2027-06", "ref_contract_label": "Jun-27", "ref_symbol": "EBM27", "implied_rate_pct": 2.6925, "cumulative_vs_deposit_bp": 44.2, "incremental_bp": 1.8, "cut_pct": 0.0, "hold_pct": 92.8, "hike_pct": 7.2}, {"meeting_date": "2027-04-29", "meeting_label": "Apr ECB", "status": "upcoming", "ref_contract_key": "2027-06", "ref_contract_label": "Jun-27", "ref_symbol": "EBM27", "implied_rate_pct": 2.6925, "cumulative_vs_deposit_bp": 44.2, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2027-06-10", "meeting_label": "Jun ECB", "status": "upcoming", "ref_contract_key": "2027-09", "ref_contract_label": "Sep-27", "ref_symbol": "EBU27", "implied_rate_pct": 2.675, "cumulative_vs_deposit_bp": 42.5, "incremental_bp": -1.8, "cut_pct": 7.2, "hold_pct": 92.8, "hike_pct": 0.0}, {"meeting_date": "2027-07-22", "meeting_label": "Jul ECB", "status": "upcoming", "ref_contract_key": "2027-09", "ref_contract_label": "Sep-27", "ref_symbol": "EBU27", "implied_rate_pct": 2.675, "cumulative_vs_deposit_bp": 42.5, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2027-09-09", "meeting_label": "Sep ECB", "status": "upcoming", "ref_contract_key": "2027-12", "ref_contract_label": "Dec-27", "ref_symbol": "EBZ27", "implied_rate_pct": 2.6425, "cumulative_vs_deposit_bp": 39.3, "incremental_bp": -3.2, "cut_pct": 12.8, "hold_pct": 87.2, "hike_pct": 0.0}, {"meeting_date": "2027-10-28", "meeting_label": "Oct ECB", "status": "upcoming", "ref_contract_key": "2027-12", "ref_contract_label": "Dec-27", "ref_symbol": "EBZ27", "implied_rate_pct": 2.6425, "cumulative_vs_deposit_bp": 39.3, "incremental_bp": 0.0, "cut_pct": 0.0, "hold_pct": 100.0, "hike_pct": 0.0}, {"meeting_date": "2027-12-16", "meeting_label": "Dec ECB", "status": "upcoming", "ref_contract_key": "2028-03", "ref_contract_label": "Mar-28", "ref_symbol": "EBH28", "implied_rate_pct": 2.63, "cumulative_vs_deposit_bp": 38.0, "incremental_bp": -1.3, "cut_pct": 5.2, "hold_pct": 94.8, "hike_pct": 0.0}], "calendar": [{"date": "2026-02-05", "label": "Feb ECB"}, {"date": "2026-03-19", "label": "Mar ECB"}, {"date": "2026-04-30", "label": "Apr ECB"}, {"date": "2026-06-11", "label": "Jun ECB"}, {"date": "2026-07-23", "label": "Jul ECB"}, {"date": "2026-09-10", "label": "Sep ECB"}, {"date": "2026-10-29", "label": "Oct ECB"}, {"date": "2026-12-17", "label": "Dec ECB"}, {"date": "2027-02-04", "label": "Feb ECB"}, {"date": "2027-03-18", "label": "Mar ECB"}, {"date": "2027-04-29", "label": "Apr ECB"}, {"date": "2027-06-10", "label": "Jun ECB"}, {"date": "2027-07-22", "label": "Jul ECB"}, {"date": "2027-09-09", "label": "Sep ECB"}, {"date": "2027-10-28", "label": "Oct ECB"}, {"date": "2027-12-16", "label": "Dec ECB"}], "calendar_source": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html"}, "ecb_calendar": [{"date": "2026-02-05", "label": "Feb ECB"}, {"date": "2026-03-19", "label": "Mar ECB"}, {"date": "2026-04-30", "label": "Apr ECB"}, {"date": "2026-06-11", "label": "Jun ECB"}, {"date": "2026-07-23", "label": "Jul ECB"}, {"date": "2026-09-10", "label": "Sep ECB"}, {"date": "2026-10-29", "label": "Oct ECB"}, {"date": "2026-12-17", "label": "Dec ECB"}, {"date": "2027-02-04", "label": "Feb ECB"}, {"date": "2027-03-18", "label": "Mar ECB"}, {"date": "2027-04-29", "label": "Apr ECB"}, {"date": "2027-06-10", "label": "Jun ECB"}, {"date": "2027-07-22", "label": "Jul ECB"}, {"date": "2027-09-09", "label": "Sep ECB"}, {"date": "2027-10-28", "label": "Oct ECB"}, {"date": "2027-12-16", "label": "Dec ECB"}], "ecb_calendar_source": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html"};
+const deposit = DATA.deposit_facility_pct;
+const contracts = DATA.contracts;
+const pricing = DATA.ecb_meeting_pricing || {};
+const calendar = DATA.ecb_calendar || [];
+const asOf = contracts[0]?.latest_date || DATA.deposit_facility_as_of || '—';
+
+document.getElementById('asof').textContent =
+  `${DATA.n_contracts} contracts · as of ${asOf} · generated ${DATA.generated_utc}`;
+document.getElementById('policyPill').textContent = `Deposit facility ${deposit.toFixed(2)}%`;
+const next = pricing.next_meeting;
+document.getElementById('nextPill').textContent = next
+  ? `Next ECB ${next.meeting_date}`
+  : 'No upcoming ECB mapped';
+
+const front = contracts[0];
+const sep = contracts.find(c => c.label === 'Sep-26');
+const peak = contracts.reduce((a,b)=> a.implied_rate_pct >= b.implied_rate_pct ? a : b);
+document.getElementById('kpis').innerHTML = [
+  ['Front', `${front.label} · ${front.implied_rate_pct.toFixed(3)}%`],
+  ['Sep-26', sep ? `${sep.implied_rate_pct.toFixed(3)}%` : '—'],
+  ['Strip peak', `${peak.label} · ${peak.implied_rate_pct.toFixed(3)}%`],
+  ['Vs deposit (peak)', `${peak.vs_deposit_bp>0?'+':''}${peak.vs_deposit_bp.toFixed(1)} bp`],
+].map(([k,v]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
+
+const labels = contracts.map(c => c.label);
+const rates = contracts.map(c => c.implied_rate_pct);
+new Chart(document.getElementById('curve'), {
+  type: 'line',
+  data: {
+    labels,
+    datasets: [{
+      label: 'Implied %',
+      data: rates,
+      borderColor: '#ffb84a',
+      backgroundColor: 'rgba(255,184,74,0.12)',
+      fill: true,
+      tension: 0.15,
+      pointRadius: 3,
+      pointBackgroundColor: '#ffb84a',
+    },{
+      label: 'Deposit',
+      data: labels.map(() => deposit),
+      borderColor: '#4aa8ff',
+      borderDash: [6,4],
+      pointRadius: 0,
+      fill: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#93a1b5' } } },
+    scales: {
+      x: { ticks: { color: '#93a1b5', maxRotation: 55 }, grid: { color: '#243043' } },
+      y: { ticks: { color: '#93a1b5' }, grid: { color: '#243043' }, title: { display: true, text: '%', color: '#93a1b5' } }
+    }
+  }
+});
+
+const nextDate = next?.meeting_date;
+document.getElementById('ecbChips').innerHTML = calendar.map(m => {
+  const d = m.date || m;
+  const label = m.label ? `${d} · ${m.label}` : d;
+  const cls = d === nextDate ? 'chip next' : 'chip';
+  const tag = d === nextDate ? ' · next' : '';
+  return `<span class="${cls}">${label}${tag}</span>`;
+}).join('');
+
+document.getElementById('ecbNote').textContent = pricing.note || '';
+document.getElementById('ecbRows').innerHTML = (pricing.meetings || []).map(m => {
+  const rowCls = m.status === 'next' ? 'ecb-next' : (m.status === 'past' ? 'ecb-past' : '');
+  const inc = m.incremental_bp;
+  const incCls = inc > 0 ? 'neg' : inc < 0 ? 'pos' : '';
+  const cum = m.cumulative_vs_deposit_bp;
+  const cumCls = cum > 0 ? 'neg' : cum < 0 ? 'pos' : '';
+  return `<tr class="${rowCls}">
+    <td>${m.meeting_label}<div style="color:var(--mut);font-size:11px">${m.meeting_date}</div></td>
+    <td>${m.status}</td>
+    <td>${m.ref_contract_label} <span style="color:var(--mut)">${m.ref_symbol}</span></td>
+    <td class="num">${m.implied_rate_pct.toFixed(3)}</td>
+    <td class="num ${cumCls}">${cum>0?'+':''}${cum.toFixed(1)}</td>
+    <td class="num ${incCls}">${inc>0?'+':''}${inc.toFixed(1)}</td>
+    <td><div class="probbar" title="cut ${m.cut_pct}% / hold ${m.hold_pct}% / hike ${m.hike_pct}%">
+      <span class="prob-cut" style="width:${m.cut_pct}%"></span>
+      <span class="prob-hold" style="width:${m.hold_pct}%"></span>
+      <span class="prob-hike" style="width:${m.hike_pct}%"></span>
+    </div>
+    <div style="font-size:10px;color:var(--mut);margin-top:3px">↓${m.cut_pct} · —${m.hold_pct} · ↑${m.hike_pct}</div></td>
+  </tr>`;
+}).join('');
+
+document.getElementById('stripRows').innerHTML = contracts.map(c => {
+  const vs = c.vs_deposit_bp;
+  const vsCls = vs > 0 ? 'neg' : vs < 0 ? 'pos' : '';
+  const ch = c.bp_change;
+  const chCls = ch == null ? '' : (ch > 0 ? 'neg' : ch < 0 ? 'pos' : '');
+  const chTxt = ch == null ? '—' : ((ch>0?'+':'') + ch.toFixed(1));
+  return `<tr>
+    <td>${c.symbol}</td>
+    <td>${c.label}</td>
+    <td class="num">${Number(c.price).toFixed(4)}</td>
+    <td class="num">${c.implied_rate_pct.toFixed(4)}</td>
+    <td class="num ${vsCls}">${vs>0?'+':''}${vs.toFixed(1)}</td>
+    <td class="num ${chCls}">${chTxt}</td>
+  </tr>`;
+}).join('');
+</script>
+</body>
+</html>

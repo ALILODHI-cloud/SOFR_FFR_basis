@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parent
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import fetch_barchart_batch
 
-DEPOSIT_FACILITY_PCT = 2.0
-DEPOSIT_FACILITY_AS_OF = "2026-06-12"
+DEPOSIT_FACILITY_PCT = 2.25
+DEPOSIT_FACILITY_AS_OF = "2026-07-15"
 BARCHART_HISTORY_LIMIT = 200
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/IJ*0/futures-prices"
