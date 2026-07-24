@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-23 11:15 UTC",
+  "generated_utc": "2026-07-24 10:59 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -20,12 +20,12 @@
     "entry_slope_bp": -23.5
   },
   "bank_rate_pct": 3.625,
-  "bank_rate_as_of": "2026-07-21",
+  "bank_rate_as_of": "2026-07-22",
   "entry": {
     "date": "2026-07-01",
     "label": "1 Jul 2026 EOD close",
     "fed_funds_mid_pct": 3.625,
-    "fed_funds_as_of": "2026-07-21",
+    "fed_funds_as_of": "2026-07-22",
     "short": {
       "symbol": "SQH28",
       "label": "Mar-28",
@@ -47,31 +47,31 @@
     "source": "barchart_eod"
   },
   "mark": {
-    "date": "2026-07-22",
+    "date": "2026-07-23",
     "short": {
       "symbol": "SQH28",
-      "date": "2026-07-22",
-      "price": 95.93,
-      "implied_rate_pct": 4.07,
-      "vs_fed_bp": 44.5
+      "date": "2026-07-23",
+      "price": 95.87,
+      "implied_rate_pct": 4.13,
+      "vs_fed_bp": 50.5
     },
     "long": {
       "symbol": "SQH27",
-      "date": "2026-07-22",
-      "price": 95.78,
-      "implied_rate_pct": 4.22,
-      "vs_fed_bp": 59.5
+      "date": "2026-07-23",
+      "price": 95.73,
+      "implied_rate_pct": 4.27,
+      "vs_fed_bp": 64.5
     },
-    "slope_bp": -15.0,
-    "updated_utc": "2026-07-23 11:15 UTC"
+    "slope_bp": -14.0,
+    "updated_utc": "2026-07-24 10:59 UTC"
   },
   "pnl": {
-    "slope_bp": 8.5,
+    "slope_bp": 9.5,
     "quoted_long_leg_bp": -0.0,
     "quoted_short_leg_bp": -0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 212.5,
+    "usd": 237.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -224,6 +224,16 @@
       "cum_pnl_gbp": 212.5,
       "daily_pnl_usd": -37.5,
       "cum_pnl_usd": 212.5
+    },
+    {
+      "date": "2026-07-23",
+      "quoted_long_rate": 4.13,
+      "quoted_short_rate": 4.27,
+      "slope_bp": -14.0,
+      "dslope_bp": 9.5,
+      "cum_pnl_gbp": 237.5,
+      "daily_pnl_usd": 25.0,
+      "cum_pnl_usd": 237.5
     }
   ],
   "regime_attribution": [
@@ -235,18 +245,18 @@
       "pnl_gbp": 300.0
     },
     {
+      "regime": "bear_steepening",
+      "label": "Bear steepening",
+      "days": 5,
+      "pnl_slope_bp": 5.5,
+      "pnl_gbp": 137.5
+    },
+    {
       "regime": "bear_flattening",
       "label": "Bear flattening",
       "days": 4,
       "pnl_slope_bp": -5.0,
       "pnl_gbp": -125.0
-    },
-    {
-      "regime": "bear_steepening",
-      "label": "Bear steepening",
-      "days": 4,
-      "pnl_slope_bp": 4.5,
-      "pnl_gbp": 112.5
     },
     {
       "regime": "mixed_flattening",
