@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-24 11:06 UTC",
+  "generated_utc": "2026-07-24 18:57 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -20,12 +20,12 @@
     "entry_slope_bp": -23.5
   },
   "bank_rate_pct": 3.625,
-  "bank_rate_as_of": "2026-07-22",
+  "bank_rate_as_of": "2026-07-23",
   "entry": {
     "date": "2026-07-01",
     "label": "1 Jul 2026 EOD close",
     "fed_funds_mid_pct": 3.625,
-    "fed_funds_as_of": "2026-07-22",
+    "fed_funds_as_of": "2026-07-23",
     "short": {
       "symbol": "SQH28",
       "label": "Mar-28",
@@ -63,7 +63,7 @@
       "vs_fed_bp": 64.5
     },
     "slope_bp": -14.0,
-    "updated_utc": "2026-07-24 11:06 UTC"
+    "updated_utc": "2026-07-24 18:57 UTC"
   },
   "pnl": {
     "slope_bp": 9.5,

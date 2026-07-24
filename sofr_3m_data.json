@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2026-07-24 10:59 UTC",
+  "generated_utc": "2026-07-24 18:57 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M SOFR (SQ*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
   "fed_funds_pct": 3.625,
-  "fed_funds_as_of": "2026-07-22",
+  "fed_funds_as_of": "2026-07-23",
   "fed_funds_target_low_pct": 3.5,
   "fed_funds_target_high_pct": 3.75,
   "fed_funds_source": "NY Fed EFFR target range midpoint",
@@ -9489,7 +9489,7 @@
   },
   "fomc_meeting_pricing": {
     "note": "Approximate meeting path from CME 3M SOFR futures (not Fed-dated OIS / FedWatch). Each meeting maps to the next quarterly contract after the decision as a post-meeting rate proxy. Probabilities assume 25bp steps (FedWatch-style). Standard 3M futures can span multiple meetings \u2014 use CME FedWatch or OIS for precise per-meeting pricing.",
-    "as_of": "2026-07-22",
+    "as_of": "2026-07-23",
     "fed_funds_pct": 3.625,
     "total_easing_priced_bp": 50.5,
     "next_meeting": {
