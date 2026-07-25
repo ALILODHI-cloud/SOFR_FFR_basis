@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-24 18:57 UTC",
+  "generated_utc": "2026-07-25 06:01 UTC",
   "trade": {
     "id": "mar28_mar27_sofr_steepener",
     "type": "spread",
@@ -47,31 +47,31 @@
     "source": "barchart_eod"
   },
   "mark": {
-    "date": "2026-07-23",
+    "date": "2026-07-24",
     "short": {
       "symbol": "SQH28",
-      "date": "2026-07-23",
-      "price": 95.87,
-      "implied_rate_pct": 4.13,
-      "vs_fed_bp": 50.5
+      "date": "2026-07-24",
+      "price": 95.91,
+      "implied_rate_pct": 4.09,
+      "vs_fed_bp": 46.5
     },
     "long": {
       "symbol": "SQH27",
-      "date": "2026-07-23",
-      "price": 95.73,
-      "implied_rate_pct": 4.27,
-      "vs_fed_bp": 64.5
+      "date": "2026-07-24",
+      "price": 95.76,
+      "implied_rate_pct": 4.24,
+      "vs_fed_bp": 61.5
     },
-    "slope_bp": -14.0,
-    "updated_utc": "2026-07-24 18:57 UTC"
+    "slope_bp": -15.0,
+    "updated_utc": "2026-07-25 06:01 UTC"
   },
   "pnl": {
-    "slope_bp": 9.5,
-    "quoted_long_leg_bp": -0.0,
+    "slope_bp": 8.5,
+    "quoted_long_leg_bp": 0.0,
     "quoted_short_leg_bp": -0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 237.5,
+    "usd": 212.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -234,6 +234,16 @@
       "cum_pnl_gbp": 237.5,
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 237.5
+    },
+    {
+      "date": "2026-07-24",
+      "quoted_long_rate": 4.09,
+      "quoted_short_rate": 4.24,
+      "slope_bp": -15.0,
+      "dslope_bp": 8.5,
+      "cum_pnl_gbp": 212.5,
+      "daily_pnl_usd": -25.0,
+      "cum_pnl_usd": 212.5
     }
   ],
   "regime_attribution": [
@@ -268,9 +278,9 @@
     {
       "regime": "bull_flattening",
       "label": "Bull flattening",
-      "days": 1,
-      "pnl_slope_bp": -0.5,
-      "pnl_gbp": -12.5
+      "days": 2,
+      "pnl_slope_bp": -1.5,
+      "pnl_gbp": -37.5
     },
     {
       "regime": "unchanged",
