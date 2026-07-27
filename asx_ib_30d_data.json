@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-25 08:53 UTC",
+  "generated_utc": "2026-07-27 12:18 UTC",
   "source": "Barchart EOD settles",
   "contract": "ASX 30-day Interbank Cash Rate (IQ* / IB)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -18,7 +18,7 @@
         2026,
         7
       ],
-      "latest_date": "2026-07-23",
+      "latest_date": "2026-07-24",
       "price": 95.65,
       "implied_rate_pct": 4.35,
       "vs_cash_bp": -0.0,
@@ -3008,6 +3008,7 @@
       },
       {
         "date": "2026-07-24",
+        "2026-07": 4.35,
         "2026-08": 4.42,
         "2026-09": 4.445,
         "2026-10": 4.49,
@@ -18680,6 +18681,13 @@
       {
         "date": "2026-07-24",
         "points": [
+          {
+            "key": "2026-07",
+            "label": "Jul-26",
+            "symbol": "IQN26",
+            "implied_rate_pct": 4.35,
+            "vs_cash_bp": -0.0
+          },
           {
             "key": "2026-08",
             "label": "Aug-26",
