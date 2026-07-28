@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-28 08:33 UTC",
+  "generated_utc": "2026-07-28 11:13 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M SOFR (SQ*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -349,11 +349,11 @@
         2031,
         12
       ],
-      "latest_date": "2026-07-24",
-      "price": 95.705,
-      "implied_rate_pct": 4.295,
-      "vs_fed_bp": 67.0,
-      "vs_fed_hikes_25bp": 2.68
+      "latest_date": "2026-07-27",
+      "price": 95.75,
+      "implied_rate_pct": 4.25,
+      "vs_fed_bp": 62.5,
+      "vs_fed_hikes_25bp": 2.5
     },
     {
       "key": "2032-03",
@@ -707,7 +707,6 @@
     "rows": [
       {
         "date": "2026-04-24",
-        "2031-12": 4.02,
         "2032-09": 4.16,
         "2032-12": 4.21,
         "2033-03": 4.25,
@@ -3316,6 +3315,7 @@
         "2031-03": 4.155,
         "2031-06": 4.185,
         "2031-09": 4.215,
+        "2031-12": 4.25,
         "2032-03": 4.285,
         "2032-06": 4.32,
         "2032-09": 4.355,
