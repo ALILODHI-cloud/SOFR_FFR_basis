@@ -1,3 +1,4 @@
+# deploy-bump
 #!/usr/bin/env python3
 """Build static trade tracker HTML shells (fetch JSON at runtime — no data bake-in)."""
 from __future__ import annotations

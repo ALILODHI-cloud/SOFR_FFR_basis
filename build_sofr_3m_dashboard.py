@@ -1,4 +1,6 @@
-"""Build interactive 3M SOFR curve dashboard (frozen reference + evolution overlay)."""
+"""Build interactive 3M SOFR curve dashboard
+
+# deploy-bump: trigger Pages refresh (frozen reference + evolution overlay)."""
 from __future__ import annotations
 
 import json
