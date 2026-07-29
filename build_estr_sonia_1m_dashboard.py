@@ -1,4 +1,4 @@
-"""Build combined 1M ESTR + 1M SONIA curves dashboard with pair basis picker."""
+"""Build combined 1M ESTR + 1M SONIA dashboard in vs-policy (bp) space."""
 from __future__ import annotations
 
 import json
@@ -11,15 +11,31 @@ with (ROOT / "estr_1m_data.json").open(encoding="utf-8") as f:
 with (ROOT / "sonia_1m_data.json").open(encoding="utf-8") as f:
     sonia = json.load(f)
 
+deposit = float(estr["deposit_facility_pct"])
+bank = float(sonia["bank_rate_pct"])
+
 estr_map = {c["key"]: c for c in estr["contracts"]}
 sonia_map = {c["key"]: c for c in sonia["contracts"]}
 common_keys = sorted(set(estr_map) & set(sonia_map))
+
+
+def vs_policy_bp(implied_pct: float, policy_pct: float) -> float:
+    return round((implied_pct - policy_pct) * 100, 1)
+
 
 basis_strip = []
 for k in common_keys:
     e = estr_map[k]
     s = sonia_map[k]
-    basis_bp = round((e["implied_rate_pct"] - s["implied_rate_pct"]) * 100, 1)
+    estr_vs = e.get("vs_deposit_bp")
+    if estr_vs is None:
+        estr_vs = vs_policy_bp(e["implied_rate_pct"], deposit)
+    sonia_vs = s.get("vs_bank_bp")
+    if sonia_vs is None:
+        sonia_vs = vs_policy_bp(s["implied_rate_pct"], bank)
+    # Relative pricing: how much more/less ESTR has priced vs its policy
+    # compared with SONIA vs Bank Rate.
+    relative_bp = round(float(estr_vs) - float(sonia_vs), 1)
     basis_strip.append({
         "key": k,
         "label": e["label"],
@@ -27,12 +43,13 @@ for k in common_keys:
         "sonia_symbol": s["symbol"],
         "estr_pct": e["implied_rate_pct"],
         "sonia_pct": s["implied_rate_pct"],
-        "basis_bp": basis_bp,  # ESTR − SONIA
+        "estr_vs_policy_bp": float(estr_vs),
+        "sonia_vs_policy_bp": float(sonia_vs),
+        "relative_bp": relative_bp,  # (ESTR−deposit) − (SONIA−Bank Rate)
         "estr_date": e["latest_date"],
         "sonia_date": s["latest_date"],
     })
 
-# Daily basis history for each overlapping contract (from timeseries)
 estr_ts = {row["date"]: row for row in estr.get("timeseries", {}).get("rows", [])}
 sonia_ts = {row["date"]: row for row in sonia.get("timeseries", {}).get("rows", [])}
 common_dates = sorted(set(estr_ts) & set(sonia_ts))
@@ -42,14 +59,17 @@ for dt in common_dates:
     er, sr = estr_ts[dt], sonia_ts[dt]
     for k in common_keys:
         if k in er and k in sr:
+            e_vs = vs_policy_bp(er[k], deposit)
+            s_vs = vs_policy_bp(sr[k], bank)
             basis_history[k].append({
                 "date": dt,
                 "estr_pct": er[k],
                 "sonia_pct": sr[k],
-                "basis_bp": round((er[k] - sr[k]) * 100, 1),
+                "estr_vs_policy_bp": e_vs,
+                "sonia_vs_policy_bp": s_vs,
+                "relative_bp": round(e_vs - s_vs, 1),
             })
 
-# Aligned curve evolution for dual-curve scrub (latest-session style points per date)
 estr_hist = {h["date"]: h for h in (estr.get("curve_evolution") or {}).get("history", [])}
 sonia_hist = {h["date"]: h for h in (sonia.get("curve_evolution") or {}).get("history", [])}
 evo_dates = sorted(set(estr_hist) & set(sonia_hist))
@@ -60,21 +80,26 @@ for dt in evo_dates:
     keys = sorted(set(ep) & set(sp))
     if not keys:
         continue
-    curve_evolution.append({
-        "date": dt,
-        "points": [
-            {
-                "key": k,
-                "label": ep[k]["label"],
-                "estr_pct": ep[k]["implied_rate_pct"],
-                "sonia_pct": sp[k]["implied_rate_pct"],
-                "basis_bp": round(
-                    (ep[k]["implied_rate_pct"] - sp[k]["implied_rate_pct"]) * 100, 1
-                ),
-            }
-            for k in keys
-        ],
-    })
+    pts = []
+    for k in keys:
+        e_imp = ep[k]["implied_rate_pct"]
+        s_imp = sp[k]["implied_rate_pct"]
+        e_vs = ep[k].get("vs_deposit_bp")
+        if e_vs is None:
+            e_vs = vs_policy_bp(e_imp, deposit)
+        s_vs = sp[k].get("vs_bank_bp")
+        if s_vs is None:
+            s_vs = vs_policy_bp(s_imp, bank)
+        pts.append({
+            "key": k,
+            "label": ep[k]["label"],
+            "estr_pct": e_imp,
+            "sonia_pct": s_imp,
+            "estr_vs_policy_bp": float(e_vs),
+            "sonia_vs_policy_bp": float(s_vs),
+            "relative_bp": round(float(e_vs) - float(s_vs), 1),
+        })
+    curve_evolution.append({"date": dt, "points": pts})
 
 payload = {
     "generated_utc": max(
@@ -83,8 +108,9 @@ payload = {
     ),
     "estr_as_of": max((c["latest_date"] for c in estr["contracts"]), default=None),
     "sonia_as_of": max((c["latest_date"] for c in sonia["contracts"]), default=None),
-    "deposit_facility_pct": estr.get("deposit_facility_pct"),
-    "bank_rate_pct": sonia.get("bank_rate_pct"),
+    "deposit_facility_pct": deposit,
+    "bank_rate_pct": bank,
+    "unit": "bp_vs_policy",
     "estr_contracts": estr["contracts"],
     "sonia_contracts": sonia["contracts"],
     "common_keys": common_keys,
@@ -92,8 +118,10 @@ payload = {
     "basis_history": basis_history,
     "curve_evolution": curve_evolution,
     "note": (
-        "Basis = 1M ESTR implied − 1M SONIA implied (bp). "
-        "Negative means SONIA futures price a higher rate than €STR for that month."
+        f"All levels vs current policy: ECB deposit {deposit:.2f}% and BoE Bank Rate {bank:.2f}%. "
+        "Curve points = implied − policy (bp). "
+        "Relative = (ESTR − deposit) − (SONIA − Bank Rate) in bp — how much more/less "
+        "the €STR strip has priced vs ECB policy than SONIA has vs Bank Rate."
     ),
 }
 
@@ -107,7 +135,7 @@ HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>1M ESTR − 1M SONIA · curves + basis</title>
+<title>1M ESTR vs SONIA · bp vs policy</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root{--bg:#0b0f17;--card:#131a26;--line:#243043;--ink:#e8eef7;--mut:#93a1b5;--acc:#39d98a;--estr:#ffb84a;--sonia:#4aa8ff;--basis:#c084fc}
@@ -126,10 +154,10 @@ h1{margin:4px 0;font-size:clamp(20px,4vw,28px)}
 .hint{color:var(--mut);font-size:12px;margin:0 0 10px;line-height:1.45}
 .chartbox{position:relative;height:380px}
 .chartbox.sm{height:260px}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
 .kpi{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .kpi .k{font-size:11px;color:var(--mut)}
-.kpi .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi .v{font-size:17px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
 .controls{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:12px}
 .controls label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
 .controls select{background:#1b2536;border:1px solid var(--line);color:var(--ink);padding:8px 10px;border-radius:8px;font-size:14px;min-width:140px}
@@ -156,20 +184,20 @@ a{color:var(--sonia);text-decoration:none}
   <p style="margin:0 0 10px;font-size:13px"><a href="portal.html" style="color:#93a1b5">← Markets portal</a>
     · <a href="estr_1m_dashboard.html" style="color:#93a1b5">1M €STR</a>
     · <a href="sonia_1m_dashboard.html" style="color:#93a1b5">1M SONIA</a></p>
-  <h1>1M ESTR + 1M SONIA · curves &amp; basis</h1>
+  <h1>1M ESTR vs SONIA · bp vs policy</h1>
   <div class="sub" id="asof"></div>
   <div>
-    <span class="pill estr">■ 1M ESTR</span>
-    <span class="pill sonia">■ 1M SONIA</span>
-    <span class="pill basis">■ Basis = ESTR − SONIA</span>
+    <span class="pill estr">■ ESTR − ECB deposit</span>
+    <span class="pill sonia">■ SONIA − Bank Rate</span>
+    <span class="pill basis">■ Relative = ESTR gap − SONIA gap</span>
   </div>
 </header>
 
 <div class="kpis" id="kpis"></div>
 
 <div class="card">
-  <h2>Implied rate curves (%)</h2>
-  <p class="hint">Latest frozen curves. Scrub to morph both strips through shared history.</p>
+  <h2>Priced change vs current policy (bp)</h2>
+  <p class="hint">Each curve is implied rate minus its own current policy rate. Zero = priced at policy. Scrub shared history.</p>
   <div class="chartbox"><canvas id="curveChart"></canvas></div>
   <div class="sliderrow">
     <button class="btn" type="button" id="btnLatest">Latest</button>
@@ -179,14 +207,14 @@ a{color:var(--sonia);text-decoration:none}
 </div>
 
 <div class="card">
-  <h2>Basis strip (ESTR − SONIA, bp)</h2>
+  <h2>Relative strip: (ESTR−deposit) − (SONIA−Bank Rate)</h2>
   <p class="hint" id="basisNote"></p>
   <div class="chartbox sm"><canvas id="basisStripChart"></canvas></div>
 </div>
 
 <div class="card">
   <h2>Pick a pair</h2>
-  <p class="hint">Choose any overlapping delivery month. Shows 1M ESTR − 1M SONIA for that contract, plus history.</p>
+  <p class="hint">Any overlapping month. Shows each leg’s bp vs its policy, then the relative gap. Optional second month = calendar of that relative.</p>
   <div class="controls">
     <label>Month
       <select id="pairSelect"></select>
@@ -200,38 +228,42 @@ a{color:var(--sonia);text-decoration:none}
 </div>
 
 <div class="card">
-  <h2>Full overlapping strip</h2>
+  <h2>Full overlapping strip (vs policy)</h2>
   <div class="tblwrap">
     <table>
       <thead><tr>
         <th>Month</th><th>ESTR</th><th>SONIA</th>
-        <th class="num">ESTR %</th><th class="num">SONIA %</th>
-        <th class="num">Basis bp</th>
+        <th class="num">ESTR vs dep</th><th class="num">SONIA vs BR</th>
+        <th class="num">Relative</th>
       </tr></thead>
       <tbody id="stripRows"></tbody>
     </table>
   </div>
 </div>
 
-<p class="foot">Barchart finalized EOD · Basis = ESTR implied − SONIA implied · Not investment advice.</p>
+<p class="foot">Barchart finalized EOD · Gaps use current ECB deposit and BoE Bank Rate for all history · Not investment advice.</p>
 </div>
 <script>
 const DATA = __DATA_JSON__;
 const strip = DATA.basis_strip || [];
 const evo = DATA.curve_evolution || [];
 const hist = DATA.basis_history || {};
+const deposit = DATA.deposit_facility_pct;
+const bank = DATA.bank_rate_pct;
 
 document.getElementById('asof').textContent =
-  `ESTR as of ${DATA.estr_as_of || '—'} · SONIA as of ${DATA.sonia_as_of || '—'} · ${DATA.generated_utc || ''}`;
+  `ESTR as of ${DATA.estr_as_of || '—'} · SONIA as of ${DATA.sonia_as_of || '—'} · dep ${Number(deposit).toFixed(2)}% · Bank Rate ${Number(bank).toFixed(2)}% · ${DATA.generated_utc || ''}`;
 document.getElementById('basisNote').textContent = DATA.note || '';
 
-const front = strip[0], mid = strip.find(r => r.label === 'Dec-26') || strip[Math.floor(strip.length/2)], back = strip[strip.length-1];
+const front = strip[0];
+const mid = strip.find(r => r.label === 'Dec-26') || strip[Math.floor(strip.length/2)];
+const back = strip[strip.length-1];
 document.getElementById('kpis').innerHTML = [
-  ['Deposit / Bank', `${Number(DATA.deposit_facility_pct).toFixed(2)}% / ${Number(DATA.bank_rate_pct).toFixed(2)}%`],
-  ['Overlap', `${strip.length} months`],
-  ['Front basis', front ? `${front.label} · ${fmtBp(front.basis_bp)}` : '—'],
-  ['Dec-26 basis', mid ? `${fmtBp(mid.basis_bp)}` : '—'],
-  ['Far basis', back ? `${back.label} · ${fmtBp(back.basis_bp)}` : '—'],
+  ['ECB deposit', `${Number(deposit).toFixed(2)}%`],
+  ['BoE Bank Rate', `${Number(bank).toFixed(2)}%`],
+  ['Front relative', front ? `${front.label} · ${fmtBp(front.relative_bp)}` : '—'],
+  ['Dec-26 relative', mid ? `${fmtBp(mid.relative_bp)}` : '—'],
+  ['Far relative', back ? `${back.label} · ${fmtBp(back.relative_bp)}` : '—'],
 ].map(([k,v]) => `<div class="kpi"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('');
 
 function fmtBp(x){
@@ -248,7 +280,12 @@ slider.value = evoIdx;
 
 function evoPoints(){
   if (!evo.length) {
-    return strip.map(r => ({key:r.key,label:r.label,estr_pct:r.estr_pct,sonia_pct:r.sonia_pct,basis_bp:r.basis_bp}));
+    return strip.map(r => ({
+      key:r.key,label:r.label,
+      estr_vs_policy_bp:r.estr_vs_policy_bp,
+      sonia_vs_policy_bp:r.sonia_vs_policy_bp,
+      relative_bp:r.relative_bp
+    }));
   }
   return evo[evoIdx].points;
 }
@@ -260,10 +297,11 @@ const curveChart = new Chart(document.getElementById('curveChart'), {
   data: {
     labels: frozen.map(p => p.label),
     datasets: [
-      { label: 'ESTR frozen', data: frozen.map(p => p.estr_pct), borderColor: '#ffb84a', backgroundColor: 'rgba(255,184,74,0.08)', fill: false, tension: 0.15, pointRadius: 3, borderWidth: 2 },
-      { label: 'SONIA frozen', data: frozen.map(p => p.sonia_pct), borderColor: '#4aa8ff', backgroundColor: 'rgba(74,168,255,0.08)', fill: false, tension: 0.15, pointRadius: 3, borderWidth: 2 },
-      { label: 'ESTR hist', data: frozen.map(p => p.estr_pct), borderColor: 'rgba(255,184,74,0.55)', borderDash: [5,4], fill: false, tension: 0.15, pointRadius: 2, borderWidth: 2 },
-      { label: 'SONIA hist', data: frozen.map(p => p.sonia_pct), borderColor: 'rgba(74,168,255,0.55)', borderDash: [5,4], fill: false, tension: 0.15, pointRadius: 2, borderWidth: 2 },
+      { label: 'ESTR vs deposit (frozen)', data: frozen.map(p => p.estr_vs_policy_bp), borderColor: '#ffb84a', fill: false, tension: 0.15, pointRadius: 3, borderWidth: 2 },
+      { label: 'SONIA vs Bank Rate (frozen)', data: frozen.map(p => p.sonia_vs_policy_bp), borderColor: '#4aa8ff', fill: false, tension: 0.15, pointRadius: 3, borderWidth: 2 },
+      { label: 'ESTR hist', data: frozen.map(p => p.estr_vs_policy_bp), borderColor: 'rgba(255,184,74,0.55)', borderDash: [5,4], fill: false, tension: 0.15, pointRadius: 2, borderWidth: 2 },
+      { label: 'SONIA hist', data: frozen.map(p => p.sonia_vs_policy_bp), borderColor: 'rgba(74,168,255,0.55)', borderDash: [5,4], fill: false, tension: 0.15, pointRadius: 2, borderWidth: 2 },
+      { label: 'Policy (0)', data: frozen.map(() => 0), borderColor: '#64748b', borderDash: [2,3], pointRadius: 0, borderWidth: 1, fill: false },
     ]
   },
   options: {
@@ -272,29 +310,25 @@ const curveChart = new Chart(document.getElementById('curveChart'), {
     plugins: { legend: { labels: { color: '#93a1b5' } } },
     scales: {
       x: { ticks: { color: '#93a1b5', maxRotation: 55 }, grid: { color: '#243043' } },
-      y: { ticks: { color: '#93a1b5' }, grid: { color: '#243043' }, title: { display: true, text: '%', color: '#93a1b5' } }
+      y: { ticks: { color: '#93a1b5' }, grid: { color: '#243043' }, title: { display: true, text: 'bp vs policy', color: '#93a1b5' } }
     }
   }
 });
 
 function refreshCurve(){
   const pts = evoPoints();
-  const fmap = Object.fromEntries(frozen.map(p => [p.key, p]));
-  const labels = frozen.map(p => p.label);
   const hmap = Object.fromEntries(pts.map(p => [p.key, p]));
-  curveChart.data.labels = labels;
-  curveChart.data.datasets[0].data = frozen.map(p => p.estr_pct);
-  curveChart.data.datasets[1].data = frozen.map(p => p.sonia_pct);
-  curveChart.data.datasets[2].data = frozen.map(p => hmap[p.key]?.estr_pct ?? null);
-  curveChart.data.datasets[3].data = frozen.map(p => hmap[p.key]?.sonia_pct ?? null);
+  curveChart.data.labels = frozen.map(p => p.label);
+  curveChart.data.datasets[0].data = frozen.map(p => p.estr_vs_policy_bp);
+  curveChart.data.datasets[1].data = frozen.map(p => p.sonia_vs_policy_bp);
+  curveChart.data.datasets[2].data = frozen.map(p => hmap[p.key]?.estr_vs_policy_bp ?? null);
+  curveChart.data.datasets[3].data = frozen.map(p => hmap[p.key]?.sonia_vs_policy_bp ?? null);
+  curveChart.data.datasets[4].data = frozen.map(() => 0);
   curveChart.update('none');
   document.getElementById('evoDate').textContent = evo.length ? evo[evoIdx].date : (DATA.estr_as_of || 'latest');
 
-  // basis strip follows scrub
-  const bLabels = frozen.map(p => p.label);
-  const bData = frozen.map(p => hmap[p.key]?.basis_bp ?? fmap[p.key]?.basis_bp ?? null);
-  basisStripChart.data.labels = bLabels;
-  basisStripChart.data.datasets[0].data = bData;
+  basisStripChart.data.labels = frozen.map(p => p.label);
+  basisStripChart.data.datasets[0].data = frozen.map(p => hmap[p.key]?.relative_bp ?? p.relative_bp);
   basisStripChart.update('none');
 }
 
@@ -303,8 +337,8 @@ const basisStripChart = new Chart(document.getElementById('basisStripChart'), {
   data: {
     labels: frozen.map(p => p.label),
     datasets: [{
-      label: 'ESTR − SONIA (bp)',
-      data: frozen.map(p => p.basis_bp),
+      label: 'Relative (bp)',
+      data: frozen.map(p => p.relative_bp),
       borderColor: '#c084fc',
       backgroundColor: 'rgba(192,132,252,0.12)',
       fill: true,
@@ -367,49 +401,48 @@ function refreshPair(){
 
   const latest = series.length ? series[series.length - 1] : null;
   const first = series.length ? series[0] : null;
-  const chg = latest && first ? latest.basis_bp - first.basis_bp : null;
-  const cal = row && row2 ? row2.basis_bp - row.basis_bp : null;
+  const chg = latest && first ? latest.relative_bp - first.relative_bp : null;
+  const cal = row && row2 ? row2.relative_bp - row.relative_bp : null;
 
   document.getElementById('pairKpis').innerHTML = [
     ['Selected', row ? row.label : '—'],
-    ['ESTR %', row ? row.estr_pct.toFixed(3) : '—'],
-    ['SONIA %', row ? row.sonia_pct.toFixed(3) : '—'],
-    ['Basis', row ? fmtBp(row.basis_bp) : '—'],
-    ['Basis Δ (hist)', chg != null ? fmtBp(chg) : '—'],
-    ['Calendar basis', cal != null ? `${row2.label} − ${row.label}: ${fmtBp(cal)}` : '—'],
+    [`ESTR vs dep ${Number(deposit).toFixed(2)}%`, row ? fmtBp(row.estr_vs_policy_bp) : '—'],
+    [`SONIA vs BR ${Number(bank).toFixed(2)}%`, row ? fmtBp(row.sonia_vs_policy_bp) : '—'],
+    ['Relative', row ? fmtBp(row.relative_bp) : '—'],
+    ['Relative Δ (hist)', chg != null ? fmtBp(chg) : '—'],
+    ['Calendar relative', cal != null ? `${row2.label} − ${row.label}: ${fmtBp(cal)}` : '—'],
   ].map(([a,b]) => `<div class="kpi"><div class="k">${a}</div><div class="v">${b}</div></div>`).join('');
 
   const dates = series.map(p => p.date);
-  const ds = [{
-    label: `${row?.label || k} basis`,
-    data: series.map(p => p.basis_bp),
-    borderColor: '#c084fc',
-    backgroundColor: 'rgba(192,132,252,0.1)',
-    fill: true,
-    tension: 0.15,
-    pointRadius: 0,
-    borderWidth: 2,
-  }];
+  const ds = [
+    {
+      label: `${row?.label || k} ESTR vs dep`,
+      data: series.map(p => p.estr_vs_policy_bp),
+      borderColor: '#ffb84a', fill: false, tension: 0.15, pointRadius: 0, borderWidth: 2,
+    },
+    {
+      label: `${row?.label || k} SONIA vs BR`,
+      data: series.map(p => p.sonia_vs_policy_bp),
+      borderColor: '#4aa8ff', fill: false, tension: 0.15, pointRadius: 0, borderWidth: 2,
+    },
+    {
+      label: `${row?.label || k} relative`,
+      data: series.map(p => p.relative_bp),
+      borderColor: '#c084fc', backgroundColor: 'rgba(192,132,252,0.1)', fill: true,
+      tension: 0.15, pointRadius: 0, borderWidth: 2,
+    },
+  ];
   if (k2 && series2.length) {
-    const map2 = Object.fromEntries(series2.map(p => [p.date, p.basis_bp]));
+    const map2 = Object.fromEntries(series2.map(p => [p.date, p.relative_bp]));
     ds.push({
-      label: `${row2.label} basis`,
+      label: `${row2.label} relative`,
       data: dates.map(d => map2[d] ?? null),
-      borderColor: '#ffb84a',
-      fill: false,
-      tension: 0.15,
-      pointRadius: 0,
-      borderWidth: 2,
+      borderColor: '#39d98a', fill: false, tension: 0.15, pointRadius: 0, borderWidth: 2,
     });
     ds.push({
-      label: `${row2.label} − ${row.label}`,
-      data: dates.map(d => map2[d] != null ? map2[d] - (series.find(p=>p.date===d)?.basis_bp ?? 0) : null),
-      borderColor: '#39d98a',
-      borderDash: [4,3],
-      fill: false,
-      tension: 0.15,
-      pointRadius: 0,
-      borderWidth: 2,
+      label: `${row2.label} − ${row.label} relative`,
+      data: dates.map(d => map2[d] != null ? map2[d] - (series.find(p=>p.date===d)?.relative_bp ?? 0) : null),
+      borderColor: '#f87171', borderDash: [4,3], fill: false, tension: 0.15, pointRadius: 0, borderWidth: 2,
     });
   }
   pairHistChart.data.labels = dates;
@@ -429,9 +462,9 @@ document.getElementById('stripRows').innerHTML = strip.map(r => `
     <td>${r.label}</td>
     <td>${r.estr_symbol}</td>
     <td>${r.sonia_symbol}</td>
-    <td class="num">${r.estr_pct.toFixed(3)}</td>
-    <td class="num">${r.sonia_pct.toFixed(3)}</td>
-    <td class="num ${clsBp(r.basis_bp)}">${fmtBp(r.basis_bp)}</td>
+    <td class="num ${clsBp(r.estr_vs_policy_bp)}">${fmtBp(r.estr_vs_policy_bp)}</td>
+    <td class="num ${clsBp(r.sonia_vs_policy_bp)}">${fmtBp(r.sonia_vs_policy_bp)}</td>
+    <td class="num ${clsBp(r.relative_bp)}">${fmtBp(r.relative_bp)}</td>
   </tr>`).join('');
 
 document.querySelectorAll('#stripRows tr').forEach(tr => {
@@ -453,11 +486,16 @@ for name in ("estr_sonia_1m_dashboard.html", "docs/estr_sonia_1m_dashboard.html"
     path.write_text(html, encoding="utf-8")
     print(f"Wrote {path}")
 
-print(f"Overlap {len(common_keys)} months · evolution {len(curve_evolution)} sessions")
+print(f"Overlap {len(common_keys)} · dep {deposit}% · bank {bank}%")
 if basis_strip:
+    r = basis_strip[0]
     print(
-        "Front basis",
-        basis_strip[0]["label"],
-        basis_strip[0]["basis_bp"],
-        "bp",
+        f"Front {r['label']}: ESTR {r['estr_vs_policy_bp']:+.1f} / "
+        f"SONIA {r['sonia_vs_policy_bp']:+.1f} → relative {r['relative_bp']:+.1f} bp"
     )
+    d = next((x for x in basis_strip if x["label"] == "Dec-26"), None)
+    if d:
+        print(
+            f"Dec-26: ESTR {d['estr_vs_policy_bp']:+.1f} / "
+            f"SONIA {d['sonia_vs_policy_bp']:+.1f} → relative {d['relative_bp']:+.1f} bp"
+        )
