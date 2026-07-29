@@ -1,0 +1,24 @@
+{
+  "generated_utc": "2026-07-29 07:47 UTC",
+  "closed": [
+    {
+      "id": "mar28_mar27_sofr_steepener",
+      "label": "Mar28\u2212Mar27 3M SOFR steepener",
+      "exit_date": "2026-07-28",
+      "pnl_usd": 212.5,
+      "pnl_bp": 8.5,
+      "entry_slope_bp": -23.5,
+      "exit_slope_bp": -15.0,
+      "rolled_into": "dec26_uk_eur_flattener"
+    }
+  ],
+  "open": [
+    {
+      "id": "dec26_uk_eur_flattener",
+      "label": "Dec26 UK\u2212EUR flattener",
+      "entry_date": "2026-07-28",
+      "entry_slope_bp": 154.5,
+      "funded_by_proceeds_usd": 212.5
+    }
+  ]
+}

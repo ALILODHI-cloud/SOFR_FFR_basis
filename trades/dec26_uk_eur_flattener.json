@@ -1,0 +1,66 @@
+{
+  "trade_id": "dec26_uk_eur_flattener",
+  "trade_type": "spread",
+  "market": "sonia_estr_1m",
+  "currency": "USD",
+  "label": "Dec26 UK\u2212EUR flattener",
+  "position": "Short JUZ26 (SONIA Dec-26) / Long IJZ26 (ESTR Dec-26)",
+  "direction": "flattener",
+  "long_symbol": "IJZ26",
+  "short_symbol": "JUZ26",
+  "long_key": "estr:2026-12",
+  "short_key": "sonia:2026-12",
+  "sonia_key": "sonia:2026-12",
+  "estr_key": "estr:2026-12",
+  "sonia_delivery_ym": "2026-12",
+  "estr_delivery_ym": "2026-12",
+  "quoted_spread": {
+    "label": "UK Dec26 \u2212 EUR Dec26",
+    "long_key": "sonia:2026-12",
+    "short_key": "estr:2026-12",
+    "long_label": "Dec-26 SONIA",
+    "short_label": "Dec-26 ESTR"
+  },
+  "entry_date": "2026-07-28",
+  "entry_label": "2026-07-28 EOD (SOFR TP roll)",
+  "entry_source": "barchart_eod",
+  "entry_locked": true,
+  "usd_per_bp": 25,
+  "face_value_usd": 1000000,
+  "contracts_per_leg": 1,
+  "detail_page": "trade_dec26_uk_eur.html",
+  "funded_by": {
+    "closed_trade_id": "mar28_mar27_sofr_steepener",
+    "proceeds_usd": 212.5,
+    "note": "SOFR Mar28\u2212Mar27 steepener take-profit proceeds rolled into this UK\u2212EUR Dec26 short"
+  },
+  "levels": {
+    "entry_slope_bp": 154.5
+  },
+  "entry": {
+    "date": "2026-07-28",
+    "label": "2026-07-28 EOD (SOFR TP roll)",
+    "short": {
+      "symbol": "JUZ26",
+      "date": "2026-07-28",
+      "price": 95.96,
+      "implied_rate_pct": 4.04,
+      "label": "Dec-26 SONIA"
+    },
+    "long": {
+      "symbol": "IJZ26",
+      "date": "2026-07-28",
+      "price": 97.505,
+      "implied_rate_pct": 2.495,
+      "label": "Dec-26 ESTR"
+    },
+    "slope_bp": 154.5,
+    "uk_minus_eur_bp": 154.5,
+    "captured_utc": "2026-07-29 07:47 UTC",
+    "source": "barchart_eod",
+    "bank_rate_pct": 3.75,
+    "deposit_facility_pct": 2.25,
+    "sonia_vs_bank_bp": 29.0,
+    "estr_vs_deposit_bp": 24.5
+  }
+}

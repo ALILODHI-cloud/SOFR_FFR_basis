@@ -378,7 +378,7 @@ h2{margin:0 0 8px;font-size:16px}
 
 <div class="section">Open positions</div>
 <div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Mar28−Mar27 SOFR steepener · live P&amp;L</p></a>
+  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Dec26 UK−EUR flattener · live P&amp;L</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
 </div>
 
@@ -450,8 +450,10 @@ def main() -> None:
         "mar27_sep26_estr_steepener_trade_data.json",
         "trade_jun27_outright.html",
         "trade_mar27_sep26_estr.html",
+        "trade_mar28_mar27_sofr.html",
         "jun27_outright_long_trade_data.json",
         "mar27_sep26_estr_flattener_trade_data.json",
+        "mar28_mar27_sofr_steepener_trade_data.json",
         "book_summary.json",
         "book.json",
     ]

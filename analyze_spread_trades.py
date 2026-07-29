@@ -19,6 +19,7 @@ from analyze_sonia import (
 ROOT = Path(__file__).resolve().parent
 TRADES_DIR = ROOT / "trades"
 SONIA_1M = ROOT / "sonia_1m_data.json"
+ESTR_1M = ROOT / "estr_1m_data.json"
 SOFR_3M = ROOT / "sofr_3m_data.json"
 STIR_3M = ROOT / "stir_curves_data.json"
 
@@ -95,6 +96,48 @@ def snap_from_sofr(symbol: str) -> dict | None:
     return None
 
 
+def snap_from_estr(symbol: str) -> dict | None:
+    if not ESTR_1M.exists():
+        return None
+    with ESTR_1M.open(encoding="utf-8") as f:
+        data = json.load(f)
+    for c in data.get("contracts", []):
+        if c.get("symbol") == symbol:
+            return {
+                "symbol": symbol,
+                "date": c.get("latest_date", ""),
+                "price": round(float(c["price"]), 4),
+                "implied_rate_pct": round(float(c["implied_rate_pct"]), 4),
+            }
+    return None
+
+
+def snap_for_symbol(symbol: str) -> dict | None:
+    if symbol.startswith("SQ"):
+        return snap_from_sofr(symbol)
+    if symbol.startswith("IJ"):
+        return snap_from_estr(symbol)
+    return snap_from_sonia(symbol)
+
+
+def series_from_1m_file(path: Path, key_map: dict[str, str]) -> pd.DataFrame | None:
+    """Load timeseries and rename delivery keys → trade keys (e.g. 2026-12 → sonia:2026-12)."""
+    if not path.exists():
+        return None
+    with path.open(encoding="utf-8") as f:
+        data = json.load(f)
+    rows = data.get("timeseries", {}).get("rows", [])
+    if not rows:
+        return None
+    df = pd.DataFrame(rows).set_index("date")
+    df.index = pd.to_datetime(df.index)
+    out = pd.DataFrame(index=df.index)
+    for src_key, dst_key in key_map.items():
+        if src_key in df.columns:
+            out[dst_key] = df[src_key].astype(float)
+    return out.dropna(how="all").sort_index() if len(out.columns) else None
+
+
 def series_from_sofr(keys: list[str]) -> pd.DataFrame | None:
     if not SOFR_3M.exists():
         return None
@@ -112,7 +155,6 @@ def series_from_sofr(keys: list[str]) -> pd.DataFrame | None:
 
 
 def fetch_leg(symbol: str) -> tuple[pd.DataFrame, dict]:
-    snap_fallback = snap_from_sofr if symbol.startswith("SQ") else snap_from_sonia
     try:
         df = fetch_barchart_eod(symbol)
         rates = price_to_rate(df["price"])
@@ -125,9 +167,13 @@ def fetch_leg(symbol: str) -> tuple[pd.DataFrame, dict]:
         }
         return df, snap
     except Exception as exc:
-        label = "sofr_3m_data" if symbol.startswith("SQ") else "sonia_1m_data"
+        label = (
+            "sofr_3m_data" if symbol.startswith("SQ")
+            else "estr_1m_data" if symbol.startswith("IJ")
+            else "sonia_1m_data"
+        )
         print(f"  ::warning::{symbol} Barchart fetch failed ({exc}); using {label} snapshot")
-        snap = snap_fallback(symbol)
+        snap = snap_for_symbol(symbol)
         if snap is None:
             raise
         return pd.DataFrame(), snap
@@ -501,6 +547,28 @@ def analyze_spread(cfg_path: Path) -> dict:
         series_fn = lambda _keys: None
         policy_rate = float(cfg.get("ecb_deposit_pct", 2.0))
         policy_as_of = cfg.get("ecb_deposit_as_of")
+    elif market == "sonia_estr_1m":
+        # Cross-market UK−EUR 1M basis. Unique trade keys avoid 2026-12 collisions.
+        pnl_per_bp = float(cfg.get("usd_per_bp", cfg.get("gbp_per_bp", 25)))
+        daily_pnl_key = "daily_pnl_usd" if currency == "USD" else "daily_pnl_gbp"
+        sonia_src = cfg.get("sonia_delivery_ym", "2026-12")
+        estr_src = cfg.get("estr_delivery_ym", "2026-12")
+        sonia_trade_key = cfg.get("sonia_key", f"sonia:{sonia_src}")
+        estr_trade_key = cfg.get("estr_key", f"estr:{estr_src}")
+
+        def series_fn(_keys: list[str]) -> pd.DataFrame | None:
+            s = series_from_1m_file(SONIA_1M, {sonia_src: sonia_trade_key})
+            e = series_from_1m_file(ESTR_1M, {estr_src: estr_trade_key})
+            if s is None and e is None:
+                return None
+            if s is None:
+                return e
+            if e is None:
+                return s
+            return s.join(e, how="outer").sort_index()
+
+        policy_rate = None
+        policy_as_of = None
     else:
         pnl_per_bp = float(cfg["gbp_per_bp"])
         daily_pnl_key = "daily_pnl_gbp"
@@ -511,7 +579,23 @@ def analyze_spread(cfg_path: Path) -> dict:
     print(f"[{cfg['trade_id']}] Fetching {long_sym} / {short_sym}…")
     short_df, short_snap = fetch_leg(short_sym)
     long_df, long_snap = fetch_leg(long_sym)
-    leg_rates = {short_key: short_snap["implied_rate_pct"], long_key: long_snap["implied_rate_pct"]}
+    # Position keys must cover quoted keys (for UK−EUR: short=sonia key, long=estr key).
+    leg_rates = {
+        short_key: short_snap["implied_rate_pct"],
+        long_key: long_snap["implied_rate_pct"],
+        q_long_key: (
+            long_snap["implied_rate_pct"] if q_long_key == long_key
+            else short_snap["implied_rate_pct"] if q_long_key == short_key
+            else None
+        ),
+        q_short_key: (
+            short_snap["implied_rate_pct"] if q_short_key == short_key
+            else long_snap["implied_rate_pct"] if q_short_key == long_key
+            else None
+        ),
+    }
+    leg_rates = {k: v for k, v in leg_rates.items() if v is not None}
+
     cfg = ensure_spread_entry(cfg_path, cfg, leg_rates, short_snap, long_snap, q_long_key, q_short_key)
     entry = cfg["entry"]
     entry_date = pd.Timestamp(entry["date"])
@@ -521,11 +605,18 @@ def analyze_spread(cfg_path: Path) -> dict:
     if hist is None:
         hist = pd.DataFrame(index=pd.DatetimeIndex([]))
 
-    for df, key in [(short_df, short_key), (long_df, long_key)]:
+    for df, key, snap in [
+        (short_df, short_key, short_snap),
+        (long_df, long_key, long_snap),
+    ]:
         if df.empty or "price" not in df.columns:
+            if snap.get("date"):
+                hist.loc[pd.Timestamp(snap["date"]).normalize(), key] = float(snap["implied_rate_pct"])
             continue
         for dt, px in df["price"].items():
-            hist.loc[pd.Timestamp(dt).normalize(), key] = float(price_to_rate(pd.Series([px])).iloc[0])
+            hist.loc[pd.Timestamp(dt).normalize(), key] = float(
+                price_to_rate(pd.Series([px])).iloc[0]
+            )
     hist = hist.sort_index()
 
     tail = hist.loc[hist.index >= entry_date].copy()
@@ -574,7 +665,7 @@ def analyze_spread(cfg_path: Path) -> dict:
         "entry_locked": cfg.get("entry_locked", False),
         "detail_page": cfg.get("detail_page", f"trade_{cfg['trade_id']}.html"),
     }
-    if market == "sofr_3m":
+    if market == "sofr_3m" or (market == "sonia_estr_1m" and currency == "USD"):
         trade_row["usd_per_bp"] = pnl_per_bp
         trade_row["face_value_usd"] = float(cfg.get("face_value_usd", 1_000_000))
     elif market == "estr_1m":

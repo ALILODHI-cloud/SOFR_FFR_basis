@@ -52,18 +52,16 @@
       "symbol": "SQH28",
       "date": "2026-07-28",
       "price": 95.975,
-      "implied_rate_pct": 4.025,
-      "vs_fed_bp": 40.0
+      "implied_rate_pct": 4.025
     },
     "long": {
       "symbol": "SQH27",
       "date": "2026-07-28",
       "price": 95.825,
-      "implied_rate_pct": 4.175,
-      "vs_fed_bp": 55.0
+      "implied_rate_pct": 4.175
     },
     "slope_bp": -15.0,
-    "updated_utc": "2026-07-29 07:29 UTC"
+    "updated_utc": "2026-07-29 07:47 UTC"
   },
   "pnl": {
     "slope_bp": 8.5,
@@ -72,7 +70,8 @@
     "to_stop_bp": null,
     "to_tp_bp": null,
     "usd": 212.5,
-    "gbp": 0.0
+    "gbp": 0.0,
+    "realized": true
   },
   "trade_path": [
     {
@@ -315,5 +314,28 @@
     "quoted_long": "Mar-28",
     "quoted_short": "Mar-27"
   },
-  "live_proxy": null
+  "live_proxy": null,
+  "status": "closed",
+  "exit": {
+    "date": "2026-07-28",
+    "label": "2026-07-28 EOD take-profit",
+    "short": {
+      "symbol": "SQH28",
+      "date": "2026-07-28",
+      "price": 95.975,
+      "implied_rate_pct": 4.025
+    },
+    "long": {
+      "symbol": "SQH27",
+      "date": "2026-07-28",
+      "price": 95.825,
+      "implied_rate_pct": 4.175
+    },
+    "slope_bp": -15.0,
+    "pnl_bp": 8.5,
+    "pnl_usd": 212.5,
+    "usd_per_bp": 25,
+    "captured_utc": "2026-07-29 07:47 UTC",
+    "source": "barchart_eod"
+  }
 }
