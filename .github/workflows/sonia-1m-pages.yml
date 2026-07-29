@@ -12,6 +12,7 @@ on:
       - 'ice_sonia_margin.py'
       - 'ice_sonia_margins.json'
       - 'build_sonia_1m_dashboard.py'
+      - 'build_estr_sonia_1m_dashboard.py'
       - 'build_trade_tracker.py'
       - 'trades/**'
       - 'requirements-sonia.txt'
@@ -50,6 +51,7 @@ jobs:
         run: |
           python analyze_sonia_1m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
           python build_sonia_1m_dashboard.py
+          python build_estr_sonia_1m_dashboard.py || echo "::warning::ESTR−SONIA basis page build skipped"
 
       - name: Refresh trade marks from Barchart (JSON only)
         run: |
@@ -65,7 +67,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json docs/ice_sonia_margins.json ice_sonia_margins.json trades_index.json *_trade_data.json trades/*.json ice_sonia_margin.py build_trade_tracker.py portal.html docs/portal.html trade_tracker.html docs/trade_tracker.html trade_*.html docs/trade_*.html
+          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html estr_sonia_1m_data.json estr_sonia_1m_dashboard.html docs/estr_sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json docs/ice_sonia_margins.json ice_sonia_margins.json trades_index.json *_trade_data.json trades/*.json ice_sonia_margin.py build_trade_tracker.py portal.html docs/portal.html trade_tracker.html docs/trade_tracker.html trade_*.html docs/trade_*.html
           git diff --staged --quiet || git commit -m "Auto-refresh SONIA + trade marks $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 

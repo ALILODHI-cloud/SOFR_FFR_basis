@@ -325,6 +325,17 @@ def build_payload() -> dict:
     if not contracts:
         raise RuntimeError("No 1M ESTR contracts fetched")
 
+    # Guard against partial Barchart chain scrapes collapsing the strip (seen as n=1).
+    if out_path.exists() and len(contracts) < 6:
+        with out_path.open(encoding="utf-8") as f:
+            prev = json.load(f)
+        prev_n = int(prev.get("n_contracts") or len(prev.get("contracts") or []))
+        if prev_n >= 6:
+            raise RuntimeError(
+                f"Partial 1M ESTR fetch ({len(contracts)} contracts); "
+                f"refusing to overwrite snapshot with {prev_n} contracts"
+            )
+
     wide = pd.DataFrame(series).sort_index(axis=1)
     ytd_start = pd.Timestamp(history_start_date())
     wide = wide.loc[wide.index >= ytd_start]

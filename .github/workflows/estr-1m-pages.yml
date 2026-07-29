@@ -8,6 +8,7 @@ on:
       - 'analyze_sonia.py'
       - 'analyze_stir_curves.py'
       - 'build_estr_1m_dashboard.py'
+      - 'build_estr_sonia_1m_dashboard.py'
       - 'requirements-sonia.txt'
       - '.github/workflows/estr-1m-pages.yml'
   schedule:
@@ -43,6 +44,7 @@ jobs:
         run: |
           python analyze_estr_1m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
           python build_estr_1m_dashboard.py
+          python build_estr_sonia_1m_dashboard.py || echo "::warning::ESTR−SONIA basis page build skipped"
 
       - uses: actions/upload-pages-artifact@v3
         with:
@@ -52,7 +54,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add estr_1m_data.json estr_1m_dashboard.html docs/estr_1m_dashboard.html portal.html docs/portal.html
+          git add estr_1m_data.json estr_1m_dashboard.html docs/estr_1m_dashboard.html estr_sonia_1m_data.json estr_sonia_1m_dashboard.html docs/estr_sonia_1m_dashboard.html portal.html docs/portal.html
           git diff --staged --quiet || git commit -m "Auto-refresh 1M ESTR curve $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 
