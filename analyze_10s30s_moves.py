@@ -185,7 +185,7 @@ def main() -> None:
 
     print(json.dumps(summary, indent=2))
 
-    # ---- Histogram ----
+    # ---- Histogram (primary deliverable) ----
     plt.rcParams.update(
         {
             "figure.facecolor": "#0e1117",
@@ -196,9 +196,10 @@ def main() -> None:
             "xtick.color": "#b8b8b8",
             "ytick.color": "#b8b8b8",
             "axes.edgecolor": "#3a3f4b",
-            "font.size": 11,
-            "axes.titlesize": 13,
+            "font.size": 12,
+            "axes.titlesize": 14,
             "axes.grid": True,
+            "axes.grid.axis": "y",
             "grid.color": "#222631",
             "grid.linewidth": 0.8,
         }
@@ -211,94 +212,108 @@ def main() -> None:
         "#8b949e",
     )
 
-    fig, ax = plt.subplots(figsize=(11, 6.2))
-    # Clip display window to ~p0.5–p99.5 for readability; annotate if last move outside
-    lo = np.percentile(moves, 0.5)
-    hi = np.percentile(moves, 99.5)
-    pad = 0.15 * (hi - lo)
-    xmin, xmax = lo - pad, hi + pad
-    # ensure last move is visible
-    xmin = min(xmin, last_move - pad)
-    xmax = max(xmax, last_move + pad)
+    fig, ax = plt.subplots(figsize=(12, 6.5))
 
-    bin_w = 0.25  # 0.25 bp bins
-    bins = np.arange(np.floor(xmin / bin_w) * bin_w, np.ceil(xmax / bin_w) * bin_w + bin_w, bin_w)
-    ax.hist(moves, bins=bins, color=BLUE, alpha=0.78, edgecolor="#0e1117", linewidth=0.3)
+    # Classic 1bp histogram bins; clip display to ~p1–p99 so bars read clearly
+    bin_w = 1.0
+    lo = np.floor(np.percentile(moves, 1) / bin_w) * bin_w - bin_w
+    hi = np.ceil(np.percentile(moves, 99) / bin_w) * bin_w + bin_w
+    # keep yesterday visible even if in the far tail
+    lo = min(lo, np.floor(last_move / bin_w) * bin_w - bin_w)
+    hi = max(hi, np.ceil(last_move / bin_w) * bin_w + bin_w)
+    bins = np.arange(lo, hi + bin_w, bin_w)
 
-    # percentile guides
-    for key, color, ls in [
-        ("p5", MUTED, ":"),
-        ("p25", MUTED, "--"),
-        ("p50", GREEN, "-"),
-        ("p75", MUTED, "--"),
-        ("p95", MUTED, ":"),
-    ]:
-        ax.axvline(qs[key], color=color, lw=1.2 if key != "p50" else 1.6, ls=ls, alpha=0.85)
+    counts, edges = np.histogram(moves, bins=bins)
+    centers = 0.5 * (edges[:-1] + edges[1:])
+    # highlight the bin containing yesterday's move
+    last_bin = int(np.digitize([last_move], edges, right=False)[0] - 1)
+    last_bin = max(0, min(last_bin, len(counts) - 1))
+    colors = [RED if i == last_bin else BLUE for i in range(len(counts))]
 
-    ax.axvline(last_move, color=RED, lw=2.6, label=None)
-    ax.axvline(0, color=MUTED, lw=0.9)
-
-    # annotate last move
-    ylim = ax.get_ylim()
-    direction = "steepened" if last_move > 0 else ("flattened" if last_move < 0 else "unchanged")
-    label = (
-        f"Most recent ({last_date:%d %b %Y})\n"
-        f"{last_move:+.2f} bp  ·  {pct:.1f}th pctile\n"
-        f"({direction})"
+    ax.bar(
+        centers,
+        counts,
+        width=bin_w * 0.92,
+        color=colors,
+        edgecolor="#0e1117",
+        linewidth=0.6,
+        align="center",
+        zorder=2,
     )
-    # place annotation on the side with more space
-    if last_move >= 0:
-        xytext = (xmin + 0.08 * (xmax - xmin), ylim[1] * 0.78)
-        ha = "left"
-    else:
-        xytext = (xmax - 0.08 * (xmax - xmin), ylim[1] * 0.78)
-        ha = "right"
+
+    # percentile guides + labels along the top of the plot
+    ylim_top_guide = max(counts) * 1.18
+    for key, lab in [
+        ("p5", "5th"),
+        ("p25", "25th"),
+        ("p50", "50th"),
+        ("p75", "75th"),
+        ("p95", "95th"),
+    ]:
+        x = qs[key]
+        if x < lo or x > hi:
+            continue
+        is_med = key == "p50"
+        ax.axvline(
+            x,
+            color=GREEN if is_med else MUTED,
+            lw=1.8 if is_med else 1.15,
+            ls="-" if is_med else "--",
+            alpha=0.9,
+            zorder=3,
+        )
+        ax.text(
+            x,
+            ylim_top_guide * 0.98,
+            f"{lab}\n{x:+.1f}",
+            ha="center",
+            va="top",
+            fontsize=8.5,
+            color=GREEN if is_med else MUTED,
+            linespacing=1.05,
+        )
+
+    ax.axvline(0, color="#6b7280", lw=1.0, zorder=1)
+
+    # annotate yesterday
+    direction = "steepened" if last_move > 0 else ("flattened" if last_move < 0 else "unchanged")
+    y_ann = max(counts) * 0.72
+    x_text = lo + 0.12 * (hi - lo) if last_move >= 0 else hi - 0.12 * (hi - lo)
+    ha = "left" if last_move >= 0 else "right"
     ax.annotate(
-        label,
-        xy=(last_move, ylim[1] * 0.55),
-        xytext=xytext,
+        f"Yesterday ({last_date:%d %b %Y})\n"
+        f"{last_move:+.1f} bp  ·  {pct:.1f}th percentile\n"
+        f"10s30s {direction}",
+        xy=(centers[last_bin], counts[last_bin]),
+        xytext=(x_text, y_ann),
         color="#e6e6e6",
-        fontsize=11,
+        fontsize=12,
         ha=ha,
         va="center",
-        bbox=dict(boxstyle="round,pad=0.4", facecolor="#161b22", edgecolor=RED, alpha=0.95),
-        arrowprops=dict(arrowstyle="->", color=RED, lw=1.6),
+        fontweight="bold",
+        bbox=dict(boxstyle="round,pad=0.45", facecolor="#161b22", edgecolor=RED, lw=1.6),
+        arrowprops=dict(arrowstyle="->", color=RED, lw=2.0),
+        zorder=5,
     )
 
-    # percentile legend strip
-    legend_bits = [
-        f"p5={qs['p5']:+.2f}",
-        f"p25={qs['p25']:+.2f}",
-        f"p50={qs['p50']:+.2f}",
-        f"p75={qs['p75']:+.2f}",
-        f"p95={qs['p95']:+.2f}",
-    ]
-    ax.text(
-        0.99,
-        0.98,
-        "  ·  ".join(legend_bits),
-        transform=ax.transAxes,
-        ha="right",
-        va="top",
-        fontsize=9,
-        color="#b8b8b8",
-    )
-
-    ax.set_xlim(xmin, xmax)
-    ax.set_xlabel("Daily change in 10s30s (bp)   ·   + = steepener")
+    ax.set_xlim(lo, hi)
+    ax.set_ylim(0, max(counts) * 1.22)
+    ax.set_xlabel("Daily change in 10s30s (bp)    ·    + = steepener / − = flattener")
     ax.set_ylabel("Number of trading days")
     ax.set_title(
-        f"US Treasury 10s30s daily moves — Investing.com  ·  {START:%b %Y}–{last_date:%b %Y}"
-        f"  (n={len(moves):,})"
+        f"Histogram: US Treasury 10s30s daily moves (Investing.com)\n"
+        f"{START:%b %Y} – {last_date:%b %Y}   ·   n={len(moves):,}   ·   "
+        f"1 bp bins   ·   red = yesterday's bin"
     )
     ax.text(
         0.01,
-        0.98,
-        f"Level on {last_date:%d %b %Y}: {df.loc[last_date, 's10s30']:+.1f} bp"
-        f"   (30Y {df.loc[last_date, 'y30']:.3f}% − 10Y {df.loc[last_date, 'y10']:.3f}%)",
+        0.02,
+        f"Level {last_date:%d %b %Y}: {df.loc[last_date, 's10s30']:+.1f} bp"
+        f"  (30Y {df.loc[last_date, 'y30']:.3f}% − 10Y {df.loc[last_date, 'y10']:.3f}%)"
+        f"   ·   p5={qs['p5']:+.1f}  p50={qs['p50']:+.1f}  p95={qs['p95']:+.1f} bp",
         transform=ax.transAxes,
         ha="left",
-        va="top",
+        va="bottom",
         fontsize=9.5,
         color=AMBER,
     )
@@ -307,47 +322,16 @@ def main() -> None:
     name = "us_10s30s_daily_move_histogram_since_2016.png"
     for folder in (OUT_ART, OUT_CHARTS):
         path = os.path.join(folder, name)
-        fig.savefig(path, dpi=150)
+        fig.savefig(path, dpi=160)
         print("wrote", path)
     plt.close(fig)
 
-    # also a small companion: cumulative distribution with last move marked
-    fig, ax = plt.subplots(figsize=(10, 5.5))
-    xs = np.sort(moves.values)
-    cdf = np.arange(1, len(xs) + 1) / len(xs)
-    ax.plot(xs, cdf * 100, color=BLUE, lw=1.8)
-    ax.axvline(last_move, color=RED, lw=2.2)
-    ax.axhline(pct, color=RED, lw=1.0, ls="--", alpha=0.8)
-    ax.scatter([last_move], [pct], color=RED, s=55, zorder=5)
-    ax.annotate(
-        f"{last_date:%d %b %Y}: {last_move:+.2f} bp\n{pct:.1f}th percentile",
-        xy=(last_move, pct),
-        xytext=(
-            (qs["p75"] + 0.5) if last_move < qs["p75"] else (qs["p25"] - 0.5),
-            min(92, pct + 18),
-        ),
-        color="#e6e6e6",
-        fontsize=11,
-        ha="left" if last_move < qs["p75"] else "right",
-        bbox=dict(boxstyle="round,pad=0.35", facecolor="#161b22", edgecolor=RED),
-        arrowprops=dict(arrowstyle="->", color=RED, lw=1.4),
-    )
-    for p, xv in [(5, qs["p5"]), (50, qs["p50"]), (95, qs["p95"])]:
-        ax.axvline(xv, color=MUTED, lw=0.9, ls=":", alpha=0.7)
-        ax.text(xv, 3, f"p{p}", color=MUTED, ha="center", fontsize=8)
-    ax.set_xlabel("Daily change in 10s30s (bp)")
-    ax.set_ylabel("Cumulative percentile")
-    ax.set_title(
-        f"Empirical CDF of US 10s30s daily moves (Investing.com, {START.year}–{last_date.year})"
-    )
-    ax.set_ylim(0, 100)
-    fig.tight_layout()
-    name2 = "us_10s30s_daily_move_cdf_since_2016.png"
+    # remove prior CDF artifact if present (histogram is the deliverable)
     for folder in (OUT_ART, OUT_CHARTS):
-        path = os.path.join(folder, name2)
-        fig.savefig(path, dpi=150)
-        print("wrote", path)
-    plt.close(fig)
+        cdf_path = os.path.join(folder, "us_10s30s_daily_move_cdf_since_2016.png")
+        if os.path.exists(cdf_path):
+            os.remove(cdf_path)
+            print("removed", cdf_path)
 
 
 if __name__ == "__main__":
