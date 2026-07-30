@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-29 11:30 UTC",
+  "generated_utc": "2026-07-30 02:29 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -48,29 +48,29 @@
     "estr_vs_deposit_bp": 24.5
   },
   "mark": {
-    "date": "2026-07-28",
+    "date": "2026-07-29",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-07-28",
-      "price": 95.96,
-      "implied_rate_pct": 4.04
+      "date": "2026-07-29",
+      "price": 95.915,
+      "implied_rate_pct": 4.085
     },
     "long": {
       "symbol": "IJZ26",
-      "date": "2026-07-28",
-      "price": 97.505,
-      "implied_rate_pct": 2.495
+      "date": "2026-07-29",
+      "price": 97.475,
+      "implied_rate_pct": 2.525
     },
-    "slope_bp": 154.5,
-    "updated_utc": "2026-07-29 11:30 UTC"
+    "slope_bp": 156.0,
+    "updated_utc": "2026-07-30 02:29 UTC"
   },
   "pnl": {
-    "slope_bp": -0.0,
-    "quoted_long_leg_bp": 0.0,
+    "slope_bp": -1.5,
+    "quoted_long_leg_bp": -0.0,
     "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": -0.0,
+    "usd": -37.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -83,9 +83,27 @@
       "cum_pnl_gbp": -0.0,
       "daily_pnl_usd": -0.0,
       "cum_pnl_usd": -0.0
+    },
+    {
+      "date": "2026-07-29",
+      "quoted_long_rate": 4.085,
+      "quoted_short_rate": 2.525,
+      "slope_bp": 156.0,
+      "dslope_bp": -1.5,
+      "cum_pnl_gbp": -37.5,
+      "daily_pnl_usd": -37.5,
+      "cum_pnl_usd": -37.5
     }
   ],
-  "regime_attribution": [],
+  "regime_attribution": [
+    {
+      "regime": "bear_flattening",
+      "label": "Bear flattening",
+      "days": 1,
+      "pnl_slope_bp": -1.5,
+      "pnl_gbp": -37.5
+    }
+  ],
   "market_note_url": "",
   "leg_labels": {
     "quoted_long": "Dec-26 SONIA",
