@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-31 02:57 UTC",
+  "generated_utc": "2026-07-31 02:59 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -62,7 +62,7 @@
       "implied_rate_pct": 2.51
     },
     "slope_bp": 150.0,
-    "updated_utc": "2026-07-31 02:57 UTC"
+    "updated_utc": "2026-07-31 02:59 UTC"
   },
   "pnl": {
     "slope_bp": 4.5,
