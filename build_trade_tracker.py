@@ -247,6 +247,8 @@ function render(D){
   const dailyKey = isUsd ? 'daily_pnl_usd' : isEur ? 'daily_pnl_eur' : 'daily_pnl_gbp';
   const cum = path.map(r=>r[cumKey] != null ? r[cumKey] : r.cum_pnl_gbp);
   const pnlLbl = isUsd ? 'Cum P&L ($)' : isEur ? 'Cum P&L (€)' : 'Cumulative P&L (£)';
+  const pnlTitle = document.getElementById('pnlChartTitle');
+  if(pnlTitle) pnlTitle.textContent = pnlLbl;
   new Chart(document.getElementById('pnlChart'), {
     type:'line',
     data:{labels,datasets:[{label:pnlLbl,data:cum,borderColor:'#39d98a',backgroundColor:'rgba(57,217,138,.08)',fill:true,tension:.2}]},
