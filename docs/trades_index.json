@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-30 18:55 UTC",
+  "generated_utc": "2026-07-31 02:57 UTC",
   "trades": [
     {
       "id": "dec26_uk_eur_flattener",
@@ -14,11 +14,11 @@
       "detail_page": "trade_dec26_uk_eur.html",
       "data_file": "dec26_uk_eur_flattener_trade_data.json",
       "pnl_gbp": null,
-      "pnl_usd": -37.5,
+      "pnl_usd": 112.5,
       "pnl_eur": null,
-      "pnl_slope_bp": -1.5,
+      "pnl_slope_bp": 4.5,
       "entry_slope_bp": 154.5,
-      "mark_slope_bp": 156.0,
+      "mark_slope_bp": 150.0,
       "stop_slope_bp": null,
       "take_profit_slope_bp": null,
       "entry_rate_pct": null,
