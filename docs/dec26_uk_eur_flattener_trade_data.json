@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-07-31 02:59 UTC",
+  "generated_utc": "2026-07-31 06:00 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -19,8 +19,8 @@
   "levels": {
     "entry_slope_bp": 154.5
   },
-  "bank_rate_pct": null,
-  "bank_rate_as_of": null,
+  "bank_rate_pct": 3.75,
+  "bank_rate_as_of": "2026-06-18",
   "entry": {
     "date": "2026-07-28",
     "label": "2026-07-28 EOD (SOFR TP roll)",
@@ -29,14 +29,16 @@
       "date": "2026-07-28",
       "price": 95.96,
       "implied_rate_pct": 4.04,
-      "label": "Dec-26 SONIA"
+      "label": "Dec-26 SONIA",
+      "vs_bank_bp": 29.0
     },
     "long": {
       "symbol": "IJZ26",
       "date": "2026-07-28",
       "price": 97.505,
       "implied_rate_pct": 2.495,
-      "label": "Dec-26 ESTR"
+      "label": "Dec-26 ESTR",
+      "vs_deposit_bp": 24.5
     },
     "slope_bp": 154.5,
     "uk_minus_eur_bp": 154.5,
@@ -45,7 +47,8 @@
     "bank_rate_pct": 3.75,
     "deposit_facility_pct": 2.25,
     "sonia_vs_bank_bp": 29.0,
-    "estr_vs_deposit_bp": 24.5
+    "estr_vs_deposit_bp": 24.5,
+    "relative_vs_policy_bp": 4.5
   },
   "mark": {
     "date": "2026-07-30",
@@ -53,16 +56,22 @@
       "symbol": "JUZ26",
       "date": "2026-07-30",
       "price": 95.99,
-      "implied_rate_pct": 4.01
+      "implied_rate_pct": 4.01,
+      "vs_bank_bp": 26.0
     },
     "long": {
       "symbol": "IJZ26",
       "date": "2026-07-30",
       "price": 97.49,
-      "implied_rate_pct": 2.51
+      "implied_rate_pct": 2.51,
+      "vs_deposit_bp": 26.0
     },
     "slope_bp": 150.0,
-    "updated_utc": "2026-07-31 02:59 UTC"
+    "updated_utc": "2026-07-31 06:00 UTC",
+    "sonia_vs_bank_bp": 26.0,
+    "estr_vs_deposit_bp": 26.0,
+    "relative_vs_policy_bp": 0.0,
+    "uk_minus_eur_bp": 150.0
   },
   "pnl": {
     "slope_bp": 4.5,
@@ -82,7 +91,10 @@
       "dslope_bp": -0.0,
       "cum_pnl_gbp": -0.0,
       "daily_pnl_usd": -0.0,
-      "cum_pnl_usd": -0.0
+      "cum_pnl_usd": -0.0,
+      "sonia_vs_bank_bp": 29.0,
+      "estr_vs_deposit_bp": 24.5,
+      "relative_vs_policy_bp": 4.5
     },
     {
       "date": "2026-07-29",
@@ -92,7 +104,10 @@
       "dslope_bp": -1.5,
       "cum_pnl_gbp": -37.5,
       "daily_pnl_usd": -37.5,
-      "cum_pnl_usd": -37.5
+      "cum_pnl_usd": -37.5,
+      "sonia_vs_bank_bp": 33.5,
+      "estr_vs_deposit_bp": 27.5,
+      "relative_vs_policy_bp": 6.0
     },
     {
       "date": "2026-07-30",
@@ -102,7 +117,10 @@
       "dslope_bp": 4.5,
       "cum_pnl_gbp": 112.5,
       "daily_pnl_usd": 150.0,
-      "cum_pnl_usd": 112.5
+      "cum_pnl_usd": 112.5,
+      "sonia_vs_bank_bp": 26.0,
+      "estr_vs_deposit_bp": 26.0,
+      "relative_vs_policy_bp": 0.0
     }
   ],
   "regime_attribution": [
@@ -126,5 +144,16 @@
     "quoted_long": "Dec-26 SONIA",
     "quoted_short": "Dec-26 ESTR"
   },
-  "live_proxy": null
+  "live_proxy": null,
+  "dual_policy": {
+    "bank_rate_pct": 3.75,
+    "bank_rate_as_of": "2026-06-18",
+    "deposit_facility_pct": 2.25,
+    "deposit_facility_as_of": "2026-07-15",
+    "policy_gap_bp": 150.0
+  },
+  "view": {
+    "primary": "relative_vs_policy_bp",
+    "note": "Implied change by end-2026: SONIA Dec-26 \u2212 Bank Rate (3.75%), ESTR Dec-26 \u2212 ECB deposit (2.25%). Relative = UK gap \u2212 EUR gap (bp). Absolute UK\u2212EUR = relative + 150.0 bp policy gap."
+  }
 }

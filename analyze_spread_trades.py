@@ -531,6 +531,7 @@ def analyze_spread(cfg_path: Path) -> dict:
     keys = list({long_key, short_key, q_long_key, q_short_key})
     levels = cfg.get("levels") or {}
 
+    dual_policy = None
     if market == "sofr_3m":
         pnl_per_bp = float(cfg["usd_per_bp"])
         daily_pnl_key = "daily_pnl_usd"
@@ -568,8 +569,30 @@ def analyze_spread(cfg_path: Path) -> dict:
                 return s
             return s.join(e, how="outer").sort_index()
 
-        policy_rate = None
-        policy_as_of = None
+        # Dual policy anchors for “implied change by end-2026” framing.
+        bank = float(cfg.get("bank_rate_pct", BANK_RATE_PCT))
+        deposit = float(cfg.get("ecb_deposit_pct", 2.25))
+        bank_as_of = cfg.get("bank_rate_as_of", BANK_RATE_AS_OF)
+        deposit_as_of = cfg.get("ecb_deposit_as_of")
+        if SONIA_1M.exists():
+            with SONIA_1M.open(encoding="utf-8") as f:
+                s_meta = json.load(f)
+            bank = float(s_meta.get("bank_rate_pct", bank))
+            bank_as_of = s_meta.get("bank_rate_as_of", bank_as_of)
+        if ESTR_1M.exists():
+            with ESTR_1M.open(encoding="utf-8") as f:
+                e_meta = json.load(f)
+            deposit = float(e_meta.get("deposit_facility_pct", deposit))
+            deposit_as_of = e_meta.get("deposit_facility_as_of", deposit_as_of)
+        policy_rate = bank  # primary display; deposit stored separately below
+        policy_as_of = bank_as_of
+        dual_policy = {
+            "bank_rate_pct": bank,
+            "bank_rate_as_of": bank_as_of,
+            "deposit_facility_pct": deposit,
+            "deposit_facility_as_of": deposit_as_of,
+            "policy_gap_bp": round((bank - deposit) * 100, 1),
+        }
     else:
         pnl_per_bp = float(cfg["gbp_per_bp"])
         daily_pnl_key = "daily_pnl_gbp"
@@ -706,21 +729,76 @@ def analyze_spread(cfg_path: Path) -> dict:
             entry_out["long"] = leg_vs_fed(entry["long"], policy_rate)
         if entry.get("short"):
             entry_out["short"] = leg_vs_fed(entry["short"], policy_rate)
+    elif market == "sonia_estr_1m" and dual_policy:
+        bank = float(dual_policy["bank_rate_pct"])
+        deposit = float(dual_policy["deposit_facility_pct"])
+        # quoted long = UK/SONIA, quoted short = EUR/ESTR
+        uk_snap = short_snap if short_sym.startswith("JU") else long_snap
+        eur_snap = long_snap if long_sym.startswith("IJ") else short_snap
+        # Position: short=JU, long=IJ in our flattener
+        def _vs(leg: dict, policy: float, key: str) -> dict:
+            out = dict(leg)
+            if leg.get("implied_rate_pct") is not None:
+                out[key] = round((float(leg["implied_rate_pct"]) - policy) * 100, 1)
+            return out
 
-    return {
+        entry_out["bank_rate_pct"] = bank
+        entry_out["deposit_facility_pct"] = deposit
+        if entry.get("short"):
+            entry_out["short"] = _vs(entry["short"], bank, "vs_bank_bp")
+            entry_out["short"]["label"] = entry_out["short"].get("label") or "Dec-26 SONIA"
+        if entry.get("long"):
+            entry_out["long"] = _vs(entry["long"], deposit, "vs_deposit_bp")
+            entry_out["long"]["label"] = entry_out["long"].get("label") or "Dec-26 ESTR"
+        entry_uk = float(entry_out["short"]["implied_rate_pct"])
+        entry_eur = float(entry_out["long"]["implied_rate_pct"])
+        entry_out["sonia_vs_bank_bp"] = round((entry_uk - bank) * 100, 1)
+        entry_out["estr_vs_deposit_bp"] = round((entry_eur - deposit) * 100, 1)
+        entry_out["relative_vs_policy_bp"] = round(
+            entry_out["sonia_vs_bank_bp"] - entry_out["estr_vs_deposit_bp"], 1
+        )
+
+        mark_short = _vs(short_snap, bank, "vs_bank_bp")
+        mark_long = _vs(long_snap, deposit, "vs_deposit_bp")
+        mark_uk = float(mark_short["implied_rate_pct"])
+        mark_eur = float(mark_long["implied_rate_pct"])
+        mark_sonia_vs = round((mark_uk - bank) * 100, 1)
+        mark_estr_vs = round((mark_eur - deposit) * 100, 1)
+        mark_relative = round(mark_sonia_vs - mark_estr_vs, 1)
+
+        # Enrich daily path with vs-policy series (for charts).
+        for row in path:
+            uk_r = float(row["quoted_long_rate"])   # UK
+            eur_r = float(row["quoted_short_rate"])  # EUR
+            row["sonia_vs_bank_bp"] = round((uk_r - bank) * 100, 1)
+            row["estr_vs_deposit_bp"] = round((eur_r - deposit) * 100, 1)
+            row["relative_vs_policy_bp"] = round(
+                row["sonia_vs_bank_bp"] - row["estr_vs_deposit_bp"], 1
+            )
+
+    mark_payload = {
+        "date": str(tail.index[-1].date()),
+        "short": leg_vs_fed(short_snap, policy_rate) if market != "sonia_estr_1m" else mark_short,
+        "long": leg_vs_fed(long_snap, policy_rate) if market != "sonia_estr_1m" else mark_long,
+        "slope_bp": round(mark_slope, 2),
+        "updated_utc": utc_now(),
+    }
+    if market == "sonia_estr_1m" and dual_policy:
+        mark_payload.update({
+            "sonia_vs_bank_bp": mark_sonia_vs,
+            "estr_vs_deposit_bp": mark_estr_vs,
+            "relative_vs_policy_bp": mark_relative,
+            "uk_minus_eur_bp": round(mark_slope, 2),
+        })
+
+    payload_out = {
         "generated_utc": utc_now(),
         "trade": trade_row,
         "levels": levels,
         "bank_rate_pct": policy_rate,
         "bank_rate_as_of": policy_as_of,
         "entry": entry_out,
-        "mark": {
-            "date": str(tail.index[-1].date()),
-            "short": leg_vs_fed(short_snap, policy_rate),
-            "long": leg_vs_fed(long_snap, policy_rate),
-            "slope_bp": round(mark_slope, 2),
-            "updated_utc": utc_now(),
-        },
+        "mark": mark_payload,
         "pnl": pnl_row,
         "trade_path": path,
         "regime_attribution": regimes,
@@ -731,6 +809,18 @@ def analyze_spread(cfg_path: Path) -> dict:
         },
         "live_proxy": live_proxy,
     }
+    if market == "sonia_estr_1m" and dual_policy:
+        payload_out["dual_policy"] = dual_policy
+        payload_out["view"] = {
+            "primary": "relative_vs_policy_bp",
+            "note": (
+                f"Implied change by end-2026: SONIA Dec-26 − Bank Rate ({bank:.2f}%), "
+                f"ESTR Dec-26 − ECB deposit ({deposit:.2f}%). "
+                f"Relative = UK gap − EUR gap (bp). Absolute UK−EUR = relative + "
+                f"{dual_policy['policy_gap_bp']:.1f} bp policy gap."
+            ),
+        }
+    return payload_out
 
 
 def analyze_trade(cfg_path: Path) -> dict:

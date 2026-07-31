@@ -57,7 +57,7 @@ h1{margin:6px 0;font-size:clamp(20px,4vw,26px)}
 </div>
 <div class="card" id="levelsCard"><h2>Entry · stop · take profit</h2><div class="grid levels" id="levels"></div></div>
 <div class="card" id="legsCard" style="display:none"><h2>Contract levels · vs policy</h2><div id="legsBody"></div></div>
-<div class="card"><h2>Cumulative P&amp;L (£)</h2><div class="chartbox"><canvas id="pnlChart"></canvas></div></div>
+<div class="card"><h2 id="pnlChartTitle">Cumulative P&amp;L</h2><div class="chartbox"><canvas id="pnlChart"></canvas></div></div>
 <div class="grid two">
   <div class="card"><h2 id="mainChartTitle">Mark</h2><div class="chartbox"><canvas id="mainChart"></canvas></div></div>
   <div class="card" id="secondChartCard"><h2 id="secondChartTitle">Legs</h2><div class="chartbox"><canvas id="secondChart"></canvas></div></div>
@@ -100,9 +100,17 @@ function render(D){
   document.getElementById('title').textContent = D.trade.label;
   document.getElementById('subtitle').textContent = D.trade.position + ' · Entry ' + D.entry.label + ' · Mark ' + D.mark.date;
   const pills = document.getElementById('pills');
-  pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span><span class="pill">'+policyLbl+' '+D.bank_rate_pct+'%</span>'
-    + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
-    + '<span class="pill">Updated '+D.generated_utc+'</span>';
+  if(D.trade.market === 'sonia_estr_1m' && D.dual_policy){
+    pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span>'
+      + '<span class="pill">Bank '+Number(D.dual_policy.bank_rate_pct).toFixed(2)+'%</span>'
+      + '<span class="pill">ECB dep '+Number(D.dual_policy.deposit_facility_pct).toFixed(2)+'%</span>'
+      + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
+      + '<span class="pill">Updated '+D.generated_utc+'</span>';
+  } else {
+    pills.innerHTML = '<span class="pill">'+D.trade.direction+'</span><span class="pill">'+policyLbl+' '+D.bank_rate_pct+'%</span>'
+      + (D.trade.entry_locked ? '<span class="pill">Entry locked (EOD)</span>' : '<span class="pill warn">Provisional</span>')
+      + '<span class="pill">Updated '+D.generated_utc+'</span>';
+  }
 
   if(isOutright){
     document.getElementById('levels').innerHTML = [
@@ -119,39 +127,105 @@ function render(D){
     document.getElementById('mainChartTitle').textContent = 'Implied rate (%)';
     document.getElementById('secondChartCard').style.display='none';
   } else {
-    document.getElementById('levels').innerHTML = [
+    const isUkEur = D.trade.market === 'sonia_estr_1m';
+    const DP = D.dual_policy || {};
+    const entryRel = D.entry.relative_vs_policy_bp != null ? D.entry.relative_vs_policy_bp
+      : (D.entry.sonia_vs_bank_bp != null && D.entry.estr_vs_deposit_bp != null
+        ? D.entry.sonia_vs_bank_bp - D.entry.estr_vs_deposit_bp : null);
+    const markRel = D.mark.relative_vs_policy_bp != null ? D.mark.relative_vs_policy_bp : null;
+
+    document.getElementById('levels').innerHTML = isUkEur ? [
+      ['entry','Entry relative (vs policy)',fmtBp(entryRel)],
+      ['entry','Entry UK−EUR absolute',fmtBp(L.entry_slope_bp)],
+      ['tp','Mark relative',fmtBp(markRel)]
+    ].map(([c,l,v])=>'<div class="level '+c+'"><div class="statlbl">'+l+'</div><div class="stat sm neu">'+v+'</div></div>').join('') : [
       ['entry','Entry spread',fmtBp(L.entry_slope_bp)],
       ['stop','Stop',fmtBp(L.stop_slope_bp)],
       ['tp','Take profit',fmtBp(L.take_profit_slope_bp)]
     ].map(([c,l,v])=>'<div class="level '+c+'"><div class="statlbl">'+l+'</div><div class="stat sm neu">'+v+'</div></div>').join('');
-    document.getElementById('stats').innerHTML = [
+
+    document.getElementById('stats').innerHTML = (isUkEur ? [
+      ['P&amp;L', fmtPnl(pnlAmt), cls(pnlAmt)],
+      ['Δ relative', fmtBp(entryRel!=null&&markRel!=null ? entryRel-markRel : pnl.slope_bp), cls(pnl.slope_bp)],
+      ['Mark relative', fmtBp(markRel), cls(pnl.slope_bp)],
+      ['Mark UK−EUR', fmtBp(D.mark.slope_bp), 'neu'],
+    ] : [
       ['P&amp;L', fmtPnl(pnlAmt), cls(pnlAmt)],
       ['Δ spread', fmtBp(pnl.slope_bp), cls(pnl.slope_bp)],
       ['Mark spread', fmtBp(D.mark.slope_bp), cls(pnl.slope_bp)],
       ['To stop', fmtBp(pnl.to_stop_bp), (D.trade.direction==='flattener'?pnl.to_stop_bp<0:pnl.to_stop_bp>0)?'bad':'neu'],
-    ].map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat '+c+'">'+v+'</div></div>').join('');
-    document.getElementById('mainChartTitle').textContent = D.trade.spread_label + ' spread (bp)';
-    document.getElementById('secondChartTitle').textContent = 'Implied rates (%)';
-    const legs = [
-      {side:'Long', entry:D.entry.long, mark:D.mark.long},
-      {side:'Short', entry:D.entry.short, mark:D.mark.short},
-    ];
-    let legsHtml = '<p class="sub" style="margin:0 0 10px">'+policyLbl+' '+D.bank_rate_pct+'%'
-      + (D.bank_rate_as_of ? ' (as of '+D.bank_rate_as_of+')' : '')
-      + ' · quoted spread '+fmtBp(D.entry.slope_bp)+'</p>'
-      + '<table class="tbl"><thead><tr><th>Side</th><th>Contract</th><th>Entry</th><th>vs '+policyLbl+'</th><th>Mark</th><th>vs '+policyLbl+'</th><th>Δ bp</th></tr></thead><tbody>';
-    legs.forEach(({side, entry, mark})=>{
-      const vsEntry = entry.vs_fed_bp != null ? entry.vs_fed_bp : (entry.implied_rate_pct!=null&&D.bank_rate_pct!=null?(entry.implied_rate_pct-D.bank_rate_pct)*100:null);
-      const vsMark = mark.vs_fed_bp != null ? mark.vs_fed_bp : (mark.implied_rate_pct!=null&&D.bank_rate_pct!=null?(mark.implied_rate_pct-D.bank_rate_pct)*100:null);
-      const dBp = entry && mark ? ((mark.implied_rate_pct - entry.implied_rate_pct)*100).toFixed(1) : '—';
-      legsHtml += '<tr><td>'+side+'</td><td>'+(entry.symbol||'')+' '+(entry.label||'')+'</td>'
-        +'<td class="num">'+fmtPct(entry.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(vsEntry)+'</td>'
-        +'<td class="num">'+fmtPct(mark.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(vsMark)+'</td>'
-        +'<td class="num">'+dBp+'</td></tr>';
-    });
-    legsHtml += '</tbody></table>';
-    document.getElementById('legsCard').style.display='block';
-    document.getElementById('legsBody').innerHTML = legsHtml;
+    ]).map(([l,v,c])=>'<div class="card"><div class="statlbl">'+l+'</div><div class="stat '+c+'">'+v+'</div></div>').join('');
+
+    document.getElementById('mainChartTitle').textContent = isUkEur
+      ? 'Implied change by end-2026 · relative (UK gap − EUR gap, bp)'
+      : D.trade.spread_label + ' spread (bp)';
+    document.getElementById('secondChartTitle').textContent = isUkEur
+      ? 'Each leg vs own policy (bp)'
+      : 'Implied rates (%)';
+
+    if(isUkEur){
+      const bank = DP.bank_rate_pct != null ? DP.bank_rate_pct : D.entry.bank_rate_pct;
+      const dep = DP.deposit_facility_pct != null ? DP.deposit_facility_pct : D.entry.deposit_facility_pct;
+      const ukE = D.entry.short, ukM = D.mark.short, eurE = D.entry.long, eurM = D.mark.long;
+      const ukVsE = ukE.vs_bank_bp != null ? ukE.vs_bank_bp : D.entry.sonia_vs_bank_bp;
+      const ukVsM = ukM.vs_bank_bp != null ? ukM.vs_bank_bp : D.mark.sonia_vs_bank_bp;
+      const eurVsE = eurE.vs_deposit_bp != null ? eurE.vs_deposit_bp : D.entry.estr_vs_deposit_bp;
+      const eurVsM = eurM.vs_deposit_bp != null ? eurM.vs_deposit_bp : D.mark.estr_vs_deposit_bp;
+      let legsHtml = '<p class="sub" style="margin:0 0 10px">'
+        + 'BoE Bank Rate <b>'+Number(bank).toFixed(2)+'%</b>'
+        + (DP.bank_rate_as_of ? ' (as of '+DP.bank_rate_as_of+')' : '')
+        + ' · ECB deposit <b>'+Number(dep).toFixed(2)+'%</b>'
+        + (DP.deposit_facility_as_of ? ' (as of '+DP.deposit_facility_as_of+')' : '')
+        + '<br/>Relative = (SONIA Dec-26 − Bank Rate) − (ESTR Dec-26 − deposit). '
+        + 'Betting this <b>decreases</b> (further UK underperformance vs EUR vs policy). '
+        + '<a href="estr_sonia_1m_dashboard.html" style="color:#4aa8ff">Full 1M ESTR vs SONIA curves →</a></p>'
+        + '<table class="tbl"><thead><tr>'
+        + '<th>Leg</th><th>Contract</th><th>Entry %</th><th>vs policy</th><th>Mark %</th><th>vs policy</th><th>Δ implied</th>'
+        + '</tr></thead><tbody>';
+      legsHtml += '<tr><td>Short UK</td><td>'+(ukE.symbol||'JUZ26')+' Dec-26 SONIA</td>'
+        +'<td class="num">'+fmtPct(ukE.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(ukVsE)+' vs BR</td>'
+        +'<td class="num">'+fmtPct(ukM.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(ukVsM)+' vs BR</td>'
+        +'<td class="num">'+((ukM.implied_rate_pct-ukE.implied_rate_pct)*100).toFixed(1)+'</td></tr>';
+      legsHtml += '<tr><td>Long EUR</td><td>'+(eurE.symbol||'IJZ26')+' Dec-26 ESTR</td>'
+        +'<td class="num">'+fmtPct(eurE.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(eurVsE)+' vs dep</td>'
+        +'<td class="num">'+fmtPct(eurM.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(eurVsM)+' vs dep</td>'
+        +'<td class="num">'+((eurM.implied_rate_pct-eurE.implied_rate_pct)*100).toFixed(1)+'</td></tr>';
+      legsHtml += '<tr><td colspan="3"><b>Relative (UK gap − EUR gap)</b></td>'
+        +'<td class="num"><b>'+fmtBp(entryRel)+'</b></td><td></td>'
+        +'<td class="num"><b>'+fmtBp(markRel)+'</b></td>'
+        +'<td class="num"><b>'+fmtBp(entryRel!=null&&markRel!=null?entryRel-markRel:null)+'</b></td></tr>';
+      legsHtml += '<tr><td colspan="3">Absolute UK − EUR</td>'
+        +'<td class="num">'+fmtBp(D.entry.slope_bp)+'</td><td></td>'
+        +'<td class="num">'+fmtBp(D.mark.slope_bp)+'</td>'
+        +'<td class="num">'+fmtBp(pnl.slope_bp)+'</td></tr>';
+      legsHtml += '</tbody></table>';
+      if(D.view && D.view.note){
+        legsHtml += '<p class="sub" style="margin:10px 0 0">'+D.view.note+'</p>';
+      }
+      document.getElementById('legsCard').style.display='block';
+      document.getElementById('legsBody').innerHTML = legsHtml;
+    } else {
+      const legs = [
+        {side:'Long', entry:D.entry.long, mark:D.mark.long},
+        {side:'Short', entry:D.entry.short, mark:D.mark.short},
+      ];
+      let legsHtml = '<p class="sub" style="margin:0 0 10px">'+policyLbl+' '+D.bank_rate_pct+'%'
+        + (D.bank_rate_as_of ? ' (as of '+D.bank_rate_as_of+')' : '')
+        + ' · quoted spread '+fmtBp(D.entry.slope_bp)+'</p>'
+        + '<table class="tbl"><thead><tr><th>Side</th><th>Contract</th><th>Entry</th><th>vs '+policyLbl+'</th><th>Mark</th><th>vs '+policyLbl+'</th><th>Δ bp</th></tr></thead><tbody>';
+      legs.forEach(({side, entry, mark})=>{
+        const vsEntry = entry.vs_fed_bp != null ? entry.vs_fed_bp : (entry.implied_rate_pct!=null&&D.bank_rate_pct!=null?(entry.implied_rate_pct-D.bank_rate_pct)*100:null);
+        const vsMark = mark.vs_fed_bp != null ? mark.vs_fed_bp : (mark.implied_rate_pct!=null&&D.bank_rate_pct!=null?(mark.implied_rate_pct-D.bank_rate_pct)*100:null);
+        const dBp = entry && mark ? ((mark.implied_rate_pct - entry.implied_rate_pct)*100).toFixed(1) : '—';
+        legsHtml += '<tr><td>'+side+'</td><td>'+(entry.symbol||'')+' '+(entry.label||'')+'</td>'
+          +'<td class="num">'+fmtPct(entry.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(vsEntry)+'</td>'
+          +'<td class="num">'+fmtPct(mark.implied_rate_pct)+'</td><td class="num">'+fmtFedBp(vsMark)+'</td>'
+          +'<td class="num">'+dBp+'</td></tr>';
+      });
+      legsHtml += '</tbody></table>';
+      document.getElementById('legsCard').style.display='block';
+      document.getElementById('legsBody').innerHTML = legsHtml;
+    }
   }
 
   const path = D.trade_path || [];
@@ -183,35 +257,73 @@ function render(D){
     });
     document.getElementById('regimeCard').style.display='none';
   } else {
-    const slopes = path.map(r=>r.slope_bp);
-    const ds = [{label:'Spread bp',data:slopes,borderColor:'#ffb84a',pointRadius:3}];
-    ds.push({label:'Entry',data:labels.map(()=>L.entry_slope_bp),borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0});
-    if(L.stop_slope_bp!=null) ds.push({label:'Stop',data:labels.map(()=>L.stop_slope_bp),borderColor:'#ff6b6b',borderDash:[4,4],pointRadius:0});
-    if(L.take_profit_slope_bp!=null) ds.push({label:'Take profit',data:labels.map(()=>L.take_profit_slope_bp),borderColor:'#39d98a',borderDash:[4,4],pointRadius:0});
-    new Chart(document.getElementById('mainChart'), { type:'line', data:{labels,datasets:ds},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
-    });
-    new Chart(document.getElementById('secondChart'), {
-      type:'line',
-      data:{labels,datasets:[
-        {label:D.leg_labels.quoted_long,data:path.map(r=>r.quoted_long_rate),borderColor:'#39d98a'},
-        {label:D.leg_labels.quoted_short,data:path.map(r=>r.quoted_short_rate),borderColor:'#ffb84a'}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
-    });
+    const isUkEur = D.trade.market === 'sonia_estr_1m';
+    const entryRel = D.entry.relative_vs_policy_bp;
+    if(isUkEur && path.length && path[0].relative_vs_policy_bp != null){
+      const rel = path.map(r=>r.relative_vs_policy_bp);
+      const ds = [
+        {label:'Relative vs policy (bp)',data:rel,borderColor:'#c084fc',pointRadius:3,borderWidth:2},
+        {label:'Entry relative',data:labels.map(()=>entryRel),borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0},
+        {label:'Zero',data:labels.map(()=>0),borderColor:'#64748b',borderDash:[2,3],pointRadius:0,borderWidth:1},
+      ];
+      new Chart(document.getElementById('mainChart'), { type:'line', data:{labels,datasets:ds},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},
+          scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}, title:{display:true,text:'bp',color:'#93a1b5'}}}}
+      });
+      new Chart(document.getElementById('secondChart'), {
+        type:'line',
+        data:{labels,datasets:[
+          {label:'SONIA Dec-26 vs Bank Rate',data:path.map(r=>r.sonia_vs_bank_bp),borderColor:'#4aa8ff',pointRadius:2,borderWidth:2},
+          {label:'ESTR Dec-26 vs deposit',data:path.map(r=>r.estr_vs_deposit_bp),borderColor:'#ffb84a',pointRadius:2,borderWidth:2},
+          {label:'Policy (0)',data:labels.map(()=>0),borderColor:'#64748b',borderDash:[2,3],pointRadius:0,borderWidth:1},
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},
+          scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}, title:{display:true,text:'bp vs policy',color:'#93a1b5'}}}}
+      });
+      document.getElementById('pathHead').innerHTML = '<th>Date</th><th>UK %</th><th>EUR %</th><th>UK vs BR</th><th>EUR vs dep</th><th>Relative</th><th>UK−EUR</th><th>Cum $</th>';
+      const pt = document.querySelector('#pathTbl tbody');
+      [...path].reverse().forEach(r=>{
+        const c = r[cumKey] != null ? r[cumKey] : r.cum_pnl_gbp;
+        pt.innerHTML += '<tr><td>'+r.date+'</td>'
+          +'<td class="num">'+r.quoted_long_rate.toFixed(3)+'</td>'
+          +'<td class="num">'+r.quoted_short_rate.toFixed(3)+'</td>'
+          +'<td class="num">'+Number(r.sonia_vs_bank_bp).toFixed(1)+'</td>'
+          +'<td class="num">'+Number(r.estr_vs_deposit_bp).toFixed(1)+'</td>'
+          +'<td class="num">'+Number(r.relative_vs_policy_bp).toFixed(1)+'</td>'
+          +'<td class="num">'+r.slope_bp.toFixed(1)+'</td>'
+          +'<td class="num">'+fmtUsd(c)+'</td></tr>';
+      });
+    } else {
+      const slopes = path.map(r=>r.slope_bp);
+      const ds = [{label:'Spread bp',data:slopes,borderColor:'#ffb84a',pointRadius:3}];
+      ds.push({label:'Entry',data:labels.map(()=>L.entry_slope_bp),borderColor:'#4aa8ff',borderDash:[5,4],pointRadius:0});
+      if(L.stop_slope_bp!=null) ds.push({label:'Stop',data:labels.map(()=>L.stop_slope_bp),borderColor:'#ff6b6b',borderDash:[4,4],pointRadius:0});
+      if(L.take_profit_slope_bp!=null) ds.push({label:'Take profit',data:labels.map(()=>L.take_profit_slope_bp),borderColor:'#39d98a',borderDash:[4,4],pointRadius:0});
+      new Chart(document.getElementById('mainChart'), { type:'line', data:{labels,datasets:ds},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
+      });
+      new Chart(document.getElementById('secondChart'), {
+        type:'line',
+        data:{labels,datasets:[
+          {label:D.leg_labels.quoted_long,data:path.map(r=>r.quoted_long_rate),borderColor:'#39d98a'},
+          {label:D.leg_labels.quoted_short,data:path.map(r=>r.quoted_short_rate),borderColor:'#ffb84a'}
+        ]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#93a1b5'}}},scales:{x:{ticks:{color:'#93a1b5'}},y:{ticks:{color:'#93a1b5'}}}}
+      });
+      document.getElementById('pathHead').innerHTML = '<th>Date</th><th>'+D.leg_labels.quoted_short+'</th><th>'+D.leg_labels.quoted_long+'</th><th>Spread</th><th>Δ day</th><th>Cum</th>';
+      const pt = document.querySelector('#pathTbl tbody');
+      const cumFmt = isUsd ? fmtUsd : isEur ? fmtEur : fmtGbp;
+      const dayFmt = isUsd ? (v=>fmtUsd(v)) : isEur ? (v=>fmtEur(v)) : fmtGbp;
+      [...path].reverse().forEach(r=>{
+        const day = r[dailyKey] != null ? r[dailyKey] : r.daily_pnl_gbp;
+        const c = r[cumKey] != null ? r[cumKey] : r.cum_pnl_gbp;
+        pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.quoted_short_rate.toFixed(3)+'</td><td class="num">'+r.quoted_long_rate.toFixed(3)+'</td><td class="num">'+r.slope_bp.toFixed(1)+'</td><td class="num">'+dayFmt(day)+'</td><td class="num">'+cumFmt(c)+'</td></tr>';
+      });
+    }
     const rt = document.querySelector('#regimeTbl tbody');
     (D.regime_attribution||[]).forEach(r=>{
       const rgPnl = isUsd ? fmtUsd(r.pnl_usd != null ? r.pnl_usd : r.pnl_gbp) : isEur ? fmtEur(r.pnl_eur != null ? r.pnl_eur : r.pnl_gbp) : fmtGbp(r.pnl_gbp);
       rt.innerHTML += '<tr><td>'+r.label+'</td><td class="num">'+r.days+'</td><td class="num">'+fmtBp(r.pnl_slope_bp)+'</td><td class="num">'+rgPnl+'</td></tr>';
-    });
-    document.getElementById('pathHead').innerHTML = '<th>Date</th><th>'+D.leg_labels.quoted_short+'</th><th>'+D.leg_labels.quoted_long+'</th><th>Spread</th><th>Δ day</th><th>Cum</th>';
-    const pt = document.querySelector('#pathTbl tbody');
-    const cumFmt = isUsd ? fmtUsd : isEur ? fmtEur : fmtGbp;
-    const dayFmt = isUsd ? (v=>fmtUsd(v)) : isEur ? (v=>fmtEur(v)) : fmtGbp;
-    [...path].reverse().forEach(r=>{
-      const day = r[dailyKey] != null ? r[dailyKey] : r.daily_pnl_gbp;
-      const c = r[cumKey] != null ? r[cumKey] : r.cum_pnl_gbp;
-      pt.innerHTML += '<tr><td>'+r.date+'</td><td class="num">'+r.quoted_short_rate.toFixed(3)+'</td><td class="num">'+r.quoted_long_rate.toFixed(3)+'</td><td class="num">'+r.slope_bp.toFixed(1)+'</td><td class="num">'+dayFmt(day)+'</td><td class="num">'+cumFmt(c)+'</td></tr>';
     });
   }
   const unit = isUsd ? '$'+perBp+'/bp' : isEur ? '€'+perBp+'/bp' : '£'+perBp+'/bp';
