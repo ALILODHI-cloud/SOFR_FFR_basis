@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-07 10:05 UTC",
+  "generated_utc": "2026-08-07 18:12 UTC",
   "source": "Barchart EOD settles",
   "contract": "ICE 1M SONIA (JU*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -370,7 +370,6 @@
   ],
   "timeseries": {
     "dates": [
-      "2026-05-08",
       "2026-05-11",
       "2026-05-12",
       "2026-05-13",
@@ -462,30 +461,6 @@
       "2028-07"
     ],
     "rows": [
-      {
-        "date": "2026-05-08",
-        "2026-08": 3.99,
-        "2026-09": 4.06,
-        "2026-10": 4.145,
-        "2026-11": 4.24,
-        "2026-12": 4.28,
-        "2027-01": 4.295,
-        "2027-02": 4.31,
-        "2027-03": 4.33,
-        "2027-04": 4.325,
-        "2027-05": 4.32,
-        "2027-06": 4.315,
-        "2027-07": 4.305,
-        "2027-08": 4.255,
-        "2027-09": 4.24,
-        "2027-10": 4.22,
-        "2027-11": 4.19,
-        "2027-12": 4.16,
-        "2028-01": 4.135,
-        "2028-02": 4.12,
-        "2028-03": 4.11,
-        "2028-04": 4.095
-      },
       {
         "date": "2026-05-11",
         "2026-08": 4.02,
@@ -2076,8 +2051,8 @@
         "2028-07": 4.17
       }
     ],
-    "n_sessions": 64,
-    "start": "2026-05-08",
+    "n_sessions": 63,
+    "start": "2026-05-11",
     "end": "2026-08-06"
   },
   "curve_evolution": {
@@ -2103,149 +2078,11 @@
       "2028-01",
       "2028-02"
     ],
-    "n_sessions": 64,
-    "start": "2026-05-08",
+    "n_sessions": 63,
+    "start": "2026-05-11",
     "end": "2026-08-06",
     "note": "Longest common history for 19 contracts (Jun-26 \u2192 Feb-28). Back 3 contracts list later on Barchart.",
     "history": [
-      {
-        "date": "2026-05-08",
-        "points": [
-          {
-            "key": "2026-08",
-            "label": "Aug-26",
-            "symbol": "JUQ26",
-            "implied_rate_pct": 3.99,
-            "vs_bank_bp": 24.0
-          },
-          {
-            "key": "2026-09",
-            "label": "Sep-26",
-            "symbol": "JUU26",
-            "implied_rate_pct": 4.06,
-            "vs_bank_bp": 31.0
-          },
-          {
-            "key": "2026-10",
-            "label": "Oct-26",
-            "symbol": "JUV26",
-            "implied_rate_pct": 4.145,
-            "vs_bank_bp": 39.5
-          },
-          {
-            "key": "2026-11",
-            "label": "Nov-26",
-            "symbol": "JUX26",
-            "implied_rate_pct": 4.24,
-            "vs_bank_bp": 49.0
-          },
-          {
-            "key": "2026-12",
-            "label": "Dec-26",
-            "symbol": "JUZ26",
-            "implied_rate_pct": 4.28,
-            "vs_bank_bp": 53.0
-          },
-          {
-            "key": "2027-01",
-            "label": "Jan-27",
-            "symbol": "JUF27",
-            "implied_rate_pct": 4.295,
-            "vs_bank_bp": 54.5
-          },
-          {
-            "key": "2027-02",
-            "label": "Feb-27",
-            "symbol": "JUG27",
-            "implied_rate_pct": 4.31,
-            "vs_bank_bp": 56.0
-          },
-          {
-            "key": "2027-03",
-            "label": "Mar-27",
-            "symbol": "JUH27",
-            "implied_rate_pct": 4.33,
-            "vs_bank_bp": 58.0
-          },
-          {
-            "key": "2027-04",
-            "label": "Apr-27",
-            "symbol": "JUJ27",
-            "implied_rate_pct": 4.325,
-            "vs_bank_bp": 57.5
-          },
-          {
-            "key": "2027-05",
-            "label": "May-27",
-            "symbol": "JUK27",
-            "implied_rate_pct": 4.32,
-            "vs_bank_bp": 57.0
-          },
-          {
-            "key": "2027-06",
-            "label": "Jun-27",
-            "symbol": "JUM27",
-            "implied_rate_pct": 4.315,
-            "vs_bank_bp": 56.5
-          },
-          {
-            "key": "2027-07",
-            "label": "Jul-27",
-            "symbol": "JUN27",
-            "implied_rate_pct": 4.305,
-            "vs_bank_bp": 55.5
-          },
-          {
-            "key": "2027-08",
-            "label": "Aug-27",
-            "symbol": "JUQ27",
-            "implied_rate_pct": 4.255,
-            "vs_bank_bp": 50.5
-          },
-          {
-            "key": "2027-09",
-            "label": "Sep-27",
-            "symbol": "JUU27",
-            "implied_rate_pct": 4.24,
-            "vs_bank_bp": 49.0
-          },
-          {
-            "key": "2027-10",
-            "label": "Oct-27",
-            "symbol": "JUV27",
-            "implied_rate_pct": 4.22,
-            "vs_bank_bp": 47.0
-          },
-          {
-            "key": "2027-11",
-            "label": "Nov-27",
-            "symbol": "JUX27",
-            "implied_rate_pct": 4.19,
-            "vs_bank_bp": 44.0
-          },
-          {
-            "key": "2027-12",
-            "label": "Dec-27",
-            "symbol": "JUZ27",
-            "implied_rate_pct": 4.16,
-            "vs_bank_bp": 41.0
-          },
-          {
-            "key": "2028-01",
-            "label": "Jan-28",
-            "symbol": "JUF28",
-            "implied_rate_pct": 4.135,
-            "vs_bank_bp": 38.5
-          },
-          {
-            "key": "2028-02",
-            "label": "Feb-28",
-            "symbol": "JUG28",
-            "implied_rate_pct": 4.12,
-            "vs_bank_bp": 37.0
-          }
-        ]
-      },
       {
         "date": "2026-05-11",
         "points": [
@@ -10946,11 +10783,6 @@
         "label": "Dec-26",
         "rows": [
           {
-            "date": "2026-05-08",
-            "implied_rate_pct": 4.28,
-            "vs_bank_bp": 53.0
-          },
-          {
             "date": "2026-05-11",
             "implied_rate_pct": 4.34,
             "vs_bank_bp": 59.0
@@ -11271,11 +11103,6 @@
         "label": "Jun-27",
         "rows": [
           {
-            "date": "2026-05-08",
-            "implied_rate_pct": 4.315,
-            "vs_bank_bp": 56.5
-          },
-          {
             "date": "2026-05-11",
             "implied_rate_pct": 4.42,
             "vs_bank_bp": 67.0
@@ -11595,11 +11422,6 @@
       "2027-12": {
         "label": "Dec-27",
         "rows": [
-          {
-            "date": "2026-05-08",
-            "implied_rate_pct": 4.16,
-            "vs_bank_bp": 41.0
-          },
           {
             "date": "2026-05-11",
             "implied_rate_pct": 4.275,
