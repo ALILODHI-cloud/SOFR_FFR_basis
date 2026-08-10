@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-07 18:12 UTC",
+  "generated_utc": "2026-08-10 10:12 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -51,23 +51,23 @@
     "relative_vs_policy_bp": 4.5
   },
   "mark": {
-    "date": "2026-08-06",
+    "date": "2026-08-07",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-08-06",
+      "date": "2026-08-07",
       "price": 96.07,
       "implied_rate_pct": 3.93,
       "vs_bank_bp": 18.0
     },
     "long": {
       "symbol": "IJZ26",
-      "date": "2026-08-06",
+      "date": "2026-08-07",
       "price": 97.535,
       "implied_rate_pct": 2.465,
       "vs_deposit_bp": 21.5
     },
     "slope_bp": 146.5,
-    "updated_utc": "2026-08-07 18:12 UTC",
+    "updated_utc": "2026-08-10 10:12 UTC",
     "sonia_vs_bank_bp": 18.0,
     "estr_vs_deposit_bp": 21.5,
     "relative_vs_policy_bp": -3.5,
@@ -186,6 +186,19 @@
       "sonia_vs_bank_bp": 18.0,
       "estr_vs_deposit_bp": 21.5,
       "relative_vs_policy_bp": -3.5
+    },
+    {
+      "date": "2026-08-07",
+      "quoted_long_rate": 3.93,
+      "quoted_short_rate": 2.465,
+      "slope_bp": 146.5,
+      "dslope_bp": 8.0,
+      "cum_pnl_gbp": 200.0,
+      "daily_pnl_usd": 0.0,
+      "cum_pnl_usd": 200.0,
+      "sonia_vs_bank_bp": 18.0,
+      "estr_vs_deposit_bp": 21.5,
+      "relative_vs_policy_bp": -3.5
     }
   ],
   "regime_attribution": [
@@ -216,6 +229,13 @@
       "days": 1,
       "pnl_slope_bp": -0.5,
       "pnl_gbp": -12.5
+    },
+    {
+      "regime": "unchanged",
+      "label": "Unchanged",
+      "days": 1,
+      "pnl_slope_bp": 0.0,
+      "pnl_gbp": 0.0
     }
   ],
   "market_note_url": "",
