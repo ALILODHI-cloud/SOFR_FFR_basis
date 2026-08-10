@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-10 10:09 UTC",
+  "generated_utc": "2026-08-10 18:12 UTC",
   "source": "Barchart EOD settles",
   "contract": "ICE 1M ESTR (IJ* / EON)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
