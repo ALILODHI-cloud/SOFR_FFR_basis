@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-11 09:47 UTC",
+  "generated_utc": "2026-08-11 18:14 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -241,12 +241,12 @@
         2029,
         12
       ],
-      "latest_date": "2026-08-07",
-      "price": 97.245,
-      "implied_rate_pct": 2.755,
-      "vs_deposit_bp": 50.5,
-      "vs_deposit_hikes_25bp": 2.02,
-      "bp_change": -3.3
+      "latest_date": "2026-08-10",
+      "price": 97.1925,
+      "implied_rate_pct": 2.8075,
+      "vs_deposit_bp": 55.8,
+      "vs_deposit_hikes_25bp": 2.23,
+      "bp_change": 2.0
     },
     {
       "key": "2030-03",
@@ -257,11 +257,11 @@
         2030,
         3
       ],
-      "latest_date": "2026-08-07",
-      "price": 97.23,
-      "implied_rate_pct": 2.77,
-      "vs_deposit_bp": 52.0,
-      "vs_deposit_hikes_25bp": 2.08,
+      "latest_date": "2026-08-10",
+      "price": 97.1775,
+      "implied_rate_pct": 2.8225,
+      "vs_deposit_bp": 57.3,
+      "vs_deposit_hikes_25bp": 2.29,
       "bp_change": 1.5
     },
     {
@@ -278,7 +278,7 @@
       "implied_rate_pct": 2.8425,
       "vs_deposit_bp": 59.3,
       "vs_deposit_hikes_25bp": 2.37,
-      "bp_change": 7.2
+      "bp_change": 2.0
     },
     {
       "key": "2030-09",
@@ -411,7 +411,6 @@
   ],
   "timeseries": {
     "dates": [
-      "2026-05-13",
       "2026-05-14",
       "2026-05-15",
       "2026-05-18",
@@ -504,19 +503,6 @@
       "2032-06"
     ],
     "rows": [
-      {
-        "date": "2026-05-13",
-        "2029-12": 2.75,
-        "2030-03": 2.78,
-        "2030-06": 2.81,
-        "2030-09": 2.8375,
-        "2030-12": 2.86,
-        "2031-03": 2.885,
-        "2031-06": 2.905,
-        "2031-09": 2.9175,
-        "2031-12": 2.9225,
-        "2032-03": 2.9275
-      },
       {
         "date": "2026-05-14",
         "2026-06": 2.2175,
@@ -2244,6 +2230,8 @@
         "2029-03": 2.765,
         "2029-06": 2.775,
         "2029-09": 2.7875,
+        "2029-12": 2.8075,
+        "2030-03": 2.8225,
         "2030-06": 2.8425,
         "2030-09": 2.865,
         "2030-12": 2.89,
@@ -2255,8 +2243,8 @@
         "2032-06": 3.05
       }
     ],
-    "n_sessions": 64,
-    "start": "2026-05-13",
+    "n_sessions": 63,
+    "start": "2026-05-14",
     "end": "2026-08-10"
   },
   "curve_evolution": {
