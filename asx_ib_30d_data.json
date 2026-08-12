@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-12 09:58 UTC",
+  "generated_utc": "2026-08-12 18:25 UTC",
   "source": "Barchart EOD settles",
   "contract": "ASX 30-day Interbank Cash Rate (IQ* / IB)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
