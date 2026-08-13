@@ -1,302 +1,302 @@
 {
-  "fetched_utc": "2026-08-12 18:27 UTC",
+  "fetched_utc": "2026-08-13 10:12 UTC",
   "source": {
     "exchange": "ICE Futures Europe (IFEU)",
     "product": "ICE 1M SONIA Index Futures (JU*)",
     "model": "IRM 2 Margin Matrix (indicative outright / calendar spread)",
     "url": "https://www.ice.com/api/productguide/margin-rates/910/pdf",
     "product_guide_id": 910,
-    "as_of": "August 12, 2026",
+    "as_of": "August 13, 2026",
     "note": "Per-contract indicative initial margin for a 1-lot position from ICE Clearing Analytics Margin Matrix. Portfolio margin on multi-leg STIR books is typically lower than the sum of leg IM."
   },
   "outrights": {
     "Sep-26": {
       "period": "M1",
       "expiry": "Sep-26",
-      "long_im_gbp": 8352.0,
-      "short_im_gbp": 8614.0
+      "long_im_gbp": 8288.0,
+      "short_im_gbp": 8629.0
     },
     "Oct-26": {
       "period": "M2",
       "expiry": "Oct-26",
-      "long_im_gbp": 8590.0,
-      "short_im_gbp": 8853.0
+      "long_im_gbp": 8524.0,
+      "short_im_gbp": 8772.0
     },
     "Nov-26": {
       "period": "M3",
       "expiry": "Nov-26",
-      "long_im_gbp": 7973.0,
-      "short_im_gbp": 8266.0
+      "long_im_gbp": 7909.0,
+      "short_im_gbp": 8200.0
     },
     "Dec-26": {
       "period": "M4",
       "expiry": "Dec-26",
-      "long_im_gbp": 8310.0,
-      "short_im_gbp": 8835.0
+      "long_im_gbp": 8242.0,
+      "short_im_gbp": 8762.0
     },
     "Jan-27": {
       "period": "M5",
       "expiry": "Jan-27",
-      "long_im_gbp": 8030.0,
-      "short_im_gbp": 8649.0
+      "long_im_gbp": 7962.0,
+      "short_im_gbp": 8574.0
     },
     "Feb-27": {
       "period": "M6",
       "expiry": "Feb-27",
-      "long_im_gbp": 7051.0,
-      "short_im_gbp": 7639.0
+      "long_im_gbp": 6986.0,
+      "short_im_gbp": 7570.0
     },
     "Mar-27": {
       "period": "M7",
       "expiry": "Mar-27",
-      "long_im_gbp": 7571.0,
-      "short_im_gbp": 7645.0
+      "long_im_gbp": 7500.0,
+      "short_im_gbp": 7574.0
     },
     "Apr-27": {
       "period": "M8",
       "expiry": "Apr-27",
-      "long_im_gbp": 6228.0,
-      "short_im_gbp": 7126.0
+      "long_im_gbp": 6162.0,
+      "short_im_gbp": 7048.0
     },
     "May-27": {
       "period": "M9",
       "expiry": "May-27",
-      "long_im_gbp": 5629.0,
-      "short_im_gbp": 7026.0
+      "long_im_gbp": 5570.0,
+      "short_im_gbp": 6953.0
     },
     "Jun-27": {
       "period": "M10",
       "expiry": "Jun-27",
-      "long_im_gbp": 4588.0,
-      "short_im_gbp": 6234.0
+      "long_im_gbp": 4543.0,
+      "short_im_gbp": 6173.0
     },
     "Jul-27": {
       "period": "M11",
       "expiry": "Jul-27",
-      "long_im_gbp": 4601.0,
-      "short_im_gbp": 6189.0
+      "long_im_gbp": 4559.0,
+      "short_im_gbp": 6133.0
     },
     "Aug-27": {
       "period": "M12",
       "expiry": "Aug-27",
-      "long_im_gbp": 4430.0,
-      "short_im_gbp": 5691.0
+      "long_im_gbp": 4389.0,
+      "short_im_gbp": 5638.0
     },
     "Sep-27": {
       "period": "M13",
       "expiry": "Sep-27",
-      "long_im_gbp": 3811.0,
-      "short_im_gbp": 4899.0
+      "long_im_gbp": 3778.0,
+      "short_im_gbp": 4857.0
     },
     "Oct-27": {
       "period": "M14",
       "expiry": "Oct-27",
-      "long_im_gbp": 3739.0,
-      "short_im_gbp": 4873.0
+      "long_im_gbp": 3708.0,
+      "short_im_gbp": 4830.0
     },
     "Nov-27": {
       "period": "M15",
       "expiry": "Nov-27",
-      "long_im_gbp": 3521.0,
-      "short_im_gbp": 4685.0
+      "long_im_gbp": 3491.0,
+      "short_im_gbp": 4644.0
     },
     "Dec-27": {
       "period": "M16",
       "expiry": "Dec-27",
-      "long_im_gbp": 3560.0,
-      "short_im_gbp": 4719.0
+      "long_im_gbp": 3528.0,
+      "short_im_gbp": 4675.0
     },
     "Jan-28": {
       "period": "M17",
       "expiry": "Jan-28",
-      "long_im_gbp": 3468.0,
-      "short_im_gbp": 4667.0
+      "long_im_gbp": 3436.0,
+      "short_im_gbp": 4624.0
     },
     "Feb-28": {
       "period": "M18",
       "expiry": "Feb-28",
-      "long_im_gbp": 3034.0,
-      "short_im_gbp": 3953.0
+      "long_im_gbp": 3004.0,
+      "short_im_gbp": 3914.0
     },
     "Mar-28": {
       "period": "M19",
       "expiry": "Mar-28",
-      "long_im_gbp": 3134.0,
-      "short_im_gbp": 3919.0
+      "long_im_gbp": 3103.0,
+      "short_im_gbp": 3879.0
     },
     "Apr-28": {
       "period": "M20",
       "expiry": "Apr-28",
-      "long_im_gbp": 2634.0,
-      "short_im_gbp": 3216.0
+      "long_im_gbp": 2604.0,
+      "short_im_gbp": 3178.0
     },
     "May-28": {
       "period": "M21",
       "expiry": "May-28",
-      "long_im_gbp": 2369.0,
-      "short_im_gbp": 2779.0
+      "long_im_gbp": 2343.0,
+      "short_im_gbp": 2746.0
     },
     "Jun-28": {
       "period": "M22",
       "expiry": "Jun-28",
-      "long_im_gbp": 1967.0,
-      "short_im_gbp": 2540.0
+      "long_im_gbp": 1946.0,
+      "short_im_gbp": 2513.0
     },
     "Jul-28": {
       "period": "M23",
       "expiry": "Jul-28",
-      "long_im_gbp": 2010.0,
-      "short_im_gbp": 2629.0
+      "long_im_gbp": 1988.0,
+      "short_im_gbp": 2603.0
     },
     "Aug-28": {
       "period": "M24",
       "expiry": "Aug-28",
-      "long_im_gbp": 1897.0,
-      "short_im_gbp": 2194.0
+      "long_im_gbp": 1876.0,
+      "short_im_gbp": 2173.0
     },
     "Sep-28": {
       "period": "M25",
       "expiry": "Sep-28",
-      "long_im_gbp": 1547.0,
-      "short_im_gbp": 1926.0
+      "long_im_gbp": 1532.0,
+      "short_im_gbp": 1909.0
     },
     "Oct-28": {
       "period": "M26",
       "expiry": "Oct-28",
-      "long_im_gbp": 1507.0,
-      "short_im_gbp": 1803.0
+      "long_im_gbp": 1492.0,
+      "short_im_gbp": 1785.0
     },
     "Nov-28": {
       "period": "M27",
       "expiry": "Nov-28",
-      "long_im_gbp": 1403.0,
-      "short_im_gbp": 1597.0
+      "long_im_gbp": 1390.0,
+      "short_im_gbp": 1582.0
     },
     "Dec-28": {
       "period": "M28",
       "expiry": "Dec-28",
-      "long_im_gbp": 1419.0,
-      "short_im_gbp": 1553.0
+      "long_im_gbp": 1405.0,
+      "short_im_gbp": 1537.0
     },
     "Jan-29": {
       "period": "M29",
       "expiry": "Jan-29",
-      "long_im_gbp": 1354.0,
-      "short_im_gbp": 1600.0
+      "long_im_gbp": 1342.0,
+      "short_im_gbp": 1584.0
     },
     "Feb-29": {
       "period": "M30",
       "expiry": "Feb-29",
-      "long_im_gbp": 1299.0,
-      "short_im_gbp": 1436.0
+      "long_im_gbp": 1285.0,
+      "short_im_gbp": 1420.0
     },
     "Mar-29": {
       "period": "M31",
       "expiry": "Mar-29",
-      "long_im_gbp": 1359.0,
-      "short_im_gbp": 1572.0
+      "long_im_gbp": 1344.0,
+      "short_im_gbp": 1556.0
     },
     "Apr-29": {
       "period": "M32",
       "expiry": "Apr-29",
-      "long_im_gbp": 1228.0,
-      "short_im_gbp": 1357.0
+      "long_im_gbp": 1219.0,
+      "short_im_gbp": 1347.0
     },
     "May-29": {
       "period": "M33",
       "expiry": "May-29",
-      "long_im_gbp": 1052.0,
-      "short_im_gbp": 1039.0
+      "long_im_gbp": 1041.0,
+      "short_im_gbp": 1029.0
     },
     "Jun-29": {
       "period": "M34",
       "expiry": "Jun-29",
-      "long_im_gbp": 1007.0,
-      "short_im_gbp": 989.0
+      "long_im_gbp": 998.0,
+      "short_im_gbp": 978.0
     },
     "Jul-29": {
       "period": "M35",
       "expiry": "Jul-29",
-      "long_im_gbp": 1044.0,
-      "short_im_gbp": 1006.0
+      "long_im_gbp": 1033.0,
+      "short_im_gbp": 997.0
     },
     "Aug-29": {
       "period": "M36",
       "expiry": "Aug-29",
-      "long_im_gbp": 1010.0,
-      "short_im_gbp": 1007.0
+      "long_im_gbp": 1001.0,
+      "short_im_gbp": 998.0
     },
     "Sep-29": {
       "period": "M37",
       "expiry": "Sep-29",
-      "long_im_gbp": 911.0,
-      "short_im_gbp": 929.0
+      "long_im_gbp": 903.0,
+      "short_im_gbp": 920.0
     },
     "Oct-29": {
       "period": "M38",
       "expiry": "Oct-29",
-      "long_im_gbp": 928.0,
-      "short_im_gbp": 926.0
+      "long_im_gbp": 920.0,
+      "short_im_gbp": 918.0
     },
     "Nov-29": {
       "period": "M39",
       "expiry": "Nov-29",
-      "long_im_gbp": 929.0,
-      "short_im_gbp": 909.0
+      "long_im_gbp": 920.0,
+      "short_im_gbp": 900.0
     },
     "Dec-29": {
       "period": "M40",
       "expiry": "Dec-29",
-      "long_im_gbp": 1009.0,
-      "short_im_gbp": 934.0
+      "long_im_gbp": 998.0,
+      "short_im_gbp": 926.0
     },
     "Jan-30": {
       "period": "M41",
       "expiry": "Jan-30",
-      "long_im_gbp": 1046.0,
-      "short_im_gbp": 994.0
+      "long_im_gbp": 1037.0,
+      "short_im_gbp": 985.0
     },
     "Feb-30": {
       "period": "M42",
       "expiry": "Feb-30",
-      "long_im_gbp": 946.0,
-      "short_im_gbp": 908.0
+      "long_im_gbp": 938.0,
+      "short_im_gbp": 899.0
     },
     "Mar-30": {
       "period": "M43",
       "expiry": "Mar-30",
-      "long_im_gbp": 995.0,
-      "short_im_gbp": 989.0
+      "long_im_gbp": 987.0,
+      "short_im_gbp": 982.0
     },
     "Apr-30": {
       "period": "M44",
       "expiry": "Apr-30",
-      "long_im_gbp": 973.0,
-      "short_im_gbp": 887.0
+      "long_im_gbp": 964.0,
+      "short_im_gbp": 879.0
     },
     "May-30": {
       "period": "M45",
       "expiry": "May-30",
-      "long_im_gbp": 1048.0,
-      "short_im_gbp": 895.0
+      "long_im_gbp": 1037.0,
+      "short_im_gbp": 885.0
     },
     "Jun-30": {
       "period": "M46",
       "expiry": "Jun-30",
-      "long_im_gbp": 989.0,
-      "short_im_gbp": 838.0
+      "long_im_gbp": 980.0,
+      "short_im_gbp": 829.0
     },
     "Jul-30": {
       "period": "M47",
       "expiry": "Jul-30",
-      "long_im_gbp": 983.0,
-      "short_im_gbp": 902.0
+      "long_im_gbp": 974.0,
+      "short_im_gbp": 892.0
     },
     "Aug-30": {
       "period": "M48",
       "expiry": "Aug-30",
-      "long_im_gbp": 1016.0,
-      "short_im_gbp": 906.0
+      "long_im_gbp": 1005.0,
+      "short_im_gbp": 896.0
     }
   },
   "calendar_spreads": [
@@ -305,23 +305,23 @@
       "far_period": "M2",
       "near_expiry": "Sep-26",
       "far_expiry": "Oct-26",
-      "long_near_im_gbp": 1656.0,
-      "short_near_im_gbp": 2540.0
+      "long_near_im_gbp": 1747.0,
+      "short_near_im_gbp": 2619.0
     },
     {
       "near_period": "M1",
       "far_period": "M4",
       "near_expiry": "Sep-26",
       "far_expiry": "Dec-26",
-      "long_near_im_gbp": 3044.0,
-      "short_near_im_gbp": 3380.0
+      "long_near_im_gbp": 3016.0,
+      "short_near_im_gbp": 3458.0
     },
     {
       "near_period": "M1",
       "far_period": "M13",
       "near_expiry": "Sep-26",
       "far_expiry": "Sep-27",
-      "long_near_im_gbp": 5607.0,
+      "long_near_im_gbp": 5540.0,
       "short_near_im_gbp": 6073.0
     },
     {
@@ -329,184 +329,184 @@
       "far_period": "M7",
       "near_expiry": "Sep-26",
       "far_expiry": "Mar-27",
-      "long_near_im_gbp": 3027.0,
-      "short_near_im_gbp": 3500.0
+      "long_near_im_gbp": 3022.0,
+      "short_near_im_gbp": 3548.0
     },
     {
       "near_period": "M2",
       "far_period": "M8",
       "near_expiry": "Oct-26",
       "far_expiry": "Apr-27",
-      "long_near_im_gbp": 4092.0,
-      "short_near_im_gbp": 3468.0
+      "long_near_im_gbp": 4062.0,
+      "short_near_im_gbp": 3432.0
     },
     {
       "near_period": "M2",
       "far_period": "M3",
       "near_expiry": "Oct-26",
       "far_expiry": "Nov-26",
-      "long_near_im_gbp": 1718.0,
-      "short_near_im_gbp": 1684.0
+      "long_near_im_gbp": 1700.0,
+      "short_near_im_gbp": 1659.0
     },
     {
       "near_period": "M2",
       "far_period": "M5",
       "near_expiry": "Oct-26",
       "far_expiry": "Jan-27",
-      "long_near_im_gbp": 3009.0,
-      "short_near_im_gbp": 2702.0
+      "long_near_im_gbp": 2998.0,
+      "short_near_im_gbp": 2685.0
     },
     {
       "near_period": "M3",
       "far_period": "M4",
       "near_expiry": "Nov-26",
       "far_expiry": "Dec-26",
-      "long_near_im_gbp": 1532.0,
-      "short_near_im_gbp": 1424.0
+      "long_near_im_gbp": 1522.0,
+      "short_near_im_gbp": 1411.0
     },
     {
       "near_period": "M3",
       "far_period": "M6",
       "near_expiry": "Nov-26",
       "far_expiry": "Feb-27",
-      "long_near_im_gbp": 2124.0,
-      "short_near_im_gbp": 2489.0
+      "long_near_im_gbp": 2106.0,
+      "short_near_im_gbp": 2478.0
     },
     {
       "near_period": "M3",
       "far_period": "M9",
       "near_expiry": "Nov-26",
       "far_expiry": "May-27",
-      "long_near_im_gbp": 3626.0,
-      "short_near_im_gbp": 3876.0
+      "long_near_im_gbp": 3609.0,
+      "short_near_im_gbp": 3850.0
     },
     {
       "near_period": "M4",
       "far_period": "M5",
       "near_expiry": "Dec-26",
       "far_expiry": "Jan-27",
-      "long_near_im_gbp": 1227.0,
-      "short_near_im_gbp": 1315.0
+      "long_near_im_gbp": 1220.0,
+      "short_near_im_gbp": 1305.0
     },
     {
       "near_period": "M5",
       "far_period": "M6",
       "near_expiry": "Jan-27",
       "far_expiry": "Feb-27",
-      "long_near_im_gbp": 1589.0,
-      "short_near_im_gbp": 1830.0
+      "long_near_im_gbp": 1578.0,
+      "short_near_im_gbp": 1815.0
     },
     {
       "near_period": "M6",
       "far_period": "M18",
       "near_expiry": "Feb-27",
       "far_expiry": "Feb-28",
-      "long_near_im_gbp": 4158.0,
-      "short_near_im_gbp": 5051.0
+      "long_near_im_gbp": 4120.0,
+      "short_near_im_gbp": 5005.0
     },
     {
       "near_period": "M6",
       "far_period": "M7",
       "near_expiry": "Feb-27",
       "far_expiry": "Mar-27",
-      "long_near_im_gbp": 1127.0,
-      "short_near_im_gbp": 1162.0
+      "long_near_im_gbp": 1118.0,
+      "short_near_im_gbp": 1151.0
     },
     {
       "near_period": "M6",
       "far_period": "M12",
       "near_expiry": "Feb-27",
       "far_expiry": "Aug-27",
-      "long_near_im_gbp": 3901.0,
-      "short_near_im_gbp": 4131.0
+      "long_near_im_gbp": 3865.0,
+      "short_near_im_gbp": 4095.0
     },
     {
       "near_period": "M6",
       "far_period": "M9",
       "near_expiry": "Feb-27",
       "far_expiry": "May-27",
-      "long_near_im_gbp": 2287.0,
-      "short_near_im_gbp": 2512.0
+      "long_near_im_gbp": 2269.0,
+      "short_near_im_gbp": 2495.0
     },
     {
       "near_period": "M7",
       "far_period": "M8",
       "near_expiry": "Mar-27",
       "far_expiry": "Apr-27",
-      "long_near_im_gbp": 1735.0,
-      "short_near_im_gbp": 1829.0
+      "long_near_im_gbp": 1728.0,
+      "short_near_im_gbp": 1817.0
     },
     {
       "near_period": "M8",
       "far_period": "M9",
       "near_expiry": "Apr-27",
       "far_expiry": "May-27",
-      "long_near_im_gbp": 1403.0,
-      "short_near_im_gbp": 1589.0
+      "long_near_im_gbp": 1384.0,
+      "short_near_im_gbp": 1569.0
     },
     {
       "near_period": "M9",
       "far_period": "M10",
       "near_expiry": "May-27",
       "far_expiry": "Jun-27",
-      "long_near_im_gbp": 1340.0,
-      "short_near_im_gbp": 1516.0
+      "long_near_im_gbp": 1324.0,
+      "short_near_im_gbp": 1496.0
     },
     {
       "near_period": "M9",
       "far_period": "M12",
       "near_expiry": "May-27",
       "far_expiry": "Aug-27",
-      "long_near_im_gbp": 2297.0,
-      "short_near_im_gbp": 2403.0
+      "long_near_im_gbp": 2267.0,
+      "short_near_im_gbp": 2374.0
     },
     {
       "near_period": "M10",
       "far_period": "M11",
       "near_expiry": "Jun-27",
       "far_expiry": "Jul-27",
-      "long_near_im_gbp": 1247.0,
-      "short_near_im_gbp": 1121.0
+      "long_near_im_gbp": 1232.0,
+      "short_near_im_gbp": 1107.0
     },
     {
       "near_period": "M11",
       "far_period": "M12",
       "near_expiry": "Jul-27",
       "far_expiry": "Aug-27",
-      "long_near_im_gbp": 1038.0,
-      "short_near_im_gbp": 1174.0
+      "long_near_im_gbp": 1028.0,
+      "short_near_im_gbp": 1163.0
     },
     {
       "near_period": "M12",
       "far_period": "M24",
       "near_expiry": "Aug-27",
       "far_expiry": "Aug-28",
-      "long_near_im_gbp": 2724.0,
-      "short_near_im_gbp": 3415.0
+      "long_near_im_gbp": 2700.0,
+      "short_near_im_gbp": 3385.0
     },
     {
       "near_period": "M12",
       "far_period": "M18",
       "near_expiry": "Aug-27",
       "far_expiry": "Feb-28",
-      "long_near_im_gbp": 1995.0,
-      "short_near_im_gbp": 2359.0
+      "long_near_im_gbp": 1979.0,
+      "short_near_im_gbp": 2336.0
     },
     {
       "near_period": "M12",
       "far_period": "M13",
       "near_expiry": "Aug-27",
       "far_expiry": "Sep-27",
-      "long_near_im_gbp": 1140.0,
-      "short_near_im_gbp": 1107.0
+      "long_near_im_gbp": 1128.0,
+      "short_near_im_gbp": 1094.0
     },
     {
       "near_period": "M18",
       "far_period": "M24",
       "near_expiry": "Feb-28",
       "far_expiry": "Aug-28",
-      "long_near_im_gbp": 1715.0,
-      "short_near_im_gbp": 2005.0
+      "long_near_im_gbp": 1697.0,
+      "short_near_im_gbp": 1983.0
     }
   ]
 }
