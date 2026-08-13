@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2026-08-13 09:58 UTC",
+  "generated_utc": "2026-08-13 18:25 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M SOFR (SQ*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
   "fed_funds_pct": 3.625,
-  "fed_funds_as_of": "2026-08-11",
+  "fed_funds_as_of": "2026-08-12",
   "fed_funds_target_low_pct": 3.5,
   "fed_funds_target_high_pct": 3.75,
   "fed_funds_source": "NY Fed EFFR target range midpoint",
@@ -379,11 +379,11 @@
         2032,
         6
       ],
-      "latest_date": "2026-08-11",
-      "price": 95.58,
-      "implied_rate_pct": 4.42,
-      "vs_fed_bp": 79.5,
-      "vs_fed_hikes_25bp": 3.18
+      "latest_date": "2026-08-12",
+      "price": 95.575,
+      "implied_rate_pct": 4.425,
+      "vs_fed_bp": 80.0,
+      "vs_fed_hikes_25bp": 3.2
     },
     {
       "key": "2032-09",
@@ -707,9 +707,6 @@
     "rows": [
       {
         "date": "2026-05-12",
-        "2031-09": 4.115,
-        "2032-03": 4.215,
-        "2032-06": 4.26,
         "2032-09": 4.305,
         "2032-12": 4.35,
         "2033-03": 4.39,
@@ -3332,6 +3329,7 @@
         "2031-09": 4.31,
         "2031-12": 4.35,
         "2032-03": 4.39,
+        "2032-06": 4.425,
         "2033-03": 4.53,
         "2033-06": 4.56,
         "2033-09": 4.595,
@@ -9502,7 +9500,7 @@
   },
   "fomc_meeting_pricing": {
     "note": "Approximate meeting path from CME 3M SOFR futures (not Fed-dated OIS / FedWatch). Each meeting maps to the next quarterly contract after the decision as a post-meeting rate proxy. Probabilities assume 25bp steps (FedWatch-style). Standard 3M futures can span multiple meetings \u2014 use CME FedWatch or OIS for precise per-meeting pricing.",
-    "as_of": "2026-08-11",
+    "as_of": "2026-08-12",
     "fed_funds_pct": 3.625,
     "total_easing_priced_bp": 40.5,
     "next_meeting": {
