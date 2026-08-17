@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-08-14 18:14 UTC",
-  "estr_as_of": "2026-08-13",
+  "generated_utc": "2026-08-17 09:31 UTC",
+  "estr_as_of": "2026-08-14",
   "sonia_as_of": "2026-08-13",
   "deposit_facility_pct": 2.25,
   "bank_rate_pct": 3.75,
@@ -15,7 +15,7 @@
         2026,
         8
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.815,
       "implied_rate_pct": 2.185,
       "vs_deposit_bp": -6.5,
@@ -30,7 +30,7 @@
         2026,
         9
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.7,
       "implied_rate_pct": 2.3,
       "vs_deposit_bp": 5.0,
@@ -45,7 +45,7 @@
         2026,
         10
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.585,
       "implied_rate_pct": 2.415,
       "vs_deposit_bp": 16.5,
@@ -60,7 +60,7 @@
         2026,
         11
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.55,
       "implied_rate_pct": 2.45,
       "vs_deposit_bp": 20.0,
@@ -75,7 +75,7 @@
         2026,
         12
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.515,
       "implied_rate_pct": 2.485,
       "vs_deposit_bp": 23.5,
@@ -90,7 +90,7 @@
         2027,
         1
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.445,
       "implied_rate_pct": 2.555,
       "vs_deposit_bp": 30.5,
@@ -105,7 +105,7 @@
         2027,
         2
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.405,
       "implied_rate_pct": 2.595,
       "vs_deposit_bp": 34.5,
@@ -120,7 +120,7 @@
         2027,
         3
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.375,
       "implied_rate_pct": 2.625,
       "vs_deposit_bp": 37.5,
@@ -135,7 +135,7 @@
         2027,
         4
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.345,
       "implied_rate_pct": 2.655,
       "vs_deposit_bp": 40.5,
@@ -150,7 +150,7 @@
         2027,
         5
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.32,
       "implied_rate_pct": 2.68,
       "vs_deposit_bp": 43.0,
@@ -165,7 +165,7 @@
         2027,
         6
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.305,
       "implied_rate_pct": 2.695,
       "vs_deposit_bp": 44.5,
@@ -180,7 +180,7 @@
         2027,
         7
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.3,
       "implied_rate_pct": 2.7,
       "vs_deposit_bp": 45.0,
@@ -195,7 +195,7 @@
         2027,
         8
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.305,
       "implied_rate_pct": 2.695,
       "vs_deposit_bp": 44.5,
@@ -210,7 +210,7 @@
         2027,
         9
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.3,
       "implied_rate_pct": 2.7,
       "vs_deposit_bp": 45.0,
@@ -225,7 +225,7 @@
         2027,
         10
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.3,
       "implied_rate_pct": 2.7,
       "vs_deposit_bp": 45.0,
@@ -240,7 +240,7 @@
         2027,
         11
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.305,
       "implied_rate_pct": 2.695,
       "vs_deposit_bp": 44.5,
@@ -255,7 +255,7 @@
         2027,
         12
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.31,
       "implied_rate_pct": 2.69,
       "vs_deposit_bp": 44.0,
@@ -270,7 +270,7 @@
         2028,
         1
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.32,
       "implied_rate_pct": 2.68,
       "vs_deposit_bp": 43.0,
@@ -285,7 +285,7 @@
         2028,
         2
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.325,
       "implied_rate_pct": 2.675,
       "vs_deposit_bp": 42.5,
@@ -300,7 +300,7 @@
         2028,
         3
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.33,
       "implied_rate_pct": 2.67,
       "vs_deposit_bp": 42.0,
@@ -315,7 +315,7 @@
         2028,
         4
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.335,
       "implied_rate_pct": 2.665,
       "vs_deposit_bp": 41.5,
@@ -330,7 +330,7 @@
         2028,
         5
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.34,
       "implied_rate_pct": 2.66,
       "vs_deposit_bp": 41.0,
@@ -345,7 +345,7 @@
         2028,
         6
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.34,
       "implied_rate_pct": 2.66,
       "vs_deposit_bp": 41.0,
@@ -360,7 +360,7 @@
         2028,
         7
       ],
-      "latest_date": "2026-08-13",
+      "latest_date": "2026-08-14",
       "price": 97.34,
       "implied_rate_pct": 2.66,
       "vs_deposit_bp": 41.0,
@@ -766,7 +766,7 @@
       "estr_vs_policy_bp": -6.5,
       "sonia_vs_policy_bp": -2.0,
       "relative_bp": -4.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -779,7 +779,7 @@
       "estr_vs_policy_bp": 5.0,
       "sonia_vs_policy_bp": -0.5,
       "relative_bp": 5.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -792,7 +792,7 @@
       "estr_vs_policy_bp": 16.5,
       "sonia_vs_policy_bp": 3.0,
       "relative_bp": 13.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -805,7 +805,7 @@
       "estr_vs_policy_bp": 20.0,
       "sonia_vs_policy_bp": 11.5,
       "relative_bp": 8.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -818,7 +818,7 @@
       "estr_vs_policy_bp": 23.5,
       "sonia_vs_policy_bp": 19.5,
       "relative_bp": 4.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -831,7 +831,7 @@
       "estr_vs_policy_bp": 30.5,
       "sonia_vs_policy_bp": 25.0,
       "relative_bp": 5.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -844,7 +844,7 @@
       "estr_vs_policy_bp": 34.5,
       "sonia_vs_policy_bp": 30.5,
       "relative_bp": 4.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -857,7 +857,7 @@
       "estr_vs_policy_bp": 37.5,
       "sonia_vs_policy_bp": 36.0,
       "relative_bp": 1.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -870,7 +870,7 @@
       "estr_vs_policy_bp": 40.5,
       "sonia_vs_policy_bp": 40.5,
       "relative_bp": 0.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -883,7 +883,7 @@
       "estr_vs_policy_bp": 43.0,
       "sonia_vs_policy_bp": 45.0,
       "relative_bp": -2.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -896,7 +896,7 @@
       "estr_vs_policy_bp": 44.5,
       "sonia_vs_policy_bp": 47.0,
       "relative_bp": -2.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -909,7 +909,7 @@
       "estr_vs_policy_bp": 45.0,
       "sonia_vs_policy_bp": 47.5,
       "relative_bp": -2.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -922,7 +922,7 @@
       "estr_vs_policy_bp": 44.5,
       "sonia_vs_policy_bp": 48.0,
       "relative_bp": -3.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -935,7 +935,7 @@
       "estr_vs_policy_bp": 45.0,
       "sonia_vs_policy_bp": 47.5,
       "relative_bp": -2.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -948,7 +948,7 @@
       "estr_vs_policy_bp": 45.0,
       "sonia_vs_policy_bp": 48.0,
       "relative_bp": -3.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -961,7 +961,7 @@
       "estr_vs_policy_bp": 44.5,
       "sonia_vs_policy_bp": 48.5,
       "relative_bp": -4.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -974,7 +974,7 @@
       "estr_vs_policy_bp": 44.0,
       "sonia_vs_policy_bp": 49.0,
       "relative_bp": -5.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -987,7 +987,7 @@
       "estr_vs_policy_bp": 43.0,
       "sonia_vs_policy_bp": 47.5,
       "relative_bp": -4.5,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -1000,7 +1000,7 @@
       "estr_vs_policy_bp": 42.5,
       "sonia_vs_policy_bp": 46.5,
       "relative_bp": -4.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -1013,7 +1013,7 @@
       "estr_vs_policy_bp": 42.0,
       "sonia_vs_policy_bp": 46.0,
       "relative_bp": -4.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -1026,7 +1026,7 @@
       "estr_vs_policy_bp": 41.5,
       "sonia_vs_policy_bp": 44.5,
       "relative_bp": -3.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -1039,7 +1039,7 @@
       "estr_vs_policy_bp": 41.0,
       "sonia_vs_policy_bp": 44.0,
       "relative_bp": -3.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -1052,7 +1052,7 @@
       "estr_vs_policy_bp": 41.0,
       "sonia_vs_policy_bp": 44.0,
       "relative_bp": -3.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     },
     {
@@ -1065,7 +1065,7 @@
       "estr_vs_policy_bp": 41.0,
       "sonia_vs_policy_bp": 45.0,
       "relative_bp": -4.0,
-      "estr_date": "2026-08-13",
+      "estr_date": "2026-08-14",
       "sonia_date": "2026-08-13"
     }
   ],
