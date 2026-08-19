@@ -1,6 +1,6 @@
 {
-  "generated_utc": "2026-08-18 17:52 UTC",
-  "estr_as_of": "2026-08-17",
+  "generated_utc": "2026-08-19 09:23 UTC",
+  "estr_as_of": "2026-08-18",
   "sonia_as_of": "2026-08-17",
   "deposit_facility_pct": 2.25,
   "bank_rate_pct": 3.75,
@@ -15,7 +15,7 @@
         2026,
         8
       ],
-      "latest_date": "2026-08-17",
+      "latest_date": "2026-08-18",
       "price": 97.815,
       "implied_rate_pct": 2.185,
       "vs_deposit_bp": -6.5,
@@ -30,11 +30,11 @@
         2026,
         9
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.695,
-      "implied_rate_pct": 2.305,
-      "vs_deposit_bp": 5.5,
-      "vs_deposit_hikes_25bp": 0.22
+      "latest_date": "2026-08-18",
+      "price": 97.69,
+      "implied_rate_pct": 2.31,
+      "vs_deposit_bp": 6.0,
+      "vs_deposit_hikes_25bp": 0.24
     },
     {
       "key": "2026-10",
@@ -45,11 +45,11 @@
         2026,
         10
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.575,
-      "implied_rate_pct": 2.425,
-      "vs_deposit_bp": 17.5,
-      "vs_deposit_hikes_25bp": 0.7
+      "latest_date": "2026-08-18",
+      "price": 97.565,
+      "implied_rate_pct": 2.435,
+      "vs_deposit_bp": 18.5,
+      "vs_deposit_hikes_25bp": 0.74
     },
     {
       "key": "2026-11",
@@ -60,11 +60,11 @@
         2026,
         11
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.535,
-      "implied_rate_pct": 2.465,
-      "vs_deposit_bp": 21.5,
-      "vs_deposit_hikes_25bp": 0.86
+      "latest_date": "2026-08-18",
+      "price": 97.52,
+      "implied_rate_pct": 2.48,
+      "vs_deposit_bp": 23.0,
+      "vs_deposit_hikes_25bp": 0.92
     },
     {
       "key": "2026-12",
@@ -75,11 +75,11 @@
         2026,
         12
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.5,
-      "implied_rate_pct": 2.5,
-      "vs_deposit_bp": 25.0,
-      "vs_deposit_hikes_25bp": 1.0
+      "latest_date": "2026-08-18",
+      "price": 97.48,
+      "implied_rate_pct": 2.52,
+      "vs_deposit_bp": 27.0,
+      "vs_deposit_hikes_25bp": 1.08
     },
     {
       "key": "2027-01",
@@ -90,11 +90,11 @@
         2027,
         1
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.42,
-      "implied_rate_pct": 2.58,
-      "vs_deposit_bp": 33.0,
-      "vs_deposit_hikes_25bp": 1.32
+      "latest_date": "2026-08-18",
+      "price": 97.39,
+      "implied_rate_pct": 2.61,
+      "vs_deposit_bp": 36.0,
+      "vs_deposit_hikes_25bp": 1.44
     },
     {
       "key": "2027-02",
@@ -105,11 +105,11 @@
         2027,
         2
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.385,
-      "implied_rate_pct": 2.615,
-      "vs_deposit_bp": 36.5,
-      "vs_deposit_hikes_25bp": 1.46
+      "latest_date": "2026-08-18",
+      "price": 97.345,
+      "implied_rate_pct": 2.655,
+      "vs_deposit_bp": 40.5,
+      "vs_deposit_hikes_25bp": 1.62
     },
     {
       "key": "2027-03",
@@ -120,11 +120,11 @@
         2027,
         3
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.355,
-      "implied_rate_pct": 2.645,
-      "vs_deposit_bp": 39.5,
-      "vs_deposit_hikes_25bp": 1.58
+      "latest_date": "2026-08-18",
+      "price": 97.31,
+      "implied_rate_pct": 2.69,
+      "vs_deposit_bp": 44.0,
+      "vs_deposit_hikes_25bp": 1.76
     },
     {
       "key": "2027-04",
@@ -135,11 +135,11 @@
         2027,
         4
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.325,
-      "implied_rate_pct": 2.675,
-      "vs_deposit_bp": 42.5,
-      "vs_deposit_hikes_25bp": 1.7
+      "latest_date": "2026-08-18",
+      "price": 97.275,
+      "implied_rate_pct": 2.725,
+      "vs_deposit_bp": 47.5,
+      "vs_deposit_hikes_25bp": 1.9
     },
     {
       "key": "2027-05",
@@ -150,11 +150,11 @@
         2027,
         5
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.29,
-      "implied_rate_pct": 2.71,
-      "vs_deposit_bp": 46.0,
-      "vs_deposit_hikes_25bp": 1.84
+      "latest_date": "2026-08-18",
+      "price": 97.23,
+      "implied_rate_pct": 2.77,
+      "vs_deposit_bp": 52.0,
+      "vs_deposit_hikes_25bp": 2.08
     },
     {
       "key": "2027-06",
@@ -165,11 +165,11 @@
         2027,
         6
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.28,
-      "implied_rate_pct": 2.72,
-      "vs_deposit_bp": 47.0,
-      "vs_deposit_hikes_25bp": 1.88
+      "latest_date": "2026-08-18",
+      "price": 97.21,
+      "implied_rate_pct": 2.79,
+      "vs_deposit_bp": 54.0,
+      "vs_deposit_hikes_25bp": 2.16
     },
     {
       "key": "2027-07",
@@ -180,11 +180,11 @@
         2027,
         7
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.27,
-      "implied_rate_pct": 2.73,
-      "vs_deposit_bp": 48.0,
-      "vs_deposit_hikes_25bp": 1.92
+      "latest_date": "2026-08-18",
+      "price": 97.2,
+      "implied_rate_pct": 2.8,
+      "vs_deposit_bp": 55.0,
+      "vs_deposit_hikes_25bp": 2.2
     },
     {
       "key": "2027-08",
@@ -195,11 +195,11 @@
         2027,
         8
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.255,
-      "implied_rate_pct": 2.745,
-      "vs_deposit_bp": 49.5,
-      "vs_deposit_hikes_25bp": 1.98
+      "latest_date": "2026-08-18",
+      "price": 97.2,
+      "implied_rate_pct": 2.8,
+      "vs_deposit_bp": 55.0,
+      "vs_deposit_hikes_25bp": 2.2
     },
     {
       "key": "2027-09",
@@ -210,11 +210,11 @@
         2027,
         9
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.255,
-      "implied_rate_pct": 2.745,
-      "vs_deposit_bp": 49.5,
-      "vs_deposit_hikes_25bp": 1.98
+      "latest_date": "2026-08-18",
+      "price": 97.195,
+      "implied_rate_pct": 2.805,
+      "vs_deposit_bp": 55.5,
+      "vs_deposit_hikes_25bp": 2.22
     },
     {
       "key": "2027-10",
@@ -225,11 +225,11 @@
         2027,
         10
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.255,
-      "implied_rate_pct": 2.745,
-      "vs_deposit_bp": 49.5,
-      "vs_deposit_hikes_25bp": 1.98
+      "latest_date": "2026-08-18",
+      "price": 97.19,
+      "implied_rate_pct": 2.81,
+      "vs_deposit_bp": 56.0,
+      "vs_deposit_hikes_25bp": 2.24
     },
     {
       "key": "2027-11",
@@ -240,11 +240,11 @@
         2027,
         11
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.26,
-      "implied_rate_pct": 2.74,
-      "vs_deposit_bp": 49.0,
-      "vs_deposit_hikes_25bp": 1.96
+      "latest_date": "2026-08-18",
+      "price": 97.195,
+      "implied_rate_pct": 2.805,
+      "vs_deposit_bp": 55.5,
+      "vs_deposit_hikes_25bp": 2.22
     },
     {
       "key": "2027-12",
@@ -255,11 +255,11 @@
         2027,
         12
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.265,
-      "implied_rate_pct": 2.735,
-      "vs_deposit_bp": 48.5,
-      "vs_deposit_hikes_25bp": 1.94
+      "latest_date": "2026-08-18",
+      "price": 97.2,
+      "implied_rate_pct": 2.8,
+      "vs_deposit_bp": 55.0,
+      "vs_deposit_hikes_25bp": 2.2
     },
     {
       "key": "2028-01",
@@ -270,11 +270,11 @@
         2028,
         1
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.27,
-      "implied_rate_pct": 2.73,
-      "vs_deposit_bp": 48.0,
-      "vs_deposit_hikes_25bp": 1.92
+      "latest_date": "2026-08-18",
+      "price": 97.205,
+      "implied_rate_pct": 2.795,
+      "vs_deposit_bp": 54.5,
+      "vs_deposit_hikes_25bp": 2.18
     },
     {
       "key": "2028-02",
@@ -285,11 +285,11 @@
         2028,
         2
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.275,
-      "implied_rate_pct": 2.725,
-      "vs_deposit_bp": 47.5,
-      "vs_deposit_hikes_25bp": 1.9
+      "latest_date": "2026-08-18",
+      "price": 97.21,
+      "implied_rate_pct": 2.79,
+      "vs_deposit_bp": 54.0,
+      "vs_deposit_hikes_25bp": 2.16
     },
     {
       "key": "2028-03",
@@ -300,11 +300,11 @@
         2028,
         3
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.275,
-      "implied_rate_pct": 2.725,
-      "vs_deposit_bp": 47.5,
-      "vs_deposit_hikes_25bp": 1.9
+      "latest_date": "2026-08-18",
+      "price": 97.21,
+      "implied_rate_pct": 2.79,
+      "vs_deposit_bp": 54.0,
+      "vs_deposit_hikes_25bp": 2.16
     },
     {
       "key": "2028-04",
@@ -315,11 +315,11 @@
         2028,
         4
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.28,
-      "implied_rate_pct": 2.72,
-      "vs_deposit_bp": 47.0,
-      "vs_deposit_hikes_25bp": 1.88
+      "latest_date": "2026-08-18",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     },
     {
       "key": "2028-05",
@@ -330,11 +330,11 @@
         2028,
         5
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.28,
-      "implied_rate_pct": 2.72,
-      "vs_deposit_bp": 47.0,
-      "vs_deposit_hikes_25bp": 1.88
+      "latest_date": "2026-08-18",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     },
     {
       "key": "2028-06",
@@ -345,11 +345,11 @@
         2028,
         6
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.28,
-      "implied_rate_pct": 2.72,
-      "vs_deposit_bp": 47.0,
-      "vs_deposit_hikes_25bp": 1.88
+      "latest_date": "2026-08-18",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     },
     {
       "key": "2028-07",
@@ -360,11 +360,11 @@
         2028,
         7
       ],
-      "latest_date": "2026-08-17",
-      "price": 97.275,
-      "implied_rate_pct": 2.725,
-      "vs_deposit_bp": 47.5,
-      "vs_deposit_hikes_25bp": 1.9
+      "latest_date": "2026-08-18",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     }
   ],
   "sonia_contracts": [
@@ -766,7 +766,7 @@
       "estr_vs_policy_bp": -6.5,
       "sonia_vs_policy_bp": -2.0,
       "relative_bp": -4.5,
-      "estr_date": "2026-08-17",
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -774,12 +774,12 @@
       "label": "Sep-26",
       "estr_symbol": "IJU26",
       "sonia_symbol": "JUU26",
-      "estr_pct": 2.305,
+      "estr_pct": 2.31,
       "sonia_pct": 3.76,
-      "estr_vs_policy_bp": 5.5,
+      "estr_vs_policy_bp": 6.0,
       "sonia_vs_policy_bp": 1.0,
-      "relative_bp": 4.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 5.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -787,12 +787,12 @@
       "label": "Oct-26",
       "estr_symbol": "IJV26",
       "sonia_symbol": "JUV26",
-      "estr_pct": 2.425,
+      "estr_pct": 2.435,
       "sonia_pct": 3.79,
-      "estr_vs_policy_bp": 17.5,
+      "estr_vs_policy_bp": 18.5,
       "sonia_vs_policy_bp": 4.0,
-      "relative_bp": 13.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 14.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -800,12 +800,12 @@
       "label": "Nov-26",
       "estr_symbol": "IJX26",
       "sonia_symbol": "JUX26",
-      "estr_pct": 2.465,
+      "estr_pct": 2.48,
       "sonia_pct": 3.885,
-      "estr_vs_policy_bp": 21.5,
+      "estr_vs_policy_bp": 23.0,
       "sonia_vs_policy_bp": 13.5,
-      "relative_bp": 8.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": 9.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -813,12 +813,12 @@
       "label": "Dec-26",
       "estr_symbol": "IJZ26",
       "sonia_symbol": "JUZ26",
-      "estr_pct": 2.5,
+      "estr_pct": 2.52,
       "sonia_pct": 3.955,
-      "estr_vs_policy_bp": 25.0,
+      "estr_vs_policy_bp": 27.0,
       "sonia_vs_policy_bp": 20.5,
-      "relative_bp": 4.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 6.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -826,12 +826,12 @@
       "label": "Jan-27",
       "estr_symbol": "IJF27",
       "sonia_symbol": "JUF27",
-      "estr_pct": 2.58,
+      "estr_pct": 2.61,
       "sonia_pct": 4.01,
-      "estr_vs_policy_bp": 33.0,
+      "estr_vs_policy_bp": 36.0,
       "sonia_vs_policy_bp": 26.0,
-      "relative_bp": 7.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": 10.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -839,12 +839,12 @@
       "label": "Feb-27",
       "estr_symbol": "IJG27",
       "sonia_symbol": "JUG27",
-      "estr_pct": 2.615,
+      "estr_pct": 2.655,
       "sonia_pct": 4.09,
-      "estr_vs_policy_bp": 36.5,
+      "estr_vs_policy_bp": 40.5,
       "sonia_vs_policy_bp": 34.0,
-      "relative_bp": 2.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 6.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -852,12 +852,12 @@
       "label": "Mar-27",
       "estr_symbol": "IJH27",
       "sonia_symbol": "JUH27",
-      "estr_pct": 2.645,
+      "estr_pct": 2.69,
       "sonia_pct": 4.14,
-      "estr_vs_policy_bp": 39.5,
+      "estr_vs_policy_bp": 44.0,
       "sonia_vs_policy_bp": 39.0,
-      "relative_bp": 0.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 5.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -865,12 +865,12 @@
       "label": "Apr-27",
       "estr_symbol": "IJJ27",
       "sonia_symbol": "JUJ27",
-      "estr_pct": 2.675,
+      "estr_pct": 2.725,
       "sonia_pct": 4.185,
-      "estr_vs_policy_bp": 42.5,
+      "estr_vs_policy_bp": 47.5,
       "sonia_vs_policy_bp": 43.5,
-      "relative_bp": -1.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": 4.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -878,12 +878,12 @@
       "label": "May-27",
       "estr_symbol": "IJK27",
       "sonia_symbol": "JUK27",
-      "estr_pct": 2.71,
+      "estr_pct": 2.77,
       "sonia_pct": 4.24,
-      "estr_vs_policy_bp": 46.0,
+      "estr_vs_policy_bp": 52.0,
       "sonia_vs_policy_bp": 49.0,
-      "relative_bp": -3.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": 3.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -891,12 +891,12 @@
       "label": "Jun-27",
       "estr_symbol": "IJM27",
       "sonia_symbol": "JUM27",
-      "estr_pct": 2.72,
+      "estr_pct": 2.79,
       "sonia_pct": 4.255,
-      "estr_vs_policy_bp": 47.0,
+      "estr_vs_policy_bp": 54.0,
       "sonia_vs_policy_bp": 50.5,
-      "relative_bp": -3.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 3.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -904,12 +904,12 @@
       "label": "Jul-27",
       "estr_symbol": "IJN27",
       "sonia_symbol": "JUN27",
-      "estr_pct": 2.73,
+      "estr_pct": 2.8,
       "sonia_pct": 4.28,
-      "estr_vs_policy_bp": 48.0,
+      "estr_vs_policy_bp": 55.0,
       "sonia_vs_policy_bp": 53.0,
-      "relative_bp": -5.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": 2.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -917,12 +917,12 @@
       "label": "Aug-27",
       "estr_symbol": "IJQ27",
       "sonia_symbol": "JUQ27",
-      "estr_pct": 2.745,
+      "estr_pct": 2.8,
       "sonia_pct": 4.3,
-      "estr_vs_policy_bp": 49.5,
+      "estr_vs_policy_bp": 55.0,
       "sonia_vs_policy_bp": 55.0,
-      "relative_bp": -5.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 0.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -930,12 +930,12 @@
       "label": "Sep-27",
       "estr_symbol": "IJU27",
       "sonia_symbol": "JUU27",
-      "estr_pct": 2.745,
+      "estr_pct": 2.805,
       "sonia_pct": 4.3,
-      "estr_vs_policy_bp": 49.5,
+      "estr_vs_policy_bp": 55.5,
       "sonia_vs_policy_bp": 55.0,
-      "relative_bp": -5.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 0.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -943,12 +943,12 @@
       "label": "Oct-27",
       "estr_symbol": "IJV27",
       "sonia_symbol": "JUV27",
-      "estr_pct": 2.745,
+      "estr_pct": 2.81,
       "sonia_pct": 4.3,
-      "estr_vs_policy_bp": 49.5,
+      "estr_vs_policy_bp": 56.0,
       "sonia_vs_policy_bp": 55.0,
-      "relative_bp": -5.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 1.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -956,12 +956,12 @@
       "label": "Nov-27",
       "estr_symbol": "IJX27",
       "sonia_symbol": "JUX27",
-      "estr_pct": 2.74,
+      "estr_pct": 2.805,
       "sonia_pct": 4.305,
-      "estr_vs_policy_bp": 49.0,
+      "estr_vs_policy_bp": 55.5,
       "sonia_vs_policy_bp": 55.5,
-      "relative_bp": -6.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 0.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -969,12 +969,12 @@
       "label": "Dec-27",
       "estr_symbol": "IJZ27",
       "sonia_symbol": "JUZ27",
-      "estr_pct": 2.735,
+      "estr_pct": 2.8,
       "sonia_pct": 4.305,
-      "estr_vs_policy_bp": 48.5,
+      "estr_vs_policy_bp": 55.0,
       "sonia_vs_policy_bp": 55.5,
-      "relative_bp": -7.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": -0.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -982,12 +982,12 @@
       "label": "Jan-28",
       "estr_symbol": "IJF28",
       "sonia_symbol": "JUF28",
-      "estr_pct": 2.73,
+      "estr_pct": 2.795,
       "sonia_pct": 4.3,
-      "estr_vs_policy_bp": 48.0,
+      "estr_vs_policy_bp": 54.5,
       "sonia_vs_policy_bp": 55.0,
-      "relative_bp": -7.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": -0.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -995,12 +995,12 @@
       "label": "Feb-28",
       "estr_symbol": "IJG28",
       "sonia_symbol": "JUG28",
-      "estr_pct": 2.725,
+      "estr_pct": 2.79,
       "sonia_pct": 4.295,
-      "estr_vs_policy_bp": 47.5,
+      "estr_vs_policy_bp": 54.0,
       "sonia_vs_policy_bp": 54.5,
-      "relative_bp": -7.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": -0.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -1008,12 +1008,12 @@
       "label": "Mar-28",
       "estr_symbol": "IJH28",
       "sonia_symbol": "JUH28",
-      "estr_pct": 2.725,
+      "estr_pct": 2.79,
       "sonia_pct": 4.29,
-      "estr_vs_policy_bp": 47.5,
+      "estr_vs_policy_bp": 54.0,
       "sonia_vs_policy_bp": 54.0,
-      "relative_bp": -6.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 0.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -1021,12 +1021,12 @@
       "label": "Apr-28",
       "estr_symbol": "IJJ28",
       "sonia_symbol": "JUJ28",
-      "estr_pct": 2.72,
+      "estr_pct": 2.785,
       "sonia_pct": 4.285,
-      "estr_vs_policy_bp": 47.0,
+      "estr_vs_policy_bp": 53.5,
       "sonia_vs_policy_bp": 53.5,
-      "relative_bp": -6.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 0.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -1034,12 +1034,12 @@
       "label": "May-28",
       "estr_symbol": "IJK28",
       "sonia_symbol": "JUK28",
-      "estr_pct": 2.72,
+      "estr_pct": 2.785,
       "sonia_pct": 4.28,
-      "estr_vs_policy_bp": 47.0,
+      "estr_vs_policy_bp": 53.5,
       "sonia_vs_policy_bp": 53.0,
-      "relative_bp": -6.0,
-      "estr_date": "2026-08-17",
+      "relative_bp": 0.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -1047,12 +1047,12 @@
       "label": "Jun-28",
       "estr_symbol": "IJM28",
       "sonia_symbol": "JUM28",
-      "estr_pct": 2.72,
+      "estr_pct": 2.785,
       "sonia_pct": 4.275,
-      "estr_vs_policy_bp": 47.0,
+      "estr_vs_policy_bp": 53.5,
       "sonia_vs_policy_bp": 52.5,
-      "relative_bp": -5.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 1.0,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     },
     {
@@ -1060,12 +1060,12 @@
       "label": "Jul-28",
       "estr_symbol": "IJN28",
       "sonia_symbol": "JUN28",
-      "estr_pct": 2.725,
+      "estr_pct": 2.785,
       "sonia_pct": 4.27,
-      "estr_vs_policy_bp": 47.5,
+      "estr_vs_policy_bp": 53.5,
       "sonia_vs_policy_bp": 52.0,
-      "relative_bp": -4.5,
-      "estr_date": "2026-08-17",
+      "relative_bp": 1.5,
+      "estr_date": "2026-08-18",
       "sonia_date": "2026-08-17"
     }
   ],
