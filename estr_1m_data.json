@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-20 09:23 UTC",
+  "generated_utc": "2026-08-21 09:26 UTC",
   "source": "Barchart EOD settles",
   "contract": "ICE 1M ESTR (IJ* / EON)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -18,7 +18,7 @@
         2026,
         8
       ],
-      "latest_date": "2026-08-19",
+      "latest_date": "2026-08-20",
       "price": 97.8125,
       "implied_rate_pct": 2.1875,
       "vs_deposit_bp": -6.2,
@@ -33,11 +33,11 @@
         2026,
         9
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.69,
-      "implied_rate_pct": 2.31,
-      "vs_deposit_bp": 6.0,
-      "vs_deposit_hikes_25bp": 0.24
+      "latest_date": "2026-08-20",
+      "price": 97.695,
+      "implied_rate_pct": 2.305,
+      "vs_deposit_bp": 5.5,
+      "vs_deposit_hikes_25bp": 0.22
     },
     {
       "key": "2026-10",
@@ -48,11 +48,11 @@
         2026,
         10
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.57,
-      "implied_rate_pct": 2.43,
-      "vs_deposit_bp": 18.0,
-      "vs_deposit_hikes_25bp": 0.72
+      "latest_date": "2026-08-20",
+      "price": 97.575,
+      "implied_rate_pct": 2.425,
+      "vs_deposit_bp": 17.5,
+      "vs_deposit_hikes_25bp": 0.7
     },
     {
       "key": "2026-11",
@@ -63,11 +63,11 @@
         2026,
         11
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.52,
-      "implied_rate_pct": 2.48,
-      "vs_deposit_bp": 23.0,
-      "vs_deposit_hikes_25bp": 0.92
+      "latest_date": "2026-08-20",
+      "price": 97.525,
+      "implied_rate_pct": 2.475,
+      "vs_deposit_bp": 22.5,
+      "vs_deposit_hikes_25bp": 0.9
     },
     {
       "key": "2026-12",
@@ -78,11 +78,11 @@
         2026,
         12
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.475,
-      "implied_rate_pct": 2.525,
-      "vs_deposit_bp": 27.5,
-      "vs_deposit_hikes_25bp": 1.1
+      "latest_date": "2026-08-20",
+      "price": 97.48,
+      "implied_rate_pct": 2.52,
+      "vs_deposit_bp": 27.0,
+      "vs_deposit_hikes_25bp": 1.08
     },
     {
       "key": "2027-01",
@@ -93,11 +93,11 @@
         2027,
         1
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.385,
-      "implied_rate_pct": 2.615,
-      "vs_deposit_bp": 36.5,
-      "vs_deposit_hikes_25bp": 1.46
+      "latest_date": "2026-08-20",
+      "price": 97.395,
+      "implied_rate_pct": 2.605,
+      "vs_deposit_bp": 35.5,
+      "vs_deposit_hikes_25bp": 1.42
     },
     {
       "key": "2027-02",
@@ -108,11 +108,11 @@
         2027,
         2
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.34,
-      "implied_rate_pct": 2.66,
-      "vs_deposit_bp": 41.0,
-      "vs_deposit_hikes_25bp": 1.64
+      "latest_date": "2026-08-20",
+      "price": 97.355,
+      "implied_rate_pct": 2.645,
+      "vs_deposit_bp": 39.5,
+      "vs_deposit_hikes_25bp": 1.58
     },
     {
       "key": "2027-03",
@@ -123,11 +123,11 @@
         2027,
         3
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.305,
-      "implied_rate_pct": 2.695,
-      "vs_deposit_bp": 44.5,
-      "vs_deposit_hikes_25bp": 1.78
+      "latest_date": "2026-08-20",
+      "price": 97.32,
+      "implied_rate_pct": 2.68,
+      "vs_deposit_bp": 43.0,
+      "vs_deposit_hikes_25bp": 1.72
     },
     {
       "key": "2027-04",
@@ -138,11 +138,11 @@
         2027,
         4
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.255,
-      "implied_rate_pct": 2.745,
-      "vs_deposit_bp": 49.5,
-      "vs_deposit_hikes_25bp": 1.98
+      "latest_date": "2026-08-20",
+      "price": 97.275,
+      "implied_rate_pct": 2.725,
+      "vs_deposit_bp": 47.5,
+      "vs_deposit_hikes_25bp": 1.9
     },
     {
       "key": "2027-05",
@@ -153,11 +153,11 @@
         2027,
         5
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.215,
-      "implied_rate_pct": 2.785,
-      "vs_deposit_bp": 53.5,
-      "vs_deposit_hikes_25bp": 2.14
+      "latest_date": "2026-08-20",
+      "price": 97.245,
+      "implied_rate_pct": 2.755,
+      "vs_deposit_bp": 50.5,
+      "vs_deposit_hikes_25bp": 2.02
     },
     {
       "key": "2027-06",
@@ -168,11 +168,11 @@
         2027,
         6
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.2,
-      "implied_rate_pct": 2.8,
-      "vs_deposit_bp": 55.0,
-      "vs_deposit_hikes_25bp": 2.2
+      "latest_date": "2026-08-20",
+      "price": 97.23,
+      "implied_rate_pct": 2.77,
+      "vs_deposit_bp": 52.0,
+      "vs_deposit_hikes_25bp": 2.08
     },
     {
       "key": "2027-07",
@@ -183,11 +183,11 @@
         2027,
         7
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.185,
-      "implied_rate_pct": 2.815,
-      "vs_deposit_bp": 56.5,
-      "vs_deposit_hikes_25bp": 2.26
+      "latest_date": "2026-08-20",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     },
     {
       "key": "2027-08",
@@ -198,11 +198,11 @@
         2027,
         8
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.17,
-      "implied_rate_pct": 2.83,
-      "vs_deposit_bp": 58.0,
-      "vs_deposit_hikes_25bp": 2.32
+      "latest_date": "2026-08-20",
+      "price": 97.195,
+      "implied_rate_pct": 2.805,
+      "vs_deposit_bp": 55.5,
+      "vs_deposit_hikes_25bp": 2.22
     },
     {
       "key": "2027-09",
@@ -213,11 +213,11 @@
         2027,
         9
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.17,
-      "implied_rate_pct": 2.83,
-      "vs_deposit_bp": 58.0,
-      "vs_deposit_hikes_25bp": 2.32
+      "latest_date": "2026-08-20",
+      "price": 97.195,
+      "implied_rate_pct": 2.805,
+      "vs_deposit_bp": 55.5,
+      "vs_deposit_hikes_25bp": 2.22
     },
     {
       "key": "2027-10",
@@ -228,11 +228,11 @@
         2027,
         10
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.165,
-      "implied_rate_pct": 2.835,
-      "vs_deposit_bp": 58.5,
-      "vs_deposit_hikes_25bp": 2.34
+      "latest_date": "2026-08-20",
+      "price": 97.195,
+      "implied_rate_pct": 2.805,
+      "vs_deposit_bp": 55.5,
+      "vs_deposit_hikes_25bp": 2.22
     },
     {
       "key": "2027-11",
@@ -243,11 +243,11 @@
         2027,
         11
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.17,
-      "implied_rate_pct": 2.83,
-      "vs_deposit_bp": 58.0,
-      "vs_deposit_hikes_25bp": 2.32
+      "latest_date": "2026-08-20",
+      "price": 97.2,
+      "implied_rate_pct": 2.8,
+      "vs_deposit_bp": 55.0,
+      "vs_deposit_hikes_25bp": 2.2
     },
     {
       "key": "2027-12",
@@ -258,11 +258,11 @@
         2027,
         12
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.175,
-      "implied_rate_pct": 2.825,
-      "vs_deposit_bp": 57.5,
-      "vs_deposit_hikes_25bp": 2.3
+      "latest_date": "2026-08-20",
+      "price": 97.205,
+      "implied_rate_pct": 2.795,
+      "vs_deposit_bp": 54.5,
+      "vs_deposit_hikes_25bp": 2.18
     },
     {
       "key": "2028-01",
@@ -273,11 +273,11 @@
         2028,
         1
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.185,
-      "implied_rate_pct": 2.815,
-      "vs_deposit_bp": 56.5,
-      "vs_deposit_hikes_25bp": 2.26
+      "latest_date": "2026-08-20",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     },
     {
       "key": "2028-02",
@@ -288,11 +288,11 @@
         2028,
         2
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.19,
-      "implied_rate_pct": 2.81,
-      "vs_deposit_bp": 56.0,
-      "vs_deposit_hikes_25bp": 2.24
+      "latest_date": "2026-08-20",
+      "price": 97.215,
+      "implied_rate_pct": 2.785,
+      "vs_deposit_bp": 53.5,
+      "vs_deposit_hikes_25bp": 2.14
     },
     {
       "key": "2028-03",
@@ -303,11 +303,11 @@
         2028,
         3
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.19,
-      "implied_rate_pct": 2.81,
-      "vs_deposit_bp": 56.0,
-      "vs_deposit_hikes_25bp": 2.24
+      "latest_date": "2026-08-20",
+      "price": 97.22,
+      "implied_rate_pct": 2.78,
+      "vs_deposit_bp": 53.0,
+      "vs_deposit_hikes_25bp": 2.12
     },
     {
       "key": "2028-04",
@@ -318,11 +318,11 @@
         2028,
         4
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.195,
-      "implied_rate_pct": 2.805,
-      "vs_deposit_bp": 55.5,
-      "vs_deposit_hikes_25bp": 2.22
+      "latest_date": "2026-08-20",
+      "price": 97.22,
+      "implied_rate_pct": 2.78,
+      "vs_deposit_bp": 53.0,
+      "vs_deposit_hikes_25bp": 2.12
     },
     {
       "key": "2028-05",
@@ -333,11 +333,11 @@
         2028,
         5
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.195,
-      "implied_rate_pct": 2.805,
-      "vs_deposit_bp": 55.5,
-      "vs_deposit_hikes_25bp": 2.22
+      "latest_date": "2026-08-20",
+      "price": 97.225,
+      "implied_rate_pct": 2.775,
+      "vs_deposit_bp": 52.5,
+      "vs_deposit_hikes_25bp": 2.1
     },
     {
       "key": "2028-06",
@@ -348,11 +348,11 @@
         2028,
         6
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.2,
-      "implied_rate_pct": 2.8,
-      "vs_deposit_bp": 55.0,
-      "vs_deposit_hikes_25bp": 2.2
+      "latest_date": "2026-08-20",
+      "price": 97.225,
+      "implied_rate_pct": 2.775,
+      "vs_deposit_bp": 52.5,
+      "vs_deposit_hikes_25bp": 2.1
     },
     {
       "key": "2028-07",
@@ -363,11 +363,11 @@
         2028,
         7
       ],
-      "latest_date": "2026-08-19",
-      "price": 97.2,
-      "implied_rate_pct": 2.8,
-      "vs_deposit_bp": 55.0,
-      "vs_deposit_hikes_25bp": 2.2
+      "latest_date": "2026-08-20",
+      "price": 97.225,
+      "implied_rate_pct": 2.775,
+      "vs_deposit_bp": 52.5,
+      "vs_deposit_hikes_25bp": 2.1
     }
   ],
   "timeseries": {
@@ -532,7 +532,8 @@
       "2026-08-14",
       "2026-08-17",
       "2026-08-18",
-      "2026-08-19"
+      "2026-08-19",
+      "2026-08-20"
     ],
     "columns": [
       "2026-08",
@@ -4315,11 +4316,38 @@
         "2028-05": 2.805,
         "2028-06": 2.8,
         "2028-07": 2.8
+      },
+      {
+        "date": "2026-08-20",
+        "2026-08": 2.1875,
+        "2026-09": 2.305,
+        "2026-10": 2.425,
+        "2026-11": 2.475,
+        "2026-12": 2.52,
+        "2027-01": 2.605,
+        "2027-02": 2.645,
+        "2027-03": 2.68,
+        "2027-04": 2.725,
+        "2027-05": 2.755,
+        "2027-06": 2.77,
+        "2027-07": 2.785,
+        "2027-08": 2.805,
+        "2027-09": 2.805,
+        "2027-10": 2.805,
+        "2027-11": 2.8,
+        "2027-12": 2.795,
+        "2028-01": 2.785,
+        "2028-02": 2.785,
+        "2028-03": 2.78,
+        "2028-04": 2.78,
+        "2028-05": 2.775,
+        "2028-06": 2.775,
+        "2028-07": 2.775
       }
     ],
-    "n_sessions": 161,
+    "n_sessions": 162,
     "start": "2026-01-02",
-    "end": "2026-08-19"
+    "end": "2026-08-20"
   },
   "curve_evolution": {
     "n_contracts": 24,
@@ -4349,11 +4377,11 @@
       "2028-06",
       "2028-07"
     ],
-    "n_sessions": 161,
+    "n_sessions": 162,
     "max_legs_on_strip": 24,
     "start": "2026-01-02",
-    "end": "2026-08-19",
-    "note": "Rolling strip evolution (YTD): 161 sessions (2026-01-02 \u2192 2026-08-19). Up to 24 contracts on latest date; back months join as they list.",
+    "end": "2026-08-20",
+    "note": "Rolling strip evolution (YTD): 162 sessions (2026-01-02 \u2192 2026-08-20). Up to 24 contracts on latest date; back months join as they list.",
     "history": [
       {
         "date": "2026-01-02",
@@ -28063,6 +28091,179 @@
             "vs_deposit_bp": 55.0
           }
         ]
+      },
+      {
+        "date": "2026-08-20",
+        "points": [
+          {
+            "key": "2026-08",
+            "label": "Aug-26",
+            "symbol": "IJQ26",
+            "implied_rate_pct": 2.1875,
+            "vs_deposit_bp": -6.2
+          },
+          {
+            "key": "2026-09",
+            "label": "Sep-26",
+            "symbol": "IJU26",
+            "implied_rate_pct": 2.305,
+            "vs_deposit_bp": 5.5
+          },
+          {
+            "key": "2026-10",
+            "label": "Oct-26",
+            "symbol": "IJV26",
+            "implied_rate_pct": 2.425,
+            "vs_deposit_bp": 17.5
+          },
+          {
+            "key": "2026-11",
+            "label": "Nov-26",
+            "symbol": "IJX26",
+            "implied_rate_pct": 2.475,
+            "vs_deposit_bp": 22.5
+          },
+          {
+            "key": "2026-12",
+            "label": "Dec-26",
+            "symbol": "IJZ26",
+            "implied_rate_pct": 2.52,
+            "vs_deposit_bp": 27.0
+          },
+          {
+            "key": "2027-01",
+            "label": "Jan-27",
+            "symbol": "IJF27",
+            "implied_rate_pct": 2.605,
+            "vs_deposit_bp": 35.5
+          },
+          {
+            "key": "2027-02",
+            "label": "Feb-27",
+            "symbol": "IJG27",
+            "implied_rate_pct": 2.645,
+            "vs_deposit_bp": 39.5
+          },
+          {
+            "key": "2027-03",
+            "label": "Mar-27",
+            "symbol": "IJH27",
+            "implied_rate_pct": 2.68,
+            "vs_deposit_bp": 43.0
+          },
+          {
+            "key": "2027-04",
+            "label": "Apr-27",
+            "symbol": "IJJ27",
+            "implied_rate_pct": 2.725,
+            "vs_deposit_bp": 47.5
+          },
+          {
+            "key": "2027-05",
+            "label": "May-27",
+            "symbol": "IJK27",
+            "implied_rate_pct": 2.755,
+            "vs_deposit_bp": 50.5
+          },
+          {
+            "key": "2027-06",
+            "label": "Jun-27",
+            "symbol": "IJM27",
+            "implied_rate_pct": 2.77,
+            "vs_deposit_bp": 52.0
+          },
+          {
+            "key": "2027-07",
+            "label": "Jul-27",
+            "symbol": "IJN27",
+            "implied_rate_pct": 2.785,
+            "vs_deposit_bp": 53.5
+          },
+          {
+            "key": "2027-08",
+            "label": "Aug-27",
+            "symbol": "IJQ27",
+            "implied_rate_pct": 2.805,
+            "vs_deposit_bp": 55.5
+          },
+          {
+            "key": "2027-09",
+            "label": "Sep-27",
+            "symbol": "IJU27",
+            "implied_rate_pct": 2.805,
+            "vs_deposit_bp": 55.5
+          },
+          {
+            "key": "2027-10",
+            "label": "Oct-27",
+            "symbol": "IJV27",
+            "implied_rate_pct": 2.805,
+            "vs_deposit_bp": 55.5
+          },
+          {
+            "key": "2027-11",
+            "label": "Nov-27",
+            "symbol": "IJX27",
+            "implied_rate_pct": 2.8,
+            "vs_deposit_bp": 55.0
+          },
+          {
+            "key": "2027-12",
+            "label": "Dec-27",
+            "symbol": "IJZ27",
+            "implied_rate_pct": 2.795,
+            "vs_deposit_bp": 54.5
+          },
+          {
+            "key": "2028-01",
+            "label": "Jan-28",
+            "symbol": "IJF28",
+            "implied_rate_pct": 2.785,
+            "vs_deposit_bp": 53.5
+          },
+          {
+            "key": "2028-02",
+            "label": "Feb-28",
+            "symbol": "IJG28",
+            "implied_rate_pct": 2.785,
+            "vs_deposit_bp": 53.5
+          },
+          {
+            "key": "2028-03",
+            "label": "Mar-28",
+            "symbol": "IJH28",
+            "implied_rate_pct": 2.78,
+            "vs_deposit_bp": 53.0
+          },
+          {
+            "key": "2028-04",
+            "label": "Apr-28",
+            "symbol": "IJJ28",
+            "implied_rate_pct": 2.78,
+            "vs_deposit_bp": 53.0
+          },
+          {
+            "key": "2028-05",
+            "label": "May-28",
+            "symbol": "IJK28",
+            "implied_rate_pct": 2.775,
+            "vs_deposit_bp": 52.5
+          },
+          {
+            "key": "2028-06",
+            "label": "Jun-28",
+            "symbol": "IJM28",
+            "implied_rate_pct": 2.775,
+            "vs_deposit_bp": 52.5
+          },
+          {
+            "key": "2028-07",
+            "label": "Jul-28",
+            "symbol": "IJN28",
+            "implied_rate_pct": 2.775,
+            "vs_deposit_bp": 52.5
+          }
+        ]
       }
     ],
     "watch_legs": {
@@ -28873,6 +29074,11 @@
             "date": "2026-08-19",
             "implied_rate_pct": 2.525,
             "vs_deposit_bp": 27.5
+          },
+          {
+            "date": "2026-08-20",
+            "implied_rate_pct": 2.52,
+            "vs_deposit_bp": 27.0
           }
         ]
       },
@@ -29683,6 +29889,11 @@
             "date": "2026-08-19",
             "implied_rate_pct": 2.8,
             "vs_deposit_bp": 55.0
+          },
+          {
+            "date": "2026-08-20",
+            "implied_rate_pct": 2.77,
+            "vs_deposit_bp": 52.0
           }
         ]
       },
@@ -30488,6 +30699,11 @@
             "date": "2026-08-19",
             "implied_rate_pct": 2.825,
             "vs_deposit_bp": 57.5
+          },
+          {
+            "date": "2026-08-20",
+            "implied_rate_pct": 2.795,
+            "vs_deposit_bp": 54.5
           }
         ]
       }
@@ -30497,7 +30713,7 @@
     "note": "Approximate meeting path from ICE 1M ESTR futures (not ECB-dated OIS / WIRP). Each meeting maps to the next month's contract as a post-decision rate proxy. Probabilities assume 25bp steps (FedWatch-style). Standard 1M futures can span multiple meetings \u2014 use Bloomberg WIRP for precise per-meeting OIS pricing.",
     "as_of": "2026-07-15",
     "deposit_facility_pct": 2.25,
-    "total_easing_priced_bp": 56.5,
+    "total_easing_priced_bp": 53.5,
     "next_meeting": {
       "meeting_date": "2026-07-23",
       "meeting_label": "Jul ECB",
@@ -30534,12 +30750,12 @@
         "ref_contract_key": "2026-10",
         "ref_contract_label": "Oct-26",
         "ref_symbol": "IJV26",
-        "implied_rate_pct": 2.43,
-        "cumulative_vs_deposit_bp": 18.0,
-        "incremental_bp": 24.3,
+        "implied_rate_pct": 2.425,
+        "cumulative_vs_deposit_bp": 17.5,
+        "incremental_bp": 23.7,
         "cut_pct": 0.0,
-        "hold_pct": 2.8,
-        "hike_pct": 97.2
+        "hold_pct": 5.2,
+        "hike_pct": 94.8
       },
       {
         "meeting_date": "2026-10-29",
@@ -30548,8 +30764,8 @@
         "ref_contract_key": "2026-11",
         "ref_contract_label": "Nov-26",
         "ref_symbol": "IJX26",
-        "implied_rate_pct": 2.48,
-        "cumulative_vs_deposit_bp": 23.0,
+        "implied_rate_pct": 2.475,
+        "cumulative_vs_deposit_bp": 22.5,
         "incremental_bp": 5.0,
         "cut_pct": 0.0,
         "hold_pct": 80.0,
@@ -30562,12 +30778,12 @@
         "ref_contract_key": "2027-01",
         "ref_contract_label": "Jan-27",
         "ref_symbol": "IJF27",
-        "implied_rate_pct": 2.615,
-        "cumulative_vs_deposit_bp": 36.5,
-        "incremental_bp": 13.5,
+        "implied_rate_pct": 2.605,
+        "cumulative_vs_deposit_bp": 35.5,
+        "incremental_bp": 13.0,
         "cut_pct": 0.0,
-        "hold_pct": 46.0,
-        "hike_pct": 54.0
+        "hold_pct": 48.0,
+        "hike_pct": 52.0
       },
       {
         "meeting_date": "2027-02-04",
@@ -30576,12 +30792,12 @@
         "ref_contract_key": "2027-03",
         "ref_contract_label": "Mar-27",
         "ref_symbol": "IJH27",
-        "implied_rate_pct": 2.695,
-        "cumulative_vs_deposit_bp": 44.5,
-        "incremental_bp": 8.0,
+        "implied_rate_pct": 2.68,
+        "cumulative_vs_deposit_bp": 43.0,
+        "incremental_bp": 7.5,
         "cut_pct": 0.0,
-        "hold_pct": 68.0,
-        "hike_pct": 32.0
+        "hold_pct": 70.0,
+        "hike_pct": 30.0
       },
       {
         "meeting_date": "2027-03-18",
@@ -30590,12 +30806,12 @@
         "ref_contract_key": "2027-04",
         "ref_contract_label": "Apr-27",
         "ref_symbol": "IJJ27",
-        "implied_rate_pct": 2.745,
-        "cumulative_vs_deposit_bp": 49.5,
-        "incremental_bp": 5.0,
+        "implied_rate_pct": 2.725,
+        "cumulative_vs_deposit_bp": 47.5,
+        "incremental_bp": 4.5,
         "cut_pct": 0.0,
-        "hold_pct": 80.0,
-        "hike_pct": 20.0
+        "hold_pct": 82.0,
+        "hike_pct": 18.0
       },
       {
         "meeting_date": "2027-04-29",
@@ -30604,12 +30820,12 @@
         "ref_contract_key": "2027-05",
         "ref_contract_label": "May-27",
         "ref_symbol": "IJK27",
-        "implied_rate_pct": 2.785,
-        "cumulative_vs_deposit_bp": 53.5,
-        "incremental_bp": 4.0,
+        "implied_rate_pct": 2.755,
+        "cumulative_vs_deposit_bp": 50.5,
+        "incremental_bp": 3.0,
         "cut_pct": 0.0,
-        "hold_pct": 84.0,
-        "hike_pct": 16.0
+        "hold_pct": 88.0,
+        "hike_pct": 12.0
       },
       {
         "meeting_date": "2027-06-10",
@@ -30618,8 +30834,8 @@
         "ref_contract_key": "2027-07",
         "ref_contract_label": "Jul-27",
         "ref_symbol": "IJN27",
-        "implied_rate_pct": 2.815,
-        "cumulative_vs_deposit_bp": 56.5,
+        "implied_rate_pct": 2.785,
+        "cumulative_vs_deposit_bp": 53.5,
         "incremental_bp": 3.0,
         "cut_pct": 0.0,
         "hold_pct": 88.0,
@@ -30632,12 +30848,12 @@
         "ref_contract_key": "2027-08",
         "ref_contract_label": "Aug-27",
         "ref_symbol": "IJQ27",
-        "implied_rate_pct": 2.83,
-        "cumulative_vs_deposit_bp": 58.0,
-        "incremental_bp": 1.5,
+        "implied_rate_pct": 2.805,
+        "cumulative_vs_deposit_bp": 55.5,
+        "incremental_bp": 2.0,
         "cut_pct": 0.0,
-        "hold_pct": 94.0,
-        "hike_pct": 6.0
+        "hold_pct": 92.0,
+        "hike_pct": 8.0
       },
       {
         "meeting_date": "2027-09-09",
@@ -30646,12 +30862,12 @@
         "ref_contract_key": "2027-10",
         "ref_contract_label": "Oct-27",
         "ref_symbol": "IJV27",
-        "implied_rate_pct": 2.835,
-        "cumulative_vs_deposit_bp": 58.5,
-        "incremental_bp": 0.5,
+        "implied_rate_pct": 2.805,
+        "cumulative_vs_deposit_bp": 55.5,
+        "incremental_bp": 0.0,
         "cut_pct": 0.0,
-        "hold_pct": 98.0,
-        "hike_pct": 2.0
+        "hold_pct": 100.0,
+        "hike_pct": 0.0
       },
       {
         "meeting_date": "2027-10-28",
@@ -30660,8 +30876,8 @@
         "ref_contract_key": "2027-11",
         "ref_contract_label": "Nov-27",
         "ref_symbol": "IJX27",
-        "implied_rate_pct": 2.83,
-        "cumulative_vs_deposit_bp": 58.0,
+        "implied_rate_pct": 2.8,
+        "cumulative_vs_deposit_bp": 55.0,
         "incremental_bp": -0.5,
         "cut_pct": 2.0,
         "hold_pct": 98.0,
@@ -30674,8 +30890,8 @@
         "ref_contract_key": "2028-01",
         "ref_contract_label": "Jan-28",
         "ref_symbol": "IJF28",
-        "implied_rate_pct": 2.815,
-        "cumulative_vs_deposit_bp": 56.5,
+        "implied_rate_pct": 2.785,
+        "cumulative_vs_deposit_bp": 53.5,
         "incremental_bp": -1.5,
         "cut_pct": 6.0,
         "hold_pct": 94.0,
