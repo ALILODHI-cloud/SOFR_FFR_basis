@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-25 09:31 UTC",
+  "generated_utc": "2026-08-25 17:55 UTC",
   "source": "Barchart EOD settles",
   "contract": "ASX 30-day Interbank Cash Rate (IQ* / IB)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -48,11 +48,11 @@
         2026,
         10
       ],
-      "latest_date": "2026-08-24",
-      "price": 95.63,
-      "implied_rate_pct": 4.37,
-      "vs_cash_bp": 2.0,
-      "vs_cash_hikes_25bp": 0.08
+      "latest_date": "2026-08-26",
+      "price": 95.62,
+      "implied_rate_pct": 4.38,
+      "vs_cash_bp": 3.0,
+      "vs_cash_hikes_25bp": 0.12
     },
     {
       "key": "2026-11",
@@ -446,7 +446,9 @@
       "2026-08-19",
       "2026-08-20",
       "2026-08-21",
-      "2026-08-24"
+      "2026-08-24",
+      "2026-08-25",
+      "2026-08-26"
     ],
     "columns": [
       "2026-08",
@@ -3338,11 +3340,19 @@
         "2027-11": 4.43,
         "2027-12": 4.415,
         "2028-01": 4.405
+      },
+      {
+        "date": "2026-08-25",
+        "2026-10": 4.38
+      },
+      {
+        "date": "2026-08-26",
+        "2026-10": 4.38
       }
     ],
-    "n_sessions": 165,
+    "n_sessions": 167,
     "start": "2026-01-02",
-    "end": "2026-08-24"
+    "end": "2026-08-26"
   },
   "curve_evolution": {
     "n_contracts": 18,
@@ -3366,11 +3376,11 @@
       "2027-12",
       "2028-01"
     ],
-    "n_sessions": 165,
+    "n_sessions": 167,
     "max_legs_on_strip": 18,
     "start": "2026-01-02",
-    "end": "2026-08-24",
-    "note": "Rolling strip evolution (YTD): 165 sessions (2026-01-02 \u2192 2026-08-24). Up to 18 contracts on latest date; back months join as they list.",
+    "end": "2026-08-26",
+    "note": "Rolling strip evolution (YTD): 167 sessions (2026-01-02 \u2192 2026-08-26). Up to 18 contracts on latest date; back months join as they list.",
     "history": [
       {
         "date": "2026-01-02",
@@ -20821,6 +20831,30 @@
             "vs_cash_bp": 5.5
           }
         ]
+      },
+      {
+        "date": "2026-08-25",
+        "points": [
+          {
+            "key": "2026-10",
+            "label": "Oct-26",
+            "symbol": "IQV26",
+            "implied_rate_pct": 4.38,
+            "vs_cash_bp": 3.0
+          }
+        ]
+      },
+      {
+        "date": "2026-08-26",
+        "points": [
+          {
+            "key": "2026-10",
+            "label": "Oct-26",
+            "symbol": "IQV26",
+            "implied_rate_pct": 4.38,
+            "vs_cash_bp": 3.0
+          }
+        ]
       }
     ],
     "watch_legs": {
@@ -22717,12 +22751,12 @@
         "ref_contract_key": "2026-10",
         "ref_contract_label": "Oct-26",
         "ref_symbol": "IQV26",
-        "implied_rate_pct": 4.37,
-        "cumulative_vs_cash_bp": 2.0,
-        "incremental_bp": 2.0,
+        "implied_rate_pct": 4.38,
+        "cumulative_vs_cash_bp": 3.0,
+        "incremental_bp": 3.0,
         "cut_pct": 0.0,
-        "hold_pct": 92.0,
-        "hike_pct": 8.0
+        "hold_pct": 88.0,
+        "hike_pct": 12.0
       },
       {
         "meeting_date": "2026-11-03",
@@ -22733,10 +22767,10 @@
         "ref_symbol": "IQZ26",
         "implied_rate_pct": 4.475,
         "cumulative_vs_cash_bp": 12.5,
-        "incremental_bp": 10.5,
+        "incremental_bp": 9.5,
         "cut_pct": 0.0,
-        "hold_pct": 58.0,
-        "hike_pct": 42.0
+        "hold_pct": 62.0,
+        "hike_pct": 38.0
       },
       {
         "meeting_date": "2026-12-08",
