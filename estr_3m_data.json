@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-08-29 01:03 UTC",
+  "generated_utc": "2026-08-31 16:26 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -411,7 +411,6 @@
   ],
   "timeseries": {
     "dates": [
-      "2026-06-02",
       "2026-06-03",
       "2026-06-04",
       "2026-06-05",
@@ -504,33 +503,6 @@
       "2032-06"
     ],
     "rows": [
-      {
-        "date": "2026-06-02",
-        "2026-06": 2.2225,
-        "2026-09": 2.465,
-        "2026-12": 2.585,
-        "2027-03": 2.6275,
-        "2027-06": 2.615,
-        "2027-09": 2.56,
-        "2027-12": 2.495,
-        "2028-03": 2.4625,
-        "2028-06": 2.4575,
-        "2028-09": 2.47,
-        "2028-12": 2.4925,
-        "2029-03": 2.52,
-        "2029-06": 2.5475,
-        "2029-09": 2.58,
-        "2029-12": 2.6125,
-        "2030-03": 2.645,
-        "2030-06": 2.6775,
-        "2030-09": 2.71,
-        "2030-12": 2.74,
-        "2031-03": 2.765,
-        "2031-06": 2.785,
-        "2031-09": 2.8,
-        "2031-12": 2.8025,
-        "2032-03": 2.805
-      },
       {
         "date": "2026-06-03",
         "2026-06": 2.23,
@@ -2285,8 +2257,8 @@
         "2032-06": 3.125
       }
     ],
-    "n_sessions": 64,
-    "start": "2026-06-02",
+    "n_sessions": 63,
+    "start": "2026-06-03",
     "end": "2026-08-28"
   },
   "curve_evolution": {
@@ -2304,93 +2276,11 @@
       "2028-09",
       "2028-12"
     ],
-    "n_sessions": 64,
-    "start": "2026-06-02",
+    "n_sessions": 63,
+    "start": "2026-06-03",
     "end": "2026-08-28",
     "note": "Longest common history for 11 contracts (through Dec-28). Far-dated contracts list later on Barchart.",
     "history": [
-      {
-        "date": "2026-06-02",
-        "points": [
-          {
-            "key": "2026-06",
-            "label": "Jun-26",
-            "symbol": "EBM26",
-            "implied_rate_pct": 2.2225,
-            "vs_deposit_bp": -2.8
-          },
-          {
-            "key": "2026-09",
-            "label": "Sep-26",
-            "symbol": "EBU26",
-            "implied_rate_pct": 2.465,
-            "vs_deposit_bp": 21.5
-          },
-          {
-            "key": "2026-12",
-            "label": "Dec-26",
-            "symbol": "EBZ26",
-            "implied_rate_pct": 2.585,
-            "vs_deposit_bp": 33.5
-          },
-          {
-            "key": "2027-03",
-            "label": "Mar-27",
-            "symbol": "EBH27",
-            "implied_rate_pct": 2.6275,
-            "vs_deposit_bp": 37.7
-          },
-          {
-            "key": "2027-06",
-            "label": "Jun-27",
-            "symbol": "EBM27",
-            "implied_rate_pct": 2.615,
-            "vs_deposit_bp": 36.5
-          },
-          {
-            "key": "2027-09",
-            "label": "Sep-27",
-            "symbol": "EBU27",
-            "implied_rate_pct": 2.56,
-            "vs_deposit_bp": 31.0
-          },
-          {
-            "key": "2027-12",
-            "label": "Dec-27",
-            "symbol": "EBZ27",
-            "implied_rate_pct": 2.495,
-            "vs_deposit_bp": 24.5
-          },
-          {
-            "key": "2028-03",
-            "label": "Mar-28",
-            "symbol": "EBH28",
-            "implied_rate_pct": 2.4625,
-            "vs_deposit_bp": 21.3
-          },
-          {
-            "key": "2028-06",
-            "label": "Jun-28",
-            "symbol": "EBM28",
-            "implied_rate_pct": 2.4575,
-            "vs_deposit_bp": 20.7
-          },
-          {
-            "key": "2028-09",
-            "label": "Sep-28",
-            "symbol": "EBU28",
-            "implied_rate_pct": 2.47,
-            "vs_deposit_bp": 22.0
-          },
-          {
-            "key": "2028-12",
-            "label": "Dec-28",
-            "symbol": "EBZ28",
-            "implied_rate_pct": 2.4925,
-            "vs_deposit_bp": 24.3
-          }
-        ]
-      },
       {
         "date": "2026-06-03",
         "points": [
