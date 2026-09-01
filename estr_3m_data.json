@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-01 13:44 UTC",
+  "generated_utc": "2026-09-01 20:00 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -257,12 +257,12 @@
         2030,
         3
       ],
-      "latest_date": "2026-08-28",
-      "price": 97.08,
-      "implied_rate_pct": 2.92,
-      "vs_deposit_bp": 67.0,
-      "vs_deposit_hikes_25bp": 2.68,
-      "bp_change": -3.0
+      "latest_date": "2026-08-31",
+      "price": 97.0325,
+      "implied_rate_pct": 2.9675,
+      "vs_deposit_bp": 71.8,
+      "vs_deposit_hikes_25bp": 2.87,
+      "bp_change": 1.7
     },
     {
       "key": "2030-06",
@@ -278,7 +278,7 @@
       "implied_rate_pct": 2.9875,
       "vs_deposit_bp": 73.7,
       "vs_deposit_hikes_25bp": 2.95,
-      "bp_change": 6.7
+      "bp_change": 2.0
     },
     {
       "key": "2030-09",
@@ -411,7 +411,6 @@
   ],
   "timeseries": {
     "dates": [
-      "2026-06-03",
       "2026-06-04",
       "2026-06-05",
       "2026-06-08",
@@ -504,18 +503,6 @@
       "2032-06"
     ],
     "rows": [
-      {
-        "date": "2026-06-03",
-        "2030-03": 2.7,
-        "2030-06": 2.7325,
-        "2030-09": 2.76,
-        "2030-12": 2.785,
-        "2031-03": 2.805,
-        "2031-06": 2.8225,
-        "2031-09": 2.8375,
-        "2031-12": 2.845,
-        "2032-03": 2.8475
-      },
       {
         "date": "2026-06-04",
         "2026-06": 2.2275,
@@ -2259,6 +2246,7 @@
         "2029-06": 2.9225,
         "2029-09": 2.935,
         "2029-12": 2.95,
+        "2030-03": 2.9675,
         "2030-06": 2.9875,
         "2030-09": 3.0075,
         "2030-12": 3.025,
@@ -2270,8 +2258,8 @@
         "2032-06": 3.17
       }
     ],
-    "n_sessions": 64,
-    "start": "2026-06-03",
+    "n_sessions": 63,
+    "start": "2026-06-04",
     "end": "2026-08-31"
   },
   "curve_evolution": {
