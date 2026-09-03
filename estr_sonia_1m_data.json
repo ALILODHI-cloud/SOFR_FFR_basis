@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-03 20:00 UTC",
+  "generated_utc": "2026-09-03 20:01 UTC",
   "estr_as_of": "2026-09-02",
   "sonia_as_of": "2026-09-02",
   "deposit_facility_pct": 2.25,
@@ -404,14 +404,6 @@
   ],
   "basis_history": {
     "2026-09": [
-      {
-        "date": "2026-06-05",
-        "estr_pct": 2.355,
-        "sonia_pct": 3.9,
-        "estr_vs_policy_bp": 10.5,
-        "sonia_vs_policy_bp": 15.0,
-        "relative_bp": -4.5
-      },
       {
         "date": "2026-06-08",
         "estr_pct": 2.37,
@@ -919,20 +911,6 @@
     ]
   },
   "curve_evolution": [
-    {
-      "date": "2026-06-05",
-      "points": [
-        {
-          "key": "2026-09",
-          "label": "Sep-26",
-          "estr_pct": 2.355,
-          "sonia_pct": 3.9,
-          "estr_vs_policy_bp": 10.5,
-          "sonia_vs_policy_bp": 15.0,
-          "relative_bp": -4.5
-        }
-      ]
-    },
     {
       "date": "2026-06-08",
       "points": [

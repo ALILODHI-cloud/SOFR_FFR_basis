@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-03 13:26 UTC",
+  "generated_utc": "2026-09-03 20:01 UTC",
   "source": "Barchart EOD settles",
   "contract": "ICE 1M SONIA (JU*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -25,7 +25,6 @@
   ],
   "timeseries": {
     "dates": [
-      "2026-06-05",
       "2026-06-08",
       "2026-06-09",
       "2026-06-10",
@@ -94,10 +93,6 @@
       "2026-09"
     ],
     "rows": [
-      {
-        "date": "2026-06-05",
-        "2026-09": 3.9
-      },
       {
         "date": "2026-06-08",
         "2026-09": 3.91
@@ -351,8 +346,8 @@
         "2026-09": 3.745
       }
     ],
-    "n_sessions": 64,
-    "start": "2026-06-05",
+    "n_sessions": 63,
+    "start": "2026-06-08",
     "end": "2026-09-02"
   },
   "curve_evolution": {
@@ -360,23 +355,11 @@
     "contract_keys": [
       "2026-09"
     ],
-    "n_sessions": 64,
-    "start": "2026-06-05",
+    "n_sessions": 63,
+    "start": "2026-06-08",
     "end": "2026-09-02",
     "note": "Longest common history for 1 contracts (Jun-26 \u2192 Feb-28). Back 3 contracts list later on Barchart.",
     "history": [
-      {
-        "date": "2026-06-05",
-        "points": [
-          {
-            "key": "2026-09",
-            "label": "Sep-26",
-            "symbol": "JUU26",
-            "implied_rate_pct": 3.9,
-            "vs_bank_bp": 15.0
-          }
-        ]
-      },
       {
         "date": "2026-06-08",
         "points": [
