@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-03 13:12 UTC",
+  "generated_utc": "2026-09-03 20:01 UTC",
   "source": "Barchart EOD settles",
   "contract": "ASX 30-day Interbank Cash Rate (IQ* / IB)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -18,7 +18,7 @@
         2026,
         9
       ],
-      "latest_date": "2026-09-02",
+      "latest_date": "2026-09-03",
       "price": 95.65,
       "implied_rate_pct": 4.35,
       "vs_cash_bp": -0.0,
@@ -198,7 +198,8 @@
       "2026-08-28",
       "2026-08-31",
       "2026-09-01",
-      "2026-09-02"
+      "2026-09-02",
+      "2026-09-03"
     ],
     "columns": [
       "2026-09"
@@ -891,22 +892,26 @@
       {
         "date": "2026-09-02",
         "2026-09": 4.35
+      },
+      {
+        "date": "2026-09-03",
+        "2026-09": 4.35
       }
     ],
-    "n_sessions": 172,
+    "n_sessions": 173,
     "start": "2026-01-02",
-    "end": "2026-09-02"
+    "end": "2026-09-03"
   },
   "curve_evolution": {
     "n_contracts": 1,
     "contract_keys": [
       "2026-09"
     ],
-    "n_sessions": 172,
+    "n_sessions": 173,
     "max_legs_on_strip": 1,
     "start": "2026-01-02",
-    "end": "2026-09-02",
-    "note": "Rolling strip evolution (YTD): 172 sessions (2026-01-02 \u2192 2026-09-02). Up to 1 contracts on latest date; back months join as they list.",
+    "end": "2026-09-03",
+    "note": "Rolling strip evolution (YTD): 173 sessions (2026-01-02 \u2192 2026-09-03). Up to 1 contracts on latest date; back months join as they list.",
     "history": [
       {
         "date": "2026-01-02",
@@ -2962,6 +2967,18 @@
       },
       {
         "date": "2026-09-02",
+        "points": [
+          {
+            "key": "2026-09",
+            "label": "Sep-26",
+            "symbol": "IQU26",
+            "implied_rate_pct": 4.35,
+            "vs_cash_bp": -0.0
+          }
+        ]
+      },
+      {
+        "date": "2026-09-03",
         "points": [
           {
             "key": "2026-09",
