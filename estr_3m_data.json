@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-03 19:58 UTC",
+  "generated_utc": "2026-09-04 12:58 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -17,17 +17,16 @@
         2026,
         9
       ],
-      "latest_date": "2026-09-02",
-      "price": 97.52,
-      "implied_rate_pct": 2.48,
-      "vs_deposit_bp": 23.0,
-      "vs_deposit_hikes_25bp": 0.92,
+      "latest_date": "2026-09-03",
+      "price": 97.5275,
+      "implied_rate_pct": 2.4725,
+      "vs_deposit_bp": 22.2,
+      "vs_deposit_hikes_25bp": 0.89,
       "bp_change": null
     }
   ],
   "timeseries": {
     "dates": [
-      "2026-06-08",
       "2026-06-09",
       "2026-06-10",
       "2026-06-11",
@@ -89,16 +88,13 @@
       "2026-08-28",
       "2026-08-31",
       "2026-09-01",
-      "2026-09-02"
+      "2026-09-02",
+      "2026-09-03"
     ],
     "columns": [
       "2026-09"
     ],
     "rows": [
-      {
-        "date": "2026-06-08",
-        "2026-09": 2.5
-      },
       {
         "date": "2026-06-09",
         "2026-09": 2.485
@@ -346,11 +342,15 @@
       {
         "date": "2026-09-02",
         "2026-09": 2.48
+      },
+      {
+        "date": "2026-09-03",
+        "2026-09": 2.4725
       }
     ],
     "n_sessions": 63,
-    "start": "2026-06-08",
-    "end": "2026-09-02"
+    "start": "2026-06-09",
+    "end": "2026-09-03"
   },
   "curve_evolution": {
     "n_contracts": 1,
@@ -358,22 +358,10 @@
       "2026-09"
     ],
     "n_sessions": 63,
-    "start": "2026-06-08",
-    "end": "2026-09-02",
+    "start": "2026-06-09",
+    "end": "2026-09-03",
     "note": "Longest common history for 1 contracts (through Dec-28). Far-dated contracts list later on Barchart.",
     "history": [
-      {
-        "date": "2026-06-08",
-        "points": [
-          {
-            "key": "2026-09",
-            "label": "Sep-26",
-            "symbol": "EBU26",
-            "implied_rate_pct": 2.5,
-            "vs_deposit_bp": 25.0
-          }
-        ]
-      },
       {
         "date": "2026-06-09",
         "points": [
@@ -1117,6 +1105,18 @@
             "vs_deposit_bp": 23.0
           }
         ]
+      },
+      {
+        "date": "2026-09-03",
+        "points": [
+          {
+            "key": "2026-09",
+            "label": "Sep-26",
+            "symbol": "EBU26",
+            "implied_rate_pct": 2.4725,
+            "vs_deposit_bp": 22.2
+          }
+        ]
       }
     ]
   },
@@ -1124,7 +1124,7 @@
     "note": "Approximate meeting path from CME 3M \u20acSTR futures (not ECB-dated OIS / WIRP). Each meeting maps to the next quarterly contract after the decision as a post-meeting rate proxy. Probabilities assume 25bp steps. Standard 3M futures can span multiple meetings \u2014 use Bloomberg WIRP for precise per-meeting OIS pricing.",
     "as_of": "2026-07-15",
     "deposit_facility_pct": 2.25,
-    "total_easing_priced_bp": 23.0,
+    "total_easing_priced_bp": 22.3,
     "next_meeting": {
       "meeting_date": "2026-07-23",
       "meeting_label": "Jul ECB",
@@ -1132,8 +1132,8 @@
       "ref_contract_key": "2026-09",
       "ref_contract_label": "Sep-26",
       "ref_symbol": "EBU26",
-      "implied_rate_pct": 2.48,
-      "cumulative_vs_deposit_bp": 23.0,
+      "implied_rate_pct": 2.4725,
+      "cumulative_vs_deposit_bp": 22.3,
       "incremental_bp": 0.0,
       "cut_pct": 0.0,
       "hold_pct": 100.0,
@@ -1147,12 +1147,12 @@
         "ref_contract_key": "2026-09",
         "ref_contract_label": "Sep-26",
         "ref_symbol": "EBU26",
-        "implied_rate_pct": 2.48,
-        "cumulative_vs_deposit_bp": 23.0,
-        "incremental_bp": 23.0,
+        "implied_rate_pct": 2.4725,
+        "cumulative_vs_deposit_bp": 22.3,
+        "incremental_bp": 22.3,
         "cut_pct": 0.0,
-        "hold_pct": 8.0,
-        "hike_pct": 92.0
+        "hold_pct": 10.8,
+        "hike_pct": 89.2
       },
       {
         "meeting_date": "2026-07-23",
@@ -1161,8 +1161,8 @@
         "ref_contract_key": "2026-09",
         "ref_contract_label": "Sep-26",
         "ref_symbol": "EBU26",
-        "implied_rate_pct": 2.48,
-        "cumulative_vs_deposit_bp": 23.0,
+        "implied_rate_pct": 2.4725,
+        "cumulative_vs_deposit_bp": 22.3,
         "incremental_bp": 0.0,
         "cut_pct": 0.0,
         "hold_pct": 100.0,
