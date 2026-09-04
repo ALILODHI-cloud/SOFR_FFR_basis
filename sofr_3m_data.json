@@ -1,10 +1,10 @@
 {
-  "generated_utc": "2026-09-03 13:11 UTC",
+  "generated_utc": "2026-09-04 13:04 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M SOFR (SQ*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
   "fed_funds_pct": 3.625,
-  "fed_funds_as_of": "2026-09-02",
+  "fed_funds_as_of": "2026-09-03",
   "fed_funds_target_low_pct": 3.5,
   "fed_funds_target_high_pct": 3.75,
   "fed_funds_source": "NY Fed EFFR target range midpoint",
@@ -19,16 +19,15 @@
         2026,
         12
       ],
-      "latest_date": "2026-09-02",
-      "price": 95.905,
-      "implied_rate_pct": 4.095,
-      "vs_fed_bp": 47.0,
-      "vs_fed_hikes_25bp": 1.88
+      "latest_date": "2026-09-03",
+      "price": 95.965,
+      "implied_rate_pct": 4.035,
+      "vs_fed_bp": 41.0,
+      "vs_fed_hikes_25bp": 1.64
     }
   ],
   "timeseries": {
     "dates": [
-      "2026-06-04",
       "2026-06-05",
       "2026-06-08",
       "2026-06-09",
@@ -90,16 +89,13 @@
       "2026-08-28",
       "2026-08-31",
       "2026-09-01",
-      "2026-09-02"
+      "2026-09-02",
+      "2026-09-03"
     ],
     "columns": [
       "2026-12"
     ],
     "rows": [
-      {
-        "date": "2026-06-04",
-        "2026-12": 3.855
-      },
       {
         "date": "2026-06-05",
         "2026-12": 3.96
@@ -347,11 +343,15 @@
       {
         "date": "2026-09-02",
         "2026-12": 4.095
+      },
+      {
+        "date": "2026-09-03",
+        "2026-12": 4.035
       }
     ],
     "n_sessions": 63,
-    "start": "2026-06-04",
-    "end": "2026-09-02"
+    "start": "2026-06-05",
+    "end": "2026-09-03"
   },
   "curve_evolution": {
     "n_contracts": 1,
@@ -359,22 +359,10 @@
       "2026-12"
     ],
     "n_sessions": 63,
-    "start": "2026-06-04",
-    "end": "2026-09-02",
+    "start": "2026-06-05",
+    "end": "2026-09-03",
     "note": "Longest common history for 1 contracts (through Dec-28). Far-dated contracts list later on Barchart.",
     "history": [
-      {
-        "date": "2026-06-04",
-        "points": [
-          {
-            "key": "2026-12",
-            "label": "Dec-26",
-            "symbol": "SQZ26",
-            "implied_rate_pct": 3.855,
-            "vs_fed_bp": 23.0
-          }
-        ]
-      },
       {
         "date": "2026-06-05",
         "points": [
@@ -1118,17 +1106,24 @@
             "vs_fed_bp": 47.0
           }
         ]
+      },
+      {
+        "date": "2026-09-03",
+        "points": [
+          {
+            "key": "2026-12",
+            "label": "Dec-26",
+            "symbol": "SQZ26",
+            "implied_rate_pct": 4.035,
+            "vs_fed_bp": 41.0
+          }
+        ]
       }
     ],
     "watch_legs": {
       "2026-12": {
         "label": "Dec-26",
         "rows": [
-          {
-            "date": "2026-06-04",
-            "implied_rate_pct": 3.855,
-            "vs_fed_bp": 23.0
-          },
           {
             "date": "2026-06-05",
             "implied_rate_pct": 3.96,
@@ -1438,6 +1433,11 @@
             "date": "2026-09-02",
             "implied_rate_pct": 4.095,
             "vs_fed_bp": 47.0
+          },
+          {
+            "date": "2026-09-03",
+            "implied_rate_pct": 4.035,
+            "vs_fed_bp": 41.0
           }
         ]
       }
@@ -1445,9 +1445,9 @@
   },
   "fomc_meeting_pricing": {
     "note": "Approximate meeting path from CME 3M SOFR futures (not Fed-dated OIS / FedWatch). Each meeting maps to the next quarterly contract after the decision as a post-meeting rate proxy. Probabilities assume 25bp steps (FedWatch-style). Standard 3M futures can span multiple meetings \u2014 use CME FedWatch or OIS for precise per-meeting pricing.",
-    "as_of": "2026-09-02",
+    "as_of": "2026-09-03",
     "fed_funds_pct": 3.625,
-    "total_easing_priced_bp": 47.0,
+    "total_easing_priced_bp": 41.0,
     "next_meeting": {
       "meeting_date": "2026-09-17",
       "meeting_label": "Sep FOMC",
@@ -1455,9 +1455,9 @@
       "ref_contract_key": "2026-12",
       "ref_contract_label": "Dec-26",
       "ref_symbol": "SQZ26",
-      "implied_rate_pct": 4.095,
-      "cumulative_vs_fed_bp": 47.0,
-      "incremental_bp": 47.0,
+      "implied_rate_pct": 4.035,
+      "cumulative_vs_fed_bp": 41.0,
+      "incremental_bp": 41.0,
       "cut_pct": 0.0,
       "hold_pct": 0.0,
       "hike_pct": 100.0
@@ -1470,9 +1470,9 @@
         "ref_contract_key": "2026-12",
         "ref_contract_label": "Dec-26",
         "ref_symbol": "SQZ26",
-        "implied_rate_pct": 4.095,
-        "cumulative_vs_fed_bp": 47.0,
-        "incremental_bp": 47.0,
+        "implied_rate_pct": 4.035,
+        "cumulative_vs_fed_bp": 41.0,
+        "incremental_bp": 41.0,
         "cut_pct": 0.0,
         "hold_pct": 0.0,
         "hike_pct": 100.0
@@ -1484,8 +1484,8 @@
         "ref_contract_key": "2026-12",
         "ref_contract_label": "Dec-26",
         "ref_symbol": "SQZ26",
-        "implied_rate_pct": 4.095,
-        "cumulative_vs_fed_bp": 47.0,
+        "implied_rate_pct": 4.035,
+        "cumulative_vs_fed_bp": 41.0,
         "incremental_bp": 0.0,
         "cut_pct": 0.0,
         "hold_pct": 100.0,
