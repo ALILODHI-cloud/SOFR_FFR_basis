@@ -1,7 +1,7 @@
 {
-  "generated_utc": "2026-09-03 20:01 UTC",
+  "generated_utc": "2026-09-04 13:20 UTC",
   "estr_as_of": "2026-09-02",
-  "sonia_as_of": "2026-09-02",
+  "sonia_as_of": "2026-09-03",
   "deposit_facility_pct": 2.25,
   "bank_rate_pct": 3.75,
   "unit": "bp_vs_policy",
@@ -377,7 +377,7 @@
         2026,
         9
       ],
-      "latest_date": "2026-09-02",
+      "latest_date": "2026-09-03",
       "price": 96.255,
       "implied_rate_pct": 3.745,
       "vs_bank_bp": -0.5,
@@ -399,7 +399,7 @@
       "sonia_vs_policy_bp": -0.5,
       "relative_bp": 7.0,
       "estr_date": "2026-09-02",
-      "sonia_date": "2026-09-02"
+      "sonia_date": "2026-09-03"
     }
   ],
   "basis_history": {
