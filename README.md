@@ -5,6 +5,11 @@ Analysis of the **FFR − SOFR** overnight basis (EFFR − SOFR, in bp) since SO
 "long July SOFR/FF", entry −1.0bp, target +2bp).
 
 ## Contents
+- `fred_basis.py` — focused, FRED-sourced answer to "compute the monthly average of
+  daily (EFFR − SOFR) since SOFR inception, show its distribution, and locate −1bp".
+  Pulls daily EFFR & SOFR from FRED (`fredgraph.csv`, no API key), automatically
+  falling back to the NY Fed upstream when FRED is unreachable. Writes
+  `monthly_basis_fred.csv` and `basis_distribution_fred.png` (time series + histogram).
 - `analyze.py` — pulls daily EFFR & SOFR (NY Fed reference rates / FRED-mirrored),
   computes calendar-month averages, the distribution, percentile of −1bp, autocorrelation
   (ACF/PACF), and predictive regressions (AR(1) and trailing-3-month). Writes `basis_data.json`.
@@ -22,7 +27,8 @@ Analysis of the **FFR − SOFR** overnight basis (EFFR − SOFR, in bp) since SO
 
 ## Reproduce
 ```bash
-python analyze.py        # refresh data + stats
+python fred_basis.py     # FRED data -> monthly distribution + chart + where -1bp sits
+python analyze.py        # refresh data + stats (full dashboard dataset)
 python build_app.py      # rebuild index.html
 pip3 install -r requirements-spx.txt
 python3 spx_dispersion.py # refresh SPX dispersion chart + CSV
