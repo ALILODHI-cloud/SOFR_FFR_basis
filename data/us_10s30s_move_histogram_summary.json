@@ -1,0 +1,31 @@
+{
+  "source": "Investing.com (US 10Y pair 23705, US 30Y pair 23706)",
+  "definition": "10s30s = 30Y yield \u2212 10Y yield; daily move in basis points",
+  "start": "2016-01-05",
+  "end": "2026-07-29",
+  "n_days": 2743,
+  "last_date": "2026-07-29",
+  "last_move_bp": 2.9,
+  "last_level_bp": 52.1,
+  "last_y10": 4.622,
+  "last_y30": 5.143,
+  "percentile_rank": 95.52,
+  "abs_percentile_rank": 90.34,
+  "mean_bp": -0.008,
+  "std_bp": 1.894,
+  "min_bp": -10.6,
+  "max_bp": 14.2,
+  "quantiles_bp": {
+    "p1": -5.358,
+    "p5": -2.9,
+    "p10": -2.0,
+    "p25": -1.0,
+    "p50": 0.0,
+    "p75": 1.0,
+    "p90": 2.0,
+    "p95": 2.79,
+    "p99": 5.5
+  },
+  "prior_close_date": "2026-07-28",
+  "asof_utc": "2026-07-30 01:58:45"
+}
