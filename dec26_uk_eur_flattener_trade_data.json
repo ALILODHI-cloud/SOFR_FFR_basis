@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-04 13:20 UTC",
+  "generated_utc": "2026-09-06 11:51 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -51,35 +51,35 @@
     "relative_vs_policy_bp": 4.5
   },
   "mark": {
-    "date": "2026-09-03",
+    "date": "2026-09-04",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-09-03",
-      "price": 96.035,
-      "implied_rate_pct": 3.965,
-      "vs_bank_bp": 21.5
+      "date": "2026-09-04",
+      "price": 96.055,
+      "implied_rate_pct": 3.945,
+      "vs_bank_bp": 19.5
     },
     "long": {
       "symbol": "IJZ26",
-      "date": "2026-09-03",
-      "price": 97.455,
-      "implied_rate_pct": 2.545,
-      "vs_deposit_bp": 29.5
+      "date": "2026-09-04",
+      "price": 97.465,
+      "implied_rate_pct": 2.535,
+      "vs_deposit_bp": 28.5
     },
-    "slope_bp": 142.0,
-    "updated_utc": "2026-09-04 13:20 UTC",
-    "sonia_vs_bank_bp": 21.5,
-    "estr_vs_deposit_bp": 29.5,
-    "relative_vs_policy_bp": -8.0,
-    "uk_minus_eur_bp": 142.0
+    "slope_bp": 141.0,
+    "updated_utc": "2026-09-06 11:51 UTC",
+    "sonia_vs_bank_bp": 19.5,
+    "estr_vs_deposit_bp": 28.5,
+    "relative_vs_policy_bp": -9.0,
+    "uk_minus_eur_bp": 141.0
   },
   "pnl": {
-    "slope_bp": 12.5,
-    "quoted_long_leg_bp": 0.0,
-    "quoted_short_leg_bp": 0.0,
+    "slope_bp": 13.5,
+    "quoted_long_leg_bp": -0.0,
+    "quoted_short_leg_bp": -0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 312.5,
+    "usd": 337.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -446,15 +446,28 @@
       "sonia_vs_bank_bp": 21.5,
       "estr_vs_deposit_bp": 29.5,
       "relative_vs_policy_bp": -8.0
+    },
+    {
+      "date": "2026-09-04",
+      "quoted_long_rate": 3.945,
+      "quoted_short_rate": 2.535,
+      "slope_bp": 141.0,
+      "dslope_bp": 13.5,
+      "cum_pnl_gbp": 337.5,
+      "daily_pnl_usd": 25.0,
+      "cum_pnl_usd": 337.5,
+      "sonia_vs_bank_bp": 19.5,
+      "estr_vs_deposit_bp": 28.5,
+      "relative_vs_policy_bp": -9.0
     }
   ],
   "regime_attribution": [
     {
       "regime": "bull_steepening",
       "label": "Bull steepening",
-      "days": 5,
-      "pnl_slope_bp": 11.5,
-      "pnl_gbp": 287.5
+      "days": 6,
+      "pnl_slope_bp": 12.5,
+      "pnl_gbp": 312.5
     },
     {
       "regime": "mixed_steepening",
