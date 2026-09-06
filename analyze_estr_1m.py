@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import fetch_barchart_batch
+from curve_chain import strip_symbols
 from curve_snapshot import write_snapshot
 
 DEPOSIT_FACILITY_PCT = 2.0
@@ -24,6 +25,9 @@ BARCHART_HISTORY_LIMIT = 200
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/IJ*0/futures-prices"
 PREFIX = "IJ"
+# Below this many scraped symbols the chain page is assumed challenged.
+MIN_CHAIN = 8
+SYNTH_CHAIN = 28
 
 MONTH_CODE = {
     "F": 1, "G": 2, "H": 3, "J": 4, "K": 5, "M": 6,
@@ -109,6 +113,13 @@ def discover_ij_chain() -> list[str]:
         page.wait_for_timeout(2000)
         found.update(pat.findall(page.content()))
         browser.close()
+
+    if len(found) < MIN_CHAIN:
+        print(
+            f"Chain scrape returned {len(found)} {PREFIX}* symbols "
+            f"(min {MIN_CHAIN}); adding synthesized strip"
+        )
+        found.update(strip_symbols(PREFIX, SYNTH_CHAIN))
 
     syms = sorted(found, key=lambda s: symbol_to_meta(s)["sort_key"] if symbol_to_meta(s) else (9999, 99))
     print(f"Discovered {len(syms)} {PREFIX}* 1M ESTR contracts")

@@ -16,12 +16,16 @@ ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import _parse_barchart_hist, fetch_barchart_batch, symbol_to_meta
+from curve_chain import strip_symbols
 from curve_snapshot import write_snapshot
 
 import requests
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/SQ*0/futures-prices"
 PREFIX = "SQ"
+# Below this many scraped symbols the chain page is assumed challenged.
+MIN_CHAIN = 12
+SYNTH_CHAIN = 42
 NYFED_LATEST_URL = "https://markets.newyorkfed.org/api/rates/all/latest.json"
 
 # FOMC decision dates (Wednesday announcements).
@@ -117,6 +121,13 @@ def discover_sq_chain() -> list[str]:
         page.wait_for_timeout(2000)
         found.update(pat.findall(page.content()))
         browser.close()
+
+    if len(found) < MIN_CHAIN:
+        print(
+            f"Chain scrape returned {len(found)} {PREFIX}* symbols "
+            f"(min {MIN_CHAIN}); adding synthesized strip"
+        )
+        found.update(strip_symbols(PREFIX, SYNTH_CHAIN, quarterly=True))
 
     syms = sorted(found, key=lambda s: meta(s)["sort_key"] if meta(s) else (9999, 99))
     print(f"Discovered {len(syms)} {PREFIX}* 3M SOFR contracts")
