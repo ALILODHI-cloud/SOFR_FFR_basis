@@ -5,7 +5,6 @@ Writes sonia_1m_data.json for build_sonia_1m_dashboard.py.
 """
 from __future__ import annotations
 
-import json
 import re
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -16,12 +15,17 @@ ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import _parse_barchart_hist, fetch_barchart_batch
+from curve_chain import strip_symbols
+from curve_snapshot import write_snapshot
 
 BANK_RATE_PCT = 3.75
 BANK_RATE_AS_OF = "2026-06-18"
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/JU*0/futures-prices"
 PREFIX = "JU"
+# Below this many scraped symbols the chain page is assumed challenged.
+MIN_CHAIN = 8
+SYNTH_CHAIN = 28
 
 MONTH_CODE = {
     "F": 1, "G": 2, "H": 3, "J": 4, "K": 5, "M": 6,
@@ -102,6 +106,13 @@ def discover_ju_chain() -> list[str]:
         page.wait_for_timeout(2000)
         found.update(pat.findall(page.content()))
         browser.close()
+
+    if len(found) < MIN_CHAIN:
+        print(
+            f"Chain scrape returned {len(found)} {PREFIX}* symbols "
+            f"(min {MIN_CHAIN}); adding synthesized strip"
+        )
+        found.update(strip_symbols(PREFIX, SYNTH_CHAIN))
 
     syms = sorted(found, key=lambda s: symbol_to_meta(s)["sort_key"] if symbol_to_meta(s) else (9999, 99))
     print(f"Discovered {len(syms)} {PREFIX}* 1M SONIA contracts")
@@ -330,10 +341,7 @@ def build_payload() -> dict:
 
 def main() -> None:
     payload = build_payload()
-    out = ROOT / "sonia_1m_data.json"
-    with out.open("w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2)
-    print(f"Wrote {out} ({payload['n_contracts']} contracts)")
+    write_snapshot(payload, ROOT / "sonia_1m_data.json", min_contracts=8)
 
 
 if __name__ == "__main__":

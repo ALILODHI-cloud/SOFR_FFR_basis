@@ -17,9 +17,14 @@ ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import fetch_barchart_batch
+from curve_chain import strip_symbols
+from curve_snapshot import write_snapshot
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/IQ*0/futures-prices"
 PREFIX = "IQ"
+# Below this many scraped symbols the chain page is assumed challenged.
+MIN_CHAIN = 6
+SYNTH_CHAIN = 22
 RBA_CASH_RATE_URL = "https://www.rba.gov.au/statistics/cash-rate/"
 
 MONTH_CODE = {
@@ -111,6 +116,13 @@ def discover_iq_chain() -> list[str]:
         page.wait_for_timeout(2000)
         found.update(pat.findall(page.content()))
         browser.close()
+
+    if len(found) < MIN_CHAIN:
+        print(
+            f"Chain scrape returned {len(found)} {PREFIX}* symbols "
+            f"(min {MIN_CHAIN}); adding synthesized strip"
+        )
+        found.update(strip_symbols(PREFIX, SYNTH_CHAIN))
 
     syms = sorted(found, key=lambda s: symbol_to_meta(s)["sort_key"] if symbol_to_meta(s) else (9999, 99))
     print(f"Discovered {len(syms)} {PREFIX}* ASX 30-day cash rate contracts")
@@ -394,10 +406,7 @@ def build_payload() -> dict:
 
 def main() -> None:
     payload = build_payload()
-    out = ROOT / "asx_ib_30d_data.json"
-    with out.open("w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2)
-    print(f"Wrote {out} ({payload['n_contracts']} contracts)")
+    write_snapshot(payload, ROOT / "asx_ib_30d_data.json", min_contracts=6)
 
 
 if __name__ == "__main__":
