@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import fetch_barchart_batch
+from curve_snapshot import write_snapshot
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/IQ*0/futures-prices"
 PREFIX = "IQ"
@@ -394,10 +395,7 @@ def build_payload() -> dict:
 
 def main() -> None:
     payload = build_payload()
-    out = ROOT / "asx_ib_30d_data.json"
-    with out.open("w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2)
-    print(f"Wrote {out} ({payload['n_contracts']} contracts)")
+    write_snapshot(payload, ROOT / "asx_ib_30d_data.json", min_contracts=6)
 
 
 if __name__ == "__main__":

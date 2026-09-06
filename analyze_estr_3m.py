@@ -5,7 +5,6 @@ Writes estr_3m_data.json for build_estr_3m_dashboard.py.
 """
 from __future__ import annotations
 
-import json
 import re
 from datetime import date, datetime, timezone
 from pathlib import Path
@@ -16,6 +15,7 @@ ROOT = Path(__file__).resolve().parent
 
 from analyze_sonia import UA, price_to_rate
 from analyze_stir_curves import fetch_barchart_batch, symbol_to_meta
+from curve_snapshot import write_snapshot
 from analyze_estr_1m import (
     ECB_GOVERNING_COUNCIL,
     ECB_PRICING_NOTE,
@@ -282,10 +282,7 @@ def build_payload() -> dict:
 
 def main() -> None:
     payload = build_payload()
-    out = ROOT / "estr_3m_data.json"
-    with out.open("w", encoding="utf-8") as f:
-        json.dump(payload, f, indent=2)
-    print(f"Wrote {out} ({payload['n_contracts']} contracts)")
+    write_snapshot(payload, ROOT / "estr_3m_data.json", min_contracts=8)
 
 
 if __name__ == "__main__":
