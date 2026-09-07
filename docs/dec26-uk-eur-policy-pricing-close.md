@@ -24,15 +24,15 @@ It triggered on the second session.
 
 ## Day one went the wrong way
 
-The first session after entry cost 1.5 bp on the relative and $37.50 of mark. The market went into the July MPC positioned for a hawkish split — economists polled by Reuters looked for 7–2 — and the UK leg drifted up to +33.5 bp of priced tightening while the euro leg added only 3.0 bp. That is the whole risk of putting on a near-parity convergence trade two days before a central bank meeting: there is no room, so the pre-meeting drift is immediately adverse.
+The first session after entry cost 1.5 bp on the relative and $37.50 of mark. The UK leg added 4.5 bp of priced tightening to +33.5 bp into the meeting, against 3.0 bp on the euro leg. That is the whole risk of putting on a near-parity convergence trade two days before a central bank decision: there is no room, so ordinary pre-meeting risk premium is immediately adverse.
 
-## The MPC did the work in one session
+## The MPC did the work in one session, and not through the vote
 
-The Committee voted **6–3 to maintain Bank Rate at 3.75%** at the meeting ending 29 July, announced 30 July. Megan Greene, Catherine Mann and Huw Pill preferred +25 bp to 4.00% — one dissenter more than June, but one fewer than the market had positioned for. The majority's stated reasoning was that holding, "combined with the significant tightening of financial conditions that had occurred since the conflict started, was providing sufficient insurance against the upside risks to inflation stemming from fluctuations in energy prices," and the Bank saw few signs of the Iran oil shock propagating through the domestic economy.
+The Committee voted **6–3 to maintain Bank Rate at 3.75%** at the meeting ending 29 July, announced 30 July. Megan Greene, Catherine Mann and Huw Pill preferred +25 bp to 4.00%. That was one dissenter more than June and one more than the 7–2 split economists polled by Reuters had expected, so on the vote count alone the meeting was a hawkish surprise.
 
-Bailey then removed the ambiguity at the press conference: *"I don't want you to leave this room thinking that the BOE is leaning toward raising rates — frankly, there's nothing in what I've said or what any of us have said that suggests that."*
+The front end rallied anyway, because everything around the vote was dovish. The majority's stated reasoning was that holding, "combined with the significant tightening of financial conditions that had occurred since the conflict started, was providing sufficient insurance against the upside risks to inflation stemming from fluctuations in energy prices," and the Bank saw few signs of the Iran oil shock propagating through the domestic economy. Bailey then removed the remaining ambiguity at the press conference: *"I don't want you to leave this room thinking that the BOE is leaning toward raising rates — frankly, there's nothing in what I've said or what any of us have said that suggests that."*
 
-The two-year gilt yield fell 12.3 bp to 4.34%, its largest one-day drop in more than two months, and LSEG data had tightening priced for the remainder of 2026 cut from 38 bp to 29 bp. Our leg agrees: JUZ26 went from +33.5 bp to +26.0 bp above Bank Rate, a 7.5 bp dovish repricing in a single session.
+The two-year gilt yield fell 12.3 bp to 4.34%, its largest one-day drop in more than two months, and LSEG data had tightening priced for the remainder of 2026 cut from 38 bp to 29 bp. Our leg agrees: JUZ26 went from +33.5 bp to +26.0 bp above Bank Rate, a 7.5 bp dovish repricing in a single session. An extra dissenter is worth a few basis points in the front contract; a governor explicitly disowning the hiking path is worth more, and the two did not net out anywhere near zero.
 
 The euro leg did almost nothing. €STR Dec-26 moved from +27.5 bp to +26.0 bp above the deposit rate, −1.5 bp. So 6.0 bp of the 7.5 bp of UK repricing dropped straight through to the relative, which closed at exactly parity — the first print at or below the +4 bp trigger, and it cleared it by four basis points.
 
