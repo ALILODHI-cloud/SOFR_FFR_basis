@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-06 11:51 UTC",
+  "generated_utc": "2026-09-07 08:18 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M SOFR (SQ*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -707,27 +707,6 @@
     "rows": [
       {
         "date": "2026-06-05",
-        "2026-06": 3.665,
-        "2026-09": 3.8,
-        "2026-12": 3.96,
-        "2027-03": 4.075,
-        "2027-06": 4.105,
-        "2027-09": 4.085,
-        "2027-12": 4.035,
-        "2028-03": 3.985,
-        "2028-06": 3.96,
-        "2028-09": 3.945,
-        "2028-12": 3.94,
-        "2029-03": 3.935,
-        "2029-06": 3.935,
-        "2029-09": 3.945,
-        "2029-12": 3.96,
-        "2030-03": 3.975,
-        "2030-06": 3.99,
-        "2030-09": 4.015,
-        "2030-12": 4.045,
-        "2031-03": 4.08,
-        "2031-06": 4.115,
         "2031-09": 4.15,
         "2031-12": 4.19,
         "2032-03": 4.23,
@@ -3407,93 +3386,11 @@
       "2028-09",
       "2028-12"
     ],
-    "n_sessions": 64,
-    "start": "2026-06-05",
+    "n_sessions": 63,
+    "start": "2026-06-08",
     "end": "2026-09-04",
     "note": "Longest common history for 11 contracts (through Dec-28). Far-dated contracts list later on Barchart.",
     "history": [
-      {
-        "date": "2026-06-05",
-        "points": [
-          {
-            "key": "2026-06",
-            "label": "Jun-26",
-            "symbol": "SQM26",
-            "implied_rate_pct": 3.665,
-            "vs_fed_bp": 4.0
-          },
-          {
-            "key": "2026-09",
-            "label": "Sep-26",
-            "symbol": "SQU26",
-            "implied_rate_pct": 3.8,
-            "vs_fed_bp": 17.5
-          },
-          {
-            "key": "2026-12",
-            "label": "Dec-26",
-            "symbol": "SQZ26",
-            "implied_rate_pct": 3.96,
-            "vs_fed_bp": 33.5
-          },
-          {
-            "key": "2027-03",
-            "label": "Mar-27",
-            "symbol": "SQH27",
-            "implied_rate_pct": 4.075,
-            "vs_fed_bp": 45.0
-          },
-          {
-            "key": "2027-06",
-            "label": "Jun-27",
-            "symbol": "SQM27",
-            "implied_rate_pct": 4.105,
-            "vs_fed_bp": 48.0
-          },
-          {
-            "key": "2027-09",
-            "label": "Sep-27",
-            "symbol": "SQU27",
-            "implied_rate_pct": 4.085,
-            "vs_fed_bp": 46.0
-          },
-          {
-            "key": "2027-12",
-            "label": "Dec-27",
-            "symbol": "SQZ27",
-            "implied_rate_pct": 4.035,
-            "vs_fed_bp": 41.0
-          },
-          {
-            "key": "2028-03",
-            "label": "Mar-28",
-            "symbol": "SQH28",
-            "implied_rate_pct": 3.985,
-            "vs_fed_bp": 36.0
-          },
-          {
-            "key": "2028-06",
-            "label": "Jun-28",
-            "symbol": "SQM28",
-            "implied_rate_pct": 3.96,
-            "vs_fed_bp": 33.5
-          },
-          {
-            "key": "2028-09",
-            "label": "Sep-28",
-            "symbol": "SQU28",
-            "implied_rate_pct": 3.945,
-            "vs_fed_bp": 32.0
-          },
-          {
-            "key": "2028-12",
-            "label": "Dec-28",
-            "symbol": "SQZ28",
-            "implied_rate_pct": 3.94,
-            "vs_fed_bp": 31.5
-          }
-        ]
-      },
       {
         "date": "2026-06-08",
         "points": [
@@ -8666,11 +8563,6 @@
         "label": "Dec-26",
         "rows": [
           {
-            "date": "2026-06-05",
-            "implied_rate_pct": 3.96,
-            "vs_fed_bp": 33.5
-          },
-          {
             "date": "2026-06-08",
             "implied_rate_pct": 3.965,
             "vs_fed_bp": 34.0
@@ -8991,11 +8883,6 @@
         "label": "Jun-27",
         "rows": [
           {
-            "date": "2026-06-05",
-            "implied_rate_pct": 4.105,
-            "vs_fed_bp": 48.0
-          },
-          {
             "date": "2026-06-08",
             "implied_rate_pct": 4.095,
             "vs_fed_bp": 47.0
@@ -9315,11 +9202,6 @@
       "2027-12": {
         "label": "Dec-27",
         "rows": [
-          {
-            "date": "2026-06-05",
-            "implied_rate_pct": 4.035,
-            "vs_fed_bp": 41.0
-          },
           {
             "date": "2026-06-08",
             "implied_rate_pct": 4.015,
