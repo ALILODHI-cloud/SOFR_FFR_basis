@@ -61,6 +61,43 @@
     "bank_rate_pct": 3.75,
     "deposit_facility_pct": 2.25,
     "sonia_vs_bank_bp": 29.0,
-    "estr_vs_deposit_bp": 24.5
-  }
+    "estr_vs_deposit_bp": 24.5,
+    "relative_vs_policy_bp": 4.5
+  },
+  "status": "closed",
+  "close_reason": "relative_pricing_target",
+  "close_rule": "First EOD print with relative implied policy change (SONIA Dec-26 vs Bank Rate minus ESTR Dec-26 vs ECB deposit) at or below +4 bp.",
+  "exit": {
+    "date": "2026-07-30",
+    "label": "2026-07-30 EOD (BoE MPC hold, 6-3)",
+    "trigger_relative_bp": 4.0,
+    "short": {
+      "symbol": "JUZ26",
+      "date": "2026-07-30",
+      "price": 95.99,
+      "implied_rate_pct": 4.01,
+      "label": "Dec-26 SONIA",
+      "vs_bank_bp": 26.0
+    },
+    "long": {
+      "symbol": "IJZ26",
+      "date": "2026-07-30",
+      "price": 97.49,
+      "implied_rate_pct": 2.51,
+      "label": "Dec-26 ESTR",
+      "vs_deposit_bp": 26.0
+    },
+    "slope_bp": 150.0,
+    "uk_minus_eur_bp": 150.0,
+    "sonia_vs_bank_bp": 26.0,
+    "estr_vs_deposit_bp": 26.0,
+    "relative_vs_policy_bp": 0.0,
+    "pnl_bp": 4.5,
+    "pnl_usd": 112.5,
+    "usd_per_bp": 25,
+    "sessions_held": 2,
+    "max_adverse_usd": -37.5,
+    "source": "barchart_eod"
+  },
+  "proceeds_usd": 112.5
 }
