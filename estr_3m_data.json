@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-07 08:17 UTC",
+  "generated_utc": "2026-09-07 14:34 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -506,7 +506,6 @@
     "rows": [
       {
         "date": "2026-06-09",
-        "2029-09": 2.6775,
         "2029-12": 2.71,
         "2030-03": 2.74,
         "2030-06": 2.77,
