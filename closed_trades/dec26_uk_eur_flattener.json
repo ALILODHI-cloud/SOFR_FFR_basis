@@ -97,7 +97,22 @@
     "usd_per_bp": 25,
     "sessions_held": 2,
     "max_adverse_usd": -37.5,
-    "source": "barchart_eod"
+    "source": "barchart_eod",
+    "early_vs_published_target": true,
+    "published_target_hit": {
+      "date": "2026-08-04",
+      "relative_vs_policy_bp": -4.5,
+      "pnl_bp": 9.0,
+      "pnl_usd": 225.0
+    },
+    "high_water_relative_bp": 6.0
   },
-  "proceeds_usd": 112.5
+  "proceeds_usd": 112.5,
+  "market_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_17/body.md",
+  "close_note_url": "https://github.com/ALILODHI-cloud/Market-Notes/blob/main/post_18/body.md",
+  "published_plan": {
+    "source": "Market-Notes post_17",
+    "target_relative_bp": -4.5,
+    "stop_relative_bp": 8.5
+  }
 }
