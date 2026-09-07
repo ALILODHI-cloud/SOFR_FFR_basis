@@ -16,7 +16,8 @@ ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "closed_trades" / "dec26_uk_eur_flattener_trade_data.json"
 OUTS = [ROOT / "charts", ROOT / "docs" / "charts"]
 NAME = "dec26_uk_eur_relative_policy_close.png"
-TRIGGER_BP = 4.0
+TARGET_BP = -4.5
+MPC_DATE = "2026-07-30"
 
 INK = "#1b2330"
 MUT = "#6b7a90"
@@ -48,12 +49,11 @@ def main() -> None:
         2, 1, figsize=(11, 8.6), sharex=True, gridspec_kw={"height_ratios": [1.15, 1]}
     )
 
-    ax1.axhspan(-12, TRIGGER_BP, color=REL, alpha=0.05)
     ax1.axhline(0, color=MUT, lw=1, ls=(0, (2, 3)))
-    ax1.axhline(TRIGGER_BP, color=REL, lw=1.2, ls="--")
+    ax1.axhline(TARGET_BP, color=REL, lw=1.2, ls="--")
     ax1.annotate(
-        f"close trigger +{TRIGGER_BP:.0f} bp",
-        xy=(df.index[-1], TRIGGER_BP),
+        f"target {TARGET_BP:+.1f} bp",
+        xy=(df.index[-1], TARGET_BP),
         xytext=(-6, 6),
         textcoords="offset points",
         ha="right",
@@ -90,9 +90,9 @@ def main() -> None:
     )
     ax1.scatter([exit_dt], [exit_rel], s=140, marker="X", color="#dc2626", zorder=6)
     ax1.annotate(
-        f"Close 30 Jul · {exit_rel:+.1f} bp\nBoE hold 6–3, +{ex['pnl_bp']:.1f} bp / +${ex['pnl_usd']:,.0f}",
+        f"Target hit 4 Aug · {exit_rel:+.1f} bp\n+{ex['pnl_bp']:.1f} bp / +${ex['pnl_usd']:,.0f}",
         xy=(exit_dt, exit_rel),
-        xytext=(16, 10),
+        xytext=(18, -30),
         textcoords="offset points",
         fontsize=9.5,
         color="#dc2626",
@@ -113,9 +113,22 @@ def main() -> None:
     for dt, style in ((entry_dt, "-"), (exit_dt, "--")):
         ax2.axvline(dt, color=MUT, lw=1, ls=style)
         ax1.axvline(dt, color=MUT, lw=1, ls=style)
+    mpc_dt = pd.Timestamp(MPC_DATE)
+    ax1.axvline(mpc_dt, color=UK, lw=1, ls=(0, (4, 3)), alpha=0.8)
+    ax1.annotate(
+        "BoE MPC\n6–3 hold",
+        xy=(mpc_dt, df.loc[mpc_dt, "relative_vs_policy_bp"]),
+        xytext=(10, -40),
+        textcoords="offset points",
+        ha="left",
+        fontsize=9,
+        color=UK,
+        arrowprops={"arrowstyle": "-", "color": UK, "lw": 0.9},
+    )
+    ax2.axvline(mpc_dt, color=UK, lw=1, ls=(0, (4, 3)), alpha=0.8)
     ax2.annotate(
         "BoE MPC\n30 Jul",
-        xy=(exit_dt, df.loc[exit_dt, "sonia_vs_bank_bp"]),
+        xy=(mpc_dt, df.loc[mpc_dt, "sonia_vs_bank_bp"]),
         xytext=(12, 22),
         textcoords="offset points",
         fontsize=9,

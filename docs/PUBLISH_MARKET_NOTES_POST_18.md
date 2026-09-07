@@ -2,11 +2,12 @@
 
 **Target repo:** https://github.com/ALILODHI-cloud/Market-Notes
 **Branch:** `main` (direct push, or PR if you prefer)
-**Post:** *Closing the Dec-26 UK−EUR policy-pricing trade at the first sub-4 bp print*
+**Post:** *Trade Update: Closing our BoE−ECB Dec-26 flattener for +9.0bps*
+**Post date:** 4 August 2026 — the session the target printed.
 
-Closes `post_17` (*Long BoE vs ECB Dec-26 @ +4.5bps*) at the first end-of-day print where relative implied policy change through Dec-26 sat at or below +4 bp: **30 July 2026**, relative 0.0 bp, +4.5 bp, **+$112.50**.
+Closes `post_17` (*Long BoE vs ECB Dec-26 @ +4.5bps*) at the **first EOD print that hit the published −4.5 bp target**: 4 August 2026, +9.0 bp, **+$225.00** at $25/bp.
 
-Note this is an early close relative to the target published in `post_17` (−4.5 bp, which printed on 4 August for +9.0 bp / +$225.00). The body states and quantifies that explicitly.
+`post_17` is the entry note for this trade, so the close is `post_18`. Do not overwrite `post_17`.
 
 ---
 
@@ -40,18 +41,18 @@ curl -L -o post_18/figures/dec26_uk_eur_relative_policy_close.png \
 The image reference in `body.md` is already relative and correct:
 
 ```markdown
-![Dec-26 UK−EUR relative policy pricing, entry to close](figures/dec26_uk_eur_relative_policy_close.png)
+![Dec-26 relative policy pricing, entry to target](figures/dec26_uk_eur_relative_policy_close.png)
 ```
 
 Under `## Latest Posts:` in `README.md`, insert as the **first** bullet:
 
 ```markdown
-- [**Closing the Dec-26 UK−EUR policy-pricing trade at the first sub-4 bp print (2026-07-30)**](post_18/body.md)
+- [**Trade Update: Closing our BoE−ECB Dec-26 flattener for +9.0bps (2026-08-04)**](post_18/body.md)
 ```
 
 ```bash
 git add post_18 README.md
-git commit -m "Add post_18: closing the Dec26 UK-EUR policy-pricing trade at the first sub-4bp print"
+git commit -m "Add post_18: closing the BoE-ECB Dec-26 flattener for +9.0bps"
 git push origin main
 ```
 
@@ -66,20 +67,22 @@ git push origin main
 
 | Item | Value |
 |---|---|
-| Close rule | first EOD relative ≤ +4 bp |
-| Published plan in `post_17` | target −4.5 bp, stop +8.5 bp |
 | Entry | 28 Jul 2026, relative +4.5 bp, UK−EUR 154.5 bp |
-| Exit | 30 Jul 2026, relative 0.0 bp, UK−EUR 150.0 bp |
-| P&L | +4.5 bp, +$112.50 at $25/bp |
-| Sessions held | 2 |
-| Max adverse mark | −$37.50 (29 Jul) |
-| Published target hit | 4 Aug 2026 at −4.5 bp, 9.0 bp / $225.00 |
-| Forgone to 4 Sep mark | 13.5 bp / $337.50 if held |
-| Stop | never threatened, high-water +6.0 bp on 29 Jul |
-| Cumulative realised, two rolls | $325.00 |
+| Exit | 4 Aug 2026, relative −4.5 bp, UK−EUR 145.5 bp |
+| Close reason | published −4.5 bp target hit |
+| P&L | +9.0 bp, +$225.00 at $25/bp |
+| Sessions held | 5 |
+| Worst mark | −$37.50 on 29 Jul, at +6.0 bp relative |
+| Stop | +8.5 bp, never threatened |
+| UK leg | SONIA Dec-26 4.040% → 3.935%, +29.0 → +18.5 bp vs Bank Rate, −10.5 bp |
+| EUR leg | €STR Dec-26 2.495% → 2.480%, +24.5 → +23.0 bp vs deposit, −1.5 bp |
+| Curve move | bull flattening; 3 of 5 sessions bull flattening for −9.5 bp |
+| Cumulative realised, two rolls | +$437.50 |
 
-External facts cited: BoE MPC 6–3 hold at 3.75% announced 30 Jul 2026 (Greene, Mann, Pill dissenting for +25 bp); Bailey press-conference quote; 2y gilt −12.3 bp to 4.34%; LSEG 2026 priced tightening 38 bp → 29 bp; 27 Aug LSEG ~24 bp priced for ECB 10 Sep vs <4 bp for BoE 17 Sep.
+Session classifications come from `classify_curve_move` in `analyze_sonia.py`, applied to the daily leg changes.
+
+External facts cited: BoE MPC 6–3 hold at 3.75% announced 30 Jul 2026 (Greene, Mann, Pill dissenting for +25 bp) against a 7–2 Reuters consensus; Bailey press-conference quote; 2y gilt −12.3 bp to 4.34%; LSEG 2026 priced tightening 38 bp → 29 bp; ECB hiked in June 2026 then held on 23 Jul with the deposit rate at 2.25%; UK and euro-area final manufacturing PMIs revised lower on 3 Aug with the UK correction larger; TD Securities fading the post-MPC sterling rally on 4 Aug.
 
 ## One-line prompt for the other agent
 
-> Publish `post_18` to https://github.com/ALILODHI-cloud/Market-Notes per `PUBLISH_MARKET_NOTES_POST_18.md` in SOFR_FFR_basis `docs/`: create `post_18/body.md` from `docs/dec26-uk-eur-policy-pricing-close.md`, copy the figure from `charts/`, update README, push to main.
+> Publish `post_18` to https://github.com/ALILODHI-cloud/Market-Notes per `PUBLISH_MARKET_NOTES_POST_18.md` in SOFR_FFR_basis `docs/`: create `post_18/body.md` from `docs/dec26-uk-eur-policy-pricing-close.md`, copy the figure from `charts/`, update README, push to main. Do not touch `post_17`, which is the entry note.
