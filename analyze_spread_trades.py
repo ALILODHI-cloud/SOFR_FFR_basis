@@ -895,10 +895,7 @@ def index_row(payload: dict) -> dict:
 
 
 def main() -> None:
-    configs = sorted(TRADES_DIR.glob("*.json"))
-    if not configs:
-        raise SystemExit(f"No trade configs in {TRADES_DIR}")
-
+    configs = sorted(TRADES_DIR.glob("*.json")) if TRADES_DIR.is_dir() else []
     index = {"generated_utc": utc_now(), "trades": []}
     payloads: list[dict] = []
     for cfg_path in configs:

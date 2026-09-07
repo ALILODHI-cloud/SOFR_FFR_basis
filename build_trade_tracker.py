@@ -407,10 +407,11 @@ h1{margin:8px 0 6px;font-size:clamp(22px,4vw,30px)}
 <header>
   <div class="eyebrow">Supra Fund Management</div>
   <h1>Live trade tracker</h1>
-  <div class="sub">Live SOFR position · Barchart marks weekdays</div>
+  <div class="sub">Barchart EOD marks on weekdays. Closed positions are archived in <code>closed_trades/</code>.</div>
 </header>
 <div id="loading" class="loading">Loading trades…</div>
 <div class="grid" id="tradeGrid"></div>
+<div id="empty" class="loading" style="display:none">No live positions. Book flat since the Dec26 UK−EUR close on 30 Jul 2026.</div>
 <p class="foot" id="foot"></p>
 </div>
 <script>
@@ -430,6 +431,7 @@ fetch('trades_index.json').then(r=>{
 }).then(INDEX=>{
   document.getElementById('loading').style.display='none';
   const grid = document.getElementById('tradeGrid');
+  if(!INDEX.trades.length){ document.getElementById('empty').style.display='block'; }
   INDEX.trades.forEach(t=>{
     const pnlVal = t.pnl_usd != null ? t.pnl_usd : t.pnl_eur != null ? t.pnl_eur : t.pnl_gbp;
     const pnlCls = pnlVal > 0.5 ? 'good' : pnlVal < -0.5 ? 'bad' : '';
@@ -492,7 +494,7 @@ h2{margin:0 0 8px;font-size:16px}
 
 <div class="section">Open positions</div>
 <div class="grid cols-2">
-  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Dec26 UK−EUR flattener · live P&amp;L</p></a>
+  <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p id="trackerBlurb">Live P&amp;L on open STIR spreads</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
 </div>
 
@@ -512,6 +514,11 @@ fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
   const el = document.getElementById('tradeCards');
   el.className = '';
   el.innerHTML = '';
+  if(!INDEX.trades.length){
+    el.className = 'loading';
+    el.textContent = 'Book flat — no live positions.';
+    document.getElementById('trackerBlurb').textContent = 'Book flat since 30 Jul 2026';
+  }
   INDEX.trades.forEach(t=>{
     const pnlVal = t.pnl_usd != null ? t.pnl_usd : t.pnl_eur != null ? t.pnl_eur : t.pnl_gbp;
     const pnlCls = pnlVal > 0.5 ? 'good' : pnlVal < -0.5 ? 'bad' : '';
@@ -533,6 +540,8 @@ fetch('trades_index.json').then(r=>r.json()).then(INDEX=>{
 
 def trade_configs() -> list[dict]:
     configs = []
+    if not TRADES_DIR.is_dir():
+        return configs
     for path in sorted(TRADES_DIR.glob("*.json")):
         with path.open(encoding="utf-8") as f:
             configs.append(json.load(f))
@@ -568,6 +577,8 @@ def main() -> None:
         "jun27_outright_long_trade_data.json",
         "mar27_sep26_estr_flattener_trade_data.json",
         "mar28_mar27_sofr_steepener_trade_data.json",
+        "trade_dec26_uk_eur.html",
+        "dec26_uk_eur_flattener_trade_data.json",
         "book_summary.json",
         "book.json",
     ]
