@@ -1,0 +1,62 @@
+{
+  "source": "Positions transcribed from portfolio screenshot on 2026-09-09",
+  "currency": "USD",
+  "contract_multiplier": 100,
+  "positions": [
+    {
+      "id": "iwm_sep11_296_291_put_spread",
+      "label": "IWM Sep-11 296/291 put spread",
+      "underlying": "IWM",
+      "expiration": "2026-09-11",
+      "strategy": "put_debit_spread",
+      "legs": [
+        {"side": "long", "quantity": 1, "strike": 296, "option_type": "P"},
+        {"side": "short", "quantity": 1, "strike": 291, "option_type": "P"}
+      ]
+    },
+    {
+      "id": "uso_oct16_150_175_call_spread",
+      "label": "USO Oct-16 150/175 call spread",
+      "underlying": "USO",
+      "expiration": "2026-10-16",
+      "strategy": "call_debit_spread",
+      "legs": [
+        {"side": "long", "quantity": 1, "strike": 150, "option_type": "C"},
+        {"side": "short", "quantity": 1, "strike": 175, "option_type": "C"}
+      ]
+    },
+    {
+      "id": "vix_oct21_20_30_call_spread",
+      "label": "VIX Oct-21 20/30 call spread",
+      "underlying": "$VIX",
+      "display_underlying": "VIX",
+      "expiration": "2026-10-21",
+      "strategy": "call_debit_spread",
+      "legs": [
+        {"side": "long", "quantity": 1, "strike": 20, "option_type": "C"},
+        {"side": "short", "quantity": 1, "strike": 30, "option_type": "C"}
+      ]
+    },
+    {
+      "id": "iwm_nov20_290_280_put_spread",
+      "label": "IWM Nov-20 290/280 put spread",
+      "underlying": "IWM",
+      "expiration": "2026-11-20",
+      "strategy": "put_debit_spread",
+      "legs": [
+        {"side": "long", "quantity": 1, "strike": 290, "option_type": "P"},
+        {"side": "short", "quantity": 1, "strike": 280, "option_type": "P"}
+      ]
+    },
+    {
+      "id": "tlt_nov20_83_call",
+      "label": "TLT Nov-20 83 call",
+      "underlying": "TLT",
+      "expiration": "2026-11-20",
+      "strategy": "long_call",
+      "legs": [
+        {"side": "long", "quantity": 1, "strike": 83, "option_type": "C"}
+      ]
+    }
+  ]
+}
