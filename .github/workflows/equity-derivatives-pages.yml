@@ -1,0 +1,66 @@
+name: Equity derivatives — fetch, build, deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'analyze_equity_derivatives.py'
+      - 'build_equity_derivatives_dashboard.py'
+      - 'equity_positions.json'
+      - 'requirements-equity.txt'
+      - '.github/workflows/equity-derivatives-pages.yml'
+  schedule:
+    # Weekdays after the U.S. options close (safe in both EDT and EST).
+    - cron: "30 22 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: equity-derivatives-pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements-equity.txt
+          playwright install --with-deps chromium
+
+      - name: Refresh option histories, Greeks, and dashboard
+        run: |
+          python analyze_equity_derivatives.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
+          python build_equity_derivatives_dashboard.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add equity_derivatives_data.json docs/equity_derivatives_data.json equity_derivatives.html docs/equity_derivatives.html
+          git diff --staged --quiet || git commit -m "Auto-refresh equity derivatives $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push || true
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
