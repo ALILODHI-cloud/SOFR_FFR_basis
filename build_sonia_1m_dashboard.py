@@ -4,11 +4,14 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from analyze_sonia_1m import compute_mpc_meeting_pricing
+from analyze_sonia_1m import compute_mpc_meeting_pricing, rebuild_evolution_from_snapshot
 
 ROOT = Path(__file__).resolve().parent
 with (ROOT / "sonia_1m_data.json").open(encoding="utf-8") as f:
     data = json.load(f)
+
+data = rebuild_evolution_from_snapshot(data)
+(ROOT / "sonia_1m_data.json").write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 if "mpc_meeting_pricing" not in data:
     data["mpc_meeting_pricing"] = compute_mpc_meeting_pricing(
@@ -135,13 +138,14 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 <body>
 <div class="wrap">
 <header>
-  <h1>1M SONIA curve · frozen reference + time travel</h1>
+  <h1>1M SONIA curve · through listed 2028 tail</h1>
   <div class="sub" id="asof"></div>
   <div>
     <span class="pill frozen">■ Frozen = latest curve</span>
     <span class="pill" style="border-color:var(--hist);color:var(--hist)">■ Amber = historical (slider)</span>
     <span class="pill policy" id="policyPill"></span>
     <span class="pill live" id="livePill" style="display:none">● Live</span>
+    <a class="pill" href="sonia_sfi_spreads.html" style="color:#ffb84a;border-color:#ffb84a;text-decoration:none">SFI Z6/Z7/Z8 calendars →</a>
   </div>
   <div class="viewbar">
     <span class="lbl">Layout</span>
@@ -489,6 +493,7 @@ function buildMainChart() {
           pointBackgroundColor: pointColors(0),
           pointBorderColor: '#0b0f17',
           pointBorderWidth: 2,
+          spanGaps: true,
           order: 1,
         },
         {
@@ -504,6 +509,7 @@ function buildMainChart() {
           pointBackgroundColor: pointColors(1),
           pointBorderColor: '#0b0f17',
           pointBorderWidth: 2,
+          spanGaps: true,
           order: 2,
         },
         {

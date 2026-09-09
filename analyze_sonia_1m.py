@@ -25,7 +25,8 @@ CHAIN_URL = "https://www.barchart.com/futures/quotes/JU*0/futures-prices"
 PREFIX = "JU"
 # Below this many scraped symbols the chain page is assumed challenged.
 MIN_CHAIN = 8
-SYNTH_CHAIN = 28
+# Enough monthly slots to reach Dec-28 from a Sep-26 front (and a bit beyond).
+SYNTH_CHAIN = 36
 
 MONTH_CODE = {
     "F": 1, "G": 2, "H": 3, "J": 4, "K": 5, "M": 6,
@@ -205,30 +206,33 @@ def compute_mpc_meeting_pricing(
 def _compute_curve_evolution(
     wide: pd.DataFrame, contracts: list[dict], bank: float
 ) -> dict:
-    """Longest date range where a stable set of contracts all have EOD."""
+    """Full listed strip over time; later contracts appear when they quote."""
     keys_all = [c["key"] for c in contracts]
     label_map = {c["key"]: c for c in contracts}
 
-    # Prefer core curve through Feb-28 if it yields more sessions than all 24.
-    core_keys = [k for k in keys_all if k <= "2028-02"]
-    full_common = wide[keys_all].dropna(how="any")
-    core_common = wide[core_keys].dropna(how="any")
-
-    if len(core_common) >= len(full_common):
-        use_keys, use_df = core_keys, core_common
-        note = (
-            f"Longest common history for {len(core_keys)} contracts "
-            f"(Jun-26 → Feb-28). Back 3 contracts list later on Barchart."
-        )
-    else:
-        use_keys, use_df = keys_all, full_common
-        note = f"Common history for all {len(keys_all)} listed contracts."
+    # Full listed strip, including the 2028 tail. Do not require a common
+    # history — later deliveries appear when they start quoting. 1M Dec-28
+    # (JUZ28) is included when Barchart lists it; otherwise the strip ends
+    # at the last 1M month that has a settle (Aug-28 as of Sep 2026).
+    use_keys = keys_all
+    last_key = use_keys[-1] if use_keys else ""
+    note = (
+        f"Full listed 1M strip ({len(use_keys)} contracts through "
+        f"{last_key or 'n/a'}). Later deliveries have shorter history; "
+        "the amber line skips missing points. ICE 1M Dec-28 (JUZ28) is "
+        "used when it quotes; otherwise end-2028 is the 3M SFI Z8 page."
+    )
 
     history: list[dict] = []
-    for dt, row in use_df.iterrows():
+    for dt, row in wide.iterrows():
         pts = []
         for k in use_keys:
-            rate = float(row[k])
+            if k not in wide.columns:
+                continue
+            v = row[k]
+            if pd.isna(v):
+                continue
+            rate = float(v)
             pts.append({
                 "key": k,
                 "label": label_map[k]["label"],
@@ -236,15 +240,18 @@ def _compute_curve_evolution(
                 "implied_rate_pct": round(rate, 4),
                 "vs_bank_bp": round((rate - bank) * 100, 1),
             })
-        history.append({"date": str(dt.date()), "points": pts})
+        if pts:
+            history.append({"date": str(dt.date()), "points": pts})
 
     # Key tenor legs vs bank over same window
-    watch = ["2026-12", "2027-06", "2027-12"]
+    watch = ["2026-12", "2027-06", "2027-12", "2028-06", "2028-12"]
     legs: dict = {}
     for k in watch:
-        if k not in use_df.columns:
+        if k not in wide.columns:
             continue
-        s = use_df[k]
+        s = wide[k].dropna()
+        if s.empty:
+            continue
         legs[k] = {
             "label": label_map[k]["label"],
             "rows": [
@@ -260,13 +267,30 @@ def _compute_curve_evolution(
     return {
         "n_contracts": len(use_keys),
         "contract_keys": use_keys,
-        "n_sessions": int(len(use_df)),
-        "start": str(use_df.index.min().date()),
-        "end": str(use_df.index.max().date()),
+        "n_sessions": int(len(history)),
+        "start": history[0]["date"] if history else None,
+        "end": history[-1]["date"] if history else None,
         "note": note,
         "history": history,
         "watch_legs": legs,
     }
+
+
+def rebuild_evolution_from_snapshot(payload: dict) -> dict:
+    """Recompute curve_evolution from an existing timeseries snapshot."""
+    rows = payload.get("timeseries", {}).get("rows") or []
+    contracts = payload.get("contracts") or []
+    bank = float(payload["bank_rate_pct"])
+    series: dict[str, dict] = {}
+    for rec in rows:
+        dt = pd.Timestamp(rec["date"])
+        for k, v in rec.items():
+            if k == "date" or v is None:
+                continue
+            series.setdefault(k, {})[dt] = float(v)
+    wide = pd.DataFrame(series).sort_index()
+    payload["curve_evolution"] = _compute_curve_evolution(wide, contracts, bank)
+    return payload
 
 
 def build_payload() -> dict:

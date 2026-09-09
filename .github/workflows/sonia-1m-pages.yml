@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'analyze_sonia_1m.py'
+      - 'analyze_sfi_structures.py'
+      - 'build_sfi_structures_dashboard.py'
       - 'analyze_sonia.py'
       - 'analyze_stir_curves.py'
       - 'analyze_jul27_dec26_trade.py'
@@ -50,7 +52,9 @@ jobs:
       - name: Fetch Barchart + rebuild 1M SONIA dashboard
         run: |
           python analyze_sonia_1m.py || echo "::warning::Barchart fetch failed; building from committed snapshot"
+          python analyze_sfi_structures.py || echo "::warning::SFI structure fetch failed; building from committed snapshot"
           python build_sonia_1m_dashboard.py
+          python build_sfi_structures_dashboard.py || echo "::warning::SFI structure page build skipped"
           python build_estr_sonia_1m_dashboard.py || echo "::warning::ESTR−SONIA basis page build skipped"
 
       - name: Refresh trade marks from Barchart (JSON only)
@@ -67,7 +71,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html estr_sonia_1m_data.json estr_sonia_1m_dashboard.html docs/estr_sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json docs/ice_sonia_margins.json ice_sonia_margins.json trades_index.json *_trade_data.json trades/*.json ice_sonia_margin.py build_trade_tracker.py portal.html docs/portal.html trade_tracker.html docs/trade_tracker.html trade_*.html docs/trade_*.html
+          git add sonia_1m_data.json sonia_1m_dashboard.html docs/sonia_1m_dashboard.html sfi_structures_data.json sonia_sfi_spreads.html docs/sonia_sfi_spreads.html estr_sonia_1m_data.json estr_sonia_1m_dashboard.html docs/estr_sonia_1m_dashboard.html docs/trades_index.json docs/*_trade_data.json docs/ice_sonia_margins.json ice_sonia_margins.json trades_index.json *_trade_data.json trades/*.json ice_sonia_margin.py build_trade_tracker.py portal.html docs/portal.html trade_tracker.html docs/trade_tracker.html trade_*.html docs/trade_*.html
           git diff --staged --quiet || git commit -m "Auto-refresh SONIA + trade marks $(date -u +%Y-%m-%dT%H:%MZ)"
           git push || true
 
