@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-10 13:13 UTC",
+  "generated_utc": "2026-09-10 19:56 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -257,12 +257,12 @@
         2030,
         3
       ],
-      "latest_date": "2026-09-08",
-      "price": 96.9575,
-      "implied_rate_pct": 3.0425,
-      "vs_deposit_bp": 79.3,
-      "vs_deposit_hikes_25bp": 3.17,
-      "bp_change": -6.7
+      "latest_date": "2026-09-09",
+      "price": 96.8775,
+      "implied_rate_pct": 3.1225,
+      "vs_deposit_bp": 87.3,
+      "vs_deposit_hikes_25bp": 3.49,
+      "bp_change": 1.3
     },
     {
       "key": "2030-06",
@@ -278,7 +278,7 @@
       "implied_rate_pct": 3.1375,
       "vs_deposit_bp": 88.8,
       "vs_deposit_hikes_25bp": 3.55,
-      "bp_change": 9.5
+      "bp_change": 1.5
     },
     {
       "key": "2030-09",
@@ -411,7 +411,6 @@
   ],
   "timeseries": {
     "dates": [
-      "2026-06-12",
       "2026-06-15",
       "2026-06-16",
       "2026-06-17",
@@ -504,19 +503,6 @@
       "2032-06"
     ],
     "rows": [
-      {
-        "date": "2026-06-12",
-        "2029-12": 2.645,
-        "2030-03": 2.675,
-        "2030-06": 2.7075,
-        "2030-09": 2.7375,
-        "2030-12": 2.765,
-        "2031-03": 2.79,
-        "2031-06": 2.8125,
-        "2031-09": 2.83,
-        "2031-12": 2.83,
-        "2032-03": 2.8325
-      },
       {
         "date": "2026-06-15",
         "2026-06": 2.215,
@@ -2267,6 +2253,7 @@
         "2029-06": 3.09,
         "2029-09": 3.1,
         "2029-12": 3.11,
+        "2030-03": 3.1225,
         "2030-06": 3.1375,
         "2030-09": 3.155,
         "2030-12": 3.17,
@@ -2278,8 +2265,8 @@
         "2032-06": 3.295
       }
     ],
-    "n_sessions": 64,
-    "start": "2026-06-12",
+    "n_sessions": 63,
+    "start": "2026-06-15",
     "end": "2026-09-09"
   },
   "curve_evolution": {
@@ -2311,86 +2298,11 @@
       "2032-03",
       "2032-06"
     ],
-    "n_sessions": 64,
-    "start": "2026-06-12",
+    "n_sessions": 63,
+    "start": "2026-06-15",
     "end": "2026-09-09",
     "note": "Full listed 3M \u20acSTR strip (25 contracts through 2032-06). Later deliveries have shorter history; the amber line skips missing points.",
     "history": [
-      {
-        "date": "2026-06-12",
-        "points": [
-          {
-            "key": "2029-12",
-            "label": "Dec-29",
-            "symbol": "EBZ29",
-            "implied_rate_pct": 2.645,
-            "vs_deposit_bp": 39.5
-          },
-          {
-            "key": "2030-03",
-            "label": "Mar-30",
-            "symbol": "EBH30",
-            "implied_rate_pct": 2.675,
-            "vs_deposit_bp": 42.5
-          },
-          {
-            "key": "2030-06",
-            "label": "Jun-30",
-            "symbol": "EBM30",
-            "implied_rate_pct": 2.7075,
-            "vs_deposit_bp": 45.8
-          },
-          {
-            "key": "2030-09",
-            "label": "Sep-30",
-            "symbol": "EBU30",
-            "implied_rate_pct": 2.7375,
-            "vs_deposit_bp": 48.7
-          },
-          {
-            "key": "2030-12",
-            "label": "Dec-30",
-            "symbol": "EBZ30",
-            "implied_rate_pct": 2.765,
-            "vs_deposit_bp": 51.5
-          },
-          {
-            "key": "2031-03",
-            "label": "Mar-31",
-            "symbol": "EBH31",
-            "implied_rate_pct": 2.79,
-            "vs_deposit_bp": 54.0
-          },
-          {
-            "key": "2031-06",
-            "label": "Jun-31",
-            "symbol": "EBM31",
-            "implied_rate_pct": 2.8125,
-            "vs_deposit_bp": 56.2
-          },
-          {
-            "key": "2031-09",
-            "label": "Sep-31",
-            "symbol": "EBU31",
-            "implied_rate_pct": 2.83,
-            "vs_deposit_bp": 58.0
-          },
-          {
-            "key": "2031-12",
-            "label": "Dec-31",
-            "symbol": "EBZ31",
-            "implied_rate_pct": 2.83,
-            "vs_deposit_bp": 58.0
-          },
-          {
-            "key": "2032-03",
-            "label": "Mar-32",
-            "symbol": "EBH32",
-            "implied_rate_pct": 2.8325,
-            "vs_deposit_bp": 58.2
-          }
-        ]
-      },
       {
         "date": "2026-06-15",
         "points": [
@@ -13637,6 +13549,13 @@
             "symbol": "EBZ29",
             "implied_rate_pct": 3.11,
             "vs_deposit_bp": 86.0
+          },
+          {
+            "key": "2030-03",
+            "label": "Mar-30",
+            "symbol": "EBH30",
+            "implied_rate_pct": 3.1225,
+            "vs_deposit_bp": 87.2
           },
           {
             "key": "2030-06",
