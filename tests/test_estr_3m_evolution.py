@@ -35,3 +35,12 @@ def test_dashboard_html_has_time_travel_controls():
         "chgTbl",
     ):
         assert needle in html, needle
+
+
+def test_estr_pages_say_deposit_not_bank():
+    for name in ("estr_3m_dashboard.html", "estr_1m_dashboard.html"):
+        html = (ROOT / name).read_text(encoding="utf-8")
+        assert "vs Bank" not in html, name
+        assert "Cum vs Bank" not in html, name
+        assert "Cumulative vs Bank" not in html, name
+        assert "vs deposit" in html, name

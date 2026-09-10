@@ -183,7 +183,7 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
   <div class="ecb-summary" id="ecbSummary"></div>
   <div class="ecb-chartbox"><canvas id="ecbChart"></canvas></div>
   <div class="tblwrap"><table id="ecbTbl"><thead><tr>
-    <th>Meeting</th><th>Ref 3M</th><th>Implied %</th><th>Cum vs dep</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
+    <th>Meeting</th><th>Ref 3M</th><th>Implied %</th><th>Cum vs deposit</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
