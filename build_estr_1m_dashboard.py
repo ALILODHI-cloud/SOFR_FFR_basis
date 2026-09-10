@@ -180,14 +180,14 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
   <div class="ecb-summary" id="ecbSummary"></div>
   <div class="ecb-chartbox"><canvas id="ecbChart"></canvas></div>
   <div class="tblwrap"><table id="ecbTbl"><thead><tr>
-    <th>Meeting</th><th>Ref 1M</th><th>Implied %</th><th>Cum vs Bank</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
+    <th>Meeting</th><th>Ref 1M</th><th>Implied %</th><th>Cum vs deposit</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
 <div class="card">
   <h2>All contracts (latest)</h2>
   <div class="tblwrap"><table id="tbl"><thead><tr>
-    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank</th><th>As of</th>
+    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs deposit</th><th>As of</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
@@ -392,7 +392,7 @@ function updatePinTray() {
       <div class="sym">${pin.symbol}</div>
       <div class="row"><span>Frozen (latest)</span><span>${f ? f.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
       <div class="row"><span>Historical</span><span>${h ? h.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
-      <div class="row"><span>vs Bank ${DATA.deposit_facility_pct}%</span><span>${h ? fmtBp(h.vs_deposit_bp) : '—'}</span></div>
+      <div class="row"><span>vs deposit ${DATA.deposit_facility_pct}%</span><span>${h ? fmtBp(h.vs_deposit_bp) : '—'}</span></div>
       <div class="row"><span>Δ vs frozen</span><span>${f && h ? fmtBp((h.implied_rate_pct - f.implied_rate_pct)*100) : '—'}</span></div>
       <div style="color:var(--mut);margin-top:4px">${hdate}</div>
       <label><input type="checkbox" data-i="${i}" class="lvlChk" ${pin.showLevelLine?'checked':''}/> Show level line</label>
@@ -559,10 +559,10 @@ function buildMainChart() {
               const lines = [`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(3)}%`];
               if (ctx.datasetIndex === 1 && fp && hm) {
                 lines.push(`Δ vs frozen: ${fmtBp((hm.implied_rate_pct - fp.implied_rate_pct)*100)}`);
-                lines.push(`vs Bank: ${fmtBp(hm.vs_deposit_bp)}`);
+                lines.push(`vs deposit: ${fmtBp(hm.vs_deposit_bp)}`);
               }
               if (ctx.datasetIndex === 0 && fp) {
-                lines.push(`vs Bank: ${fmtBp(fp.vs_deposit_bp)}`);
+                lines.push(`vs deposit: ${fmtBp(fp.vs_deposit_bp)}`);
               }
               lines.push('Click to pin');
               return lines;
@@ -687,7 +687,7 @@ function renderEcbPanel() {
       labels,
       datasets: [
         {
-          label: 'Cumulative vs Bank (bp)',
+          label: 'Cumulative vs deposit (bp)',
           data: cum,
           type: 'line',
           borderColor: '#4aa8ff',

@@ -161,28 +161,26 @@ def compute_ecb_meeting_pricing_3m(
 def _compute_curve_evolution(
     wide: pd.DataFrame, contracts: list[dict], deposit: float
 ) -> dict:
+    """Full listed strip over time; later contracts appear when they quote."""
     keys_all = [c["key"] for c in contracts]
     label_map = {c["key"]: c for c in contracts}
-
-    core_keys = [k for k in keys_all if k <= "2028-12"]
-    full_common = wide[keys_all].dropna(how="any")
-    core_common = wide[core_keys].dropna(how="any")
-
-    if len(core_common) >= len(full_common):
-        use_keys, use_df = core_keys, core_common
-        note = (
-            f"Longest common history for {len(core_keys)} contracts "
-            f"(through Dec-28). Far-dated contracts list later on Barchart."
-        )
-    else:
-        use_keys, use_df = keys_all, full_common
-        note = f"Common history for all {len(keys_all)} listed contracts."
+    last_key = keys_all[-1] if keys_all else ""
+    note = (
+        f"Full listed 3M €STR strip ({len(keys_all)} contracts through "
+        f"{last_key or 'n/a'}). Later deliveries have shorter history; "
+        "the amber line skips missing points."
+    )
 
     history: list[dict] = []
-    for dt, row in use_df.iterrows():
+    for dt, row in wide.iterrows():
         pts = []
-        for k in use_keys:
-            rate = float(row[k])
+        for k in keys_all:
+            if k not in wide.columns:
+                continue
+            v = row[k]
+            if pd.isna(v):
+                continue
+            rate = float(v)
             pts.append({
                 "key": k,
                 "label": label_map[k]["label"],
@@ -190,17 +188,35 @@ def _compute_curve_evolution(
                 "implied_rate_pct": round(rate, 4),
                 "vs_deposit_bp": round((rate - deposit) * 100, 1),
             })
-        history.append({"date": str(dt.date()), "points": pts})
+        if pts:
+            history.append({"date": str(dt.date()), "points": pts})
 
     return {
-        "n_contracts": len(use_keys),
-        "contract_keys": use_keys,
-        "n_sessions": int(len(use_df)),
-        "start": str(use_df.index.min().date()) if len(use_df) else None,
-        "end": str(use_df.index.max().date()) if len(use_df) else None,
+        "n_contracts": len(keys_all),
+        "contract_keys": keys_all,
+        "n_sessions": int(len(history)),
+        "start": history[0]["date"] if history else None,
+        "end": history[-1]["date"] if history else None,
         "note": note,
         "history": history,
     }
+
+
+def rebuild_evolution_from_snapshot(payload: dict) -> dict:
+    """Recompute curve_evolution from an existing timeseries snapshot."""
+    rows = payload.get("timeseries", {}).get("rows") or []
+    contracts = payload.get("contracts") or []
+    deposit = float(payload["deposit_facility_pct"])
+    series: dict[str, dict] = {}
+    for rec in rows:
+        dt = pd.Timestamp(rec["date"])
+        for k, v in rec.items():
+            if k == "date" or v is None:
+                continue
+            series.setdefault(k, {})[dt] = float(v)
+    wide = pd.DataFrame(series).sort_index()
+    payload["curve_evolution"] = _compute_curve_evolution(wide, contracts, deposit)
+    return payload
 
 
 def build_payload() -> dict:
