@@ -2,6 +2,11 @@
 
 Full **3M SOFR / SONIA / €STR** forward curves from **Barchart EOD**, auto-refreshing.
 
+**Permanent URL (GitHub Pages):**  
+https://alilodhi-cloud.github.io/SOFR_FFR_basis/stir_curves_dashboard.html
+
+**Portal hub:** https://alilodhi-cloud.github.io/SOFR_FFR_basis/portal.html
+
 ## What you get
 
 | Curve | Barchart prefix | Contracts (typical) |
