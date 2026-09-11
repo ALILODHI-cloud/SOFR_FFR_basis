@@ -487,13 +487,18 @@ h2{margin:0 0 8px;font-size:16px}
 <header>
   <div class="eyebrow">Supra Fund Management</div>
   <h1>Markets portal</h1>
-  <p class="sub">Live trade trackers · STIR curve dashboards</p>
+  <p class="sub">Equity derivatives risk · live trade trackers · STIR curve dashboards</p>
 </header>
 
 <div class="section">Open positions</div>
 <div class="grid cols-2">
   <a class="card featured" href="trade_tracker.html"><h2>Live trade tracker</h2><p>Dec26 UK−EUR flattener · live P&amp;L</p></a>
   <div id="tradeCards" class="loading">Loading trade P&amp;L…</div>
+</div>
+
+<div class="section">Equity derivatives</div>
+<div class="grid cols-2">
+  <a class="card featured" href="equity_derivatives.html"><h2>Options risk monitor</h2><p>Five positions · leg Greeks · IV and skew repricing · daily P&amp;L decomposition</p><span class="pill live">● Barchart EOD</span></a>
 </div>
 
 <div class="section">Curve dashboards</div>
