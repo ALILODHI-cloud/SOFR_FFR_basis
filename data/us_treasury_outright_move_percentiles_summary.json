@@ -1,0 +1,61 @@
+{
+  "asof_utc": "2026-07-30 02:45:12",
+  "source": "Investing.com",
+  "lookback_start": "2016-01-01",
+  "last_date": "2026-07-29",
+  "prior_date": "2026-07-28",
+  "n_days": 2741,
+  "tenors": {
+    "2Y": {
+      "prior_yield": 4.277,
+      "last_yield": 4.236,
+      "move_bp": -4.1,
+      "percentile_rank": 12.88,
+      "abs_percentile_rank": 73.44,
+      "mean_bp": 0.117,
+      "std_bp": 5.139,
+      "quantiles_bp": {
+        "p5": -7.7,
+        "p25": -2.0,
+        "p50": 0.1,
+        "p75": 2.3,
+        "p95": 7.6
+      },
+      "n_days": 2741
+    },
+    "10Y": {
+      "prior_yield": 4.604,
+      "last_yield": 4.622,
+      "move_bp": 1.8,
+      "percentile_rank": 64.76,
+      "abs_percentile_rank": 31.45,
+      "mean_bp": 0.087,
+      "std_bp": 5.287,
+      "quantiles_bp": {
+        "p5": -8.4,
+        "p25": -3.0,
+        "p50": 0.1,
+        "p75": 3.3,
+        "p95": 8.4
+      },
+      "n_days": 2741
+    },
+    "30Y": {
+      "prior_yield": 5.096,
+      "last_yield": 5.143,
+      "move_bp": 4.7,
+      "percentile_rank": 85.11,
+      "abs_percentile_rank": 70.7,
+      "mean_bp": 0.079,
+      "std_bp": 4.959,
+      "quantiles_bp": {
+        "p5": -7.7,
+        "p25": -2.8,
+        "p50": 0.0,
+        "p75": 3.0,
+        "p95": 7.9
+      },
+      "n_days": 2741
+    }
+  }
+}
