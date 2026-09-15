@@ -128,3 +128,34 @@ python3 build_trade_tracker.py
 
 > Note: extracted text from Barclays Global Rates Weekly reports is intentionally excluded
 > from version control (`pages_dump.txt` is gitignored) as it is restricted research.
+
+---
+
+# SPY Realized Monthly Volatility (20-Year History)
+
+Computes **SPY realized monthly volatility** from Investing.com daily prices over the
+trailing 20 years and identifies the most volatile month.
+
+## Contents
+- `spy_vol.py` — pulls SPY daily closes from **Investing.com** (SPDR S&P 500 ETF,
+  pair_id `525`, via the `investgo` client), computes per-calendar-month realized vol
+  from daily log returns, and writes `spy_vol_data.json`.
+- `build_spy_vol.py` — builds the responsive dashboard `spy_vol.html` from the JSON.
+- `spy_vol_data.json` / `spy_vol.html` — computed snapshot + dashboard.
+
+## Reproduce
+```bash
+pip install investgo
+python spy_vol.py          # fetch + compute (writes spy_vol_data.json)
+python build_spy_vol.py    # rebuild spy_vol.html
+```
+
+## Method
+Daily close-to-close log returns `r_t = ln(P_t / P_{t-1})`, grouped by calendar month:
+- `rv_ann  = sqrt(252/n · Σr²)` — annualized realized vol (primary ranking)
+- `std_ann = std(r)·sqrt(252)` — annualized sample-std vol
+- `rv_month = sqrt(Σr²)` — non-annualized monthly realized vol
+
+## Key finding
+- **March 2020 (COVID crash) had the highest SPY realized monthly volatility ≈ 89% annualized**,
+  narrowly ahead of **October 2008 ≈ 87%** (GFC) and November 2008 ≈ 70%.
