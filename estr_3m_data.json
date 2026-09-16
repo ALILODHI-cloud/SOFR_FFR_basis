@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-16 02:17 UTC",
+  "generated_utc": "2026-09-16 07:00 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -507,10 +507,6 @@
       {
         "date": "2026-06-18",
         "2026-06": 2.2125,
-        "2028-09": 2.475,
-        "2029-03": 2.515,
-        "2029-06": 2.5325,
-        "2029-09": 2.55,
         "2029-12": 2.5725,
         "2030-03": 2.5975,
         "2030-06": 2.6225,
@@ -2334,34 +2330,6 @@
             "symbol": "EBM26",
             "implied_rate_pct": 2.2125,
             "vs_deposit_bp": -28.8
-          },
-          {
-            "key": "2028-09",
-            "label": "Sep-28",
-            "symbol": "EBU28",
-            "implied_rate_pct": 2.475,
-            "vs_deposit_bp": -2.5
-          },
-          {
-            "key": "2029-03",
-            "label": "Mar-29",
-            "symbol": "EBH29",
-            "implied_rate_pct": 2.515,
-            "vs_deposit_bp": 1.5
-          },
-          {
-            "key": "2029-06",
-            "label": "Jun-29",
-            "symbol": "EBM29",
-            "implied_rate_pct": 2.5325,
-            "vs_deposit_bp": 3.3
-          },
-          {
-            "key": "2029-09",
-            "label": "Sep-29",
-            "symbol": "EBU29",
-            "implied_rate_pct": 2.55,
-            "vs_deposit_bp": 5.0
           },
           {
             "key": "2029-12",
