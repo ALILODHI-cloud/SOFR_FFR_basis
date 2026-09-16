@@ -499,6 +499,7 @@ h2{margin:0 0 8px;font-size:16px}
 <div class="section">Curve dashboards</div>
 <div class="grid cols-2">
   <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2><p>15 Sep EOD · Sep MPC tomorrow ~14% hike</p></a>
+  <a class="card" href="sonia_3m_dashboard.html"><h2>3M SONIA curve · MPC</h2><p>ICE J8* · 15 Sep EOD · Sep MPC tomorrow</p></a>
   <a class="card" href="estr_1m_dashboard.html"><h2>1M ESTR curve live</h2><p>15 Sep EOD · DFR 2.50% after 10 Sep hike</p></a>
   <a class="card" href="estr_sonia_1m_dashboard.html"><h2>1M ESTR vs SONIA (bp vs policy)</h2><p>15 Sep EOD · UK still more hawkish</p></a>
   <a class="card" href="estr_3m_dashboard.html"><h2>3M ESTR curve · ECB</h2><p>15 Sep EOD · next Oct ECB</p></a>
