@@ -145,8 +145,9 @@ def compute_mpc_meeting_pricing(
 ) -> dict:
     """Map 1M SONIA strip to BoE MPC calendar with meeting-level probabilities."""
     cmap = {c["key"]: c for c in contracts}
-    ref_date = date.fromisoformat(as_of) if as_of else date.today()
     latest = max(date.fromisoformat(c["latest_date"]) for c in contracts)
+    # Past/next vs last EOD (or today), not the Bank Rate decision date.
+    ref_date = max(date.today(), latest)
 
     rows: list[dict] = []
     prev_implied: float | None = None
@@ -194,7 +195,8 @@ def compute_mpc_meeting_pricing(
 
     return {
         "note": MPC_PRICING_NOTE,
-        "as_of": as_of or str(ref_date),
+        "as_of": str(latest),
+        "bank_rate_as_of": as_of,
         "bank_rate_pct": bank_rate_pct,
         "total_easing_priced_bp": total_easing_bp,
         "next_meeting": next_mtg,

@@ -138,9 +138,11 @@ function isLiveMode() {
 
 async function fetchData() {
   if (!isLiveMode()) return EMBEDDED;
-  const r = await fetch('/api/data?' + Date.now());
-  if (!r.ok) throw new Error('API ' + r.status);
-  return r.json();
+  try {
+    const r = await fetch('/api/data?' + Date.now());
+    if (r.ok) return r.json();
+  } catch (e) {}
+  return EMBEDDED;
 }
 
 async function fetchStatus() {

@@ -19,8 +19,8 @@ from analyze_stir_curves import fetch_barchart_batch
 from curve_chain import strip_symbols
 from curve_snapshot import write_snapshot
 
-DEPOSIT_FACILITY_PCT = 2.0
-DEPOSIT_FACILITY_AS_OF = "2026-06-12"
+DEPOSIT_FACILITY_PCT = 2.50
+DEPOSIT_FACILITY_AS_OF = "2026-09-10"
 BARCHART_HISTORY_LIMIT = 200
 
 CHAIN_URL = "https://www.barchart.com/futures/quotes/IJ*0/futures-prices"
@@ -127,19 +127,11 @@ def discover_ij_chain() -> list[str]:
 
 
 def fetch_deposit_rate(fallback_path: Path | None = None) -> dict:
-    if fallback_path and fallback_path.is_file():
-        with fallback_path.open(encoding="utf-8") as f:
-            prev = json.load(f)
-        fallback = {
-            "deposit_facility_pct": float(prev.get("deposit_facility_pct", DEPOSIT_FACILITY_PCT)),
-            "deposit_facility_as_of": prev.get("deposit_facility_as_of", DEPOSIT_FACILITY_AS_OF),
-        }
-    else:
-        fallback = {
-            "deposit_facility_pct": DEPOSIT_FACILITY_PCT,
-            "deposit_facility_as_of": DEPOSIT_FACILITY_AS_OF,
-        }
-    return {**fallback, "deposit_facility_source": "committed fallback"}
+    return {
+        "deposit_facility_pct": DEPOSIT_FACILITY_PCT,
+        "deposit_facility_as_of": DEPOSIT_FACILITY_AS_OF,
+        "deposit_facility_source": "ECB 10 Sep 2026 +25bp to 2.50%",
+    }
 
 
 def _ref_contract_key(meeting_date: date) -> str:
@@ -166,8 +158,8 @@ def compute_ecb_meeting_pricing(
     as_of: str | None = None,
 ) -> dict:
     cmap = {c["key"]: c for c in contracts}
-    ref_date = date.fromisoformat(as_of) if as_of else date.today()
     latest = max(date.fromisoformat(c["latest_date"]) for c in contracts)
+    ref_date = max(date.today(), latest)
 
     rows: list[dict] = []
     prev_implied: float | None = None
@@ -215,7 +207,7 @@ def compute_ecb_meeting_pricing(
 
     return {
         "note": ECB_PRICING_NOTE,
-        "as_of": as_of or str(ref_date),
+        "as_of": str(latest),
         "deposit_facility_pct": deposit_pct,
         "total_easing_priced_bp": total_easing_bp,
         "next_meeting": next_mtg,
