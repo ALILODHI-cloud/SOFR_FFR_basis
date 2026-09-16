@@ -89,8 +89,9 @@ def discover_chain_symbols(prefix: str, chain_url: str) -> list[str]:
                 found.update(pat.findall(body))
 
         page.on("response", on_resp)
-        page.goto(chain_url, wait_until="networkidle", timeout=120_000)
-        page.wait_for_timeout(1500)
+        # Match other curve scrapers: networkidle often hangs on Barchart ads/analytics.
+        page.goto(chain_url, wait_until="domcontentloaded", timeout=120_000)
+        page.wait_for_timeout(2500)
         html = page.content()
         found.update(pat.findall(html))
         browser.close()
