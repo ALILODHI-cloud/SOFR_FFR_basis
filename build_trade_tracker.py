@@ -487,7 +487,7 @@ h2{margin:0 0 8px;font-size:16px}
 <header>
   <div class="eyebrow">Supra Fund Management</div>
   <h1>Markets portal</h1>
-  <p class="sub">Live trade trackers · STIR curve dashboards</p>
+  <p class="sub">Live trade trackers · STIR curve dashboards · marks through 15 Sep 2026 EOD</p>
 </header>
 
 <div class="section">Open positions</div>
@@ -498,13 +498,15 @@ h2{margin:0 0 8px;font-size:16px}
 
 <div class="section">Curve dashboards</div>
 <div class="grid cols-2">
-  <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2></a>
-  <a class="card" href="estr_1m_dashboard.html"><h2>1M ESTR curve live</h2></a>
-  <a class="card" href="estr_sonia_1m_dashboard.html"><h2>1M ESTR vs SONIA (bp vs policy)</h2></a>
-  <a class="card" href="estr_3m_dashboard.html"><h2>3M ESTR curve · ECB</h2></a>
-  <a class="card" href="sofr_3m_dashboard.html"><h2>3M SOFR curve live</h2></a>
-  <a class="card" href="asx_ib_30d_dashboard.html"><h2>ASX 30-day cash rate live</h2></a>
-  <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2></a>
+  <a class="card" href="sonia_1m_dashboard.html"><h2>1M SONIA curve live</h2><p>15 Sep EOD · Sep MPC tomorrow ~14% hike</p></a>
+  <a class="card" href="sonia_3m_dashboard.html"><h2>3M SONIA curve · MPC</h2><p>ICE J8* · 15 Sep EOD · Sep MPC tomorrow</p></a>
+  <a class="card" href="estr_1m_dashboard.html"><h2>1M ESTR curve live</h2><p>15 Sep EOD · DFR 2.50% after 10 Sep hike</p></a>
+  <a class="card" href="estr_sonia_1m_dashboard.html"><h2>1M ESTR vs SONIA (bp vs policy)</h2><p>15 Sep EOD · UK still more hawkish</p></a>
+  <a class="card" href="estr_3m_dashboard.html"><h2>3M ESTR curve · ECB</h2><p>15 Sep EOD · next Oct ECB</p></a>
+  <a class="card" href="sofr_3m_dashboard.html"><h2>3M SOFR curve live</h2><p>15 Sep EOD · Sep FOMC tomorrow</p></a>
+  <a class="card" href="ff_30d_dashboard.html"><h2>30-day Fed Funds curve · FOMC</h2><p>CME ZQ* · 15 Sep EOD · Sep FOMC 100% hike</p></a>
+  <a class="card" href="asx_ib_30d_dashboard.html"><h2>ASX 30-day cash rate live</h2><p>Refreshed strip · next 29 Sep RBA</p></a>
+  <a class="card" href="sonia_dashboard.html"><h2>Dec27−Dec26 monitor</h2><p>15 Sep EOD · slope +76.0 bp</p></a>
 </div>
 </div>
 <script>

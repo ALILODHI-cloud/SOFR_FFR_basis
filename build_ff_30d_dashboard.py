@@ -1,15 +1,13 @@
-"""Build interactive 3M SOFR curve dashboard
-
-# deploy-bump: trigger Pages refresh (frozen reference + evolution overlay)."""
+"""Build interactive 30-day Fed Funds curve dashboard (frozen reference + evolution overlay)."""
 from __future__ import annotations
 
 import json
 from pathlib import Path
 
-from analyze_sofr_3m import compute_fomc_meeting_pricing
+from analyze_ff_30d import compute_fomc_meeting_pricing
 
 ROOT = Path(__file__).resolve().parent
-with (ROOT / "sofr_3m_data.json").open(encoding="utf-8") as f:
+with (ROOT / "ff_30d_data.json").open(encoding="utf-8") as f:
     data = json.load(f)
 
 if "fomc_meeting_pricing" not in data:
@@ -25,7 +23,7 @@ HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>3M SOFR Curve Live</title>
+<title>30-Day Fed Funds Curve Live</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 <style>
@@ -137,7 +135,8 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 <body>
 <div class="wrap">
 <header>
-  <h1>3M SOFR curve · frozen reference + time travel</h1>
+  <p style="margin:0 0 10px;font-size:13px"><a href="portal.html" style="color:#93a1b5;text-decoration:none">← Markets portal</a></p>
+  <h1>30-day Fed Funds curve · frozen reference + time travel</h1>
   <div class="sub" id="asof"></div>
   <div>
     <span class="pill frozen">■ Frozen = latest curve</span>
@@ -176,12 +175,12 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 </div>
 
 <div class="card">
-  <h2>FOMC meeting pricing (from 3M SOFR strip)</h2>
+  <h2>FOMC meeting pricing (from 30-day Fed Funds strip)</h2>
   <p class="hint" id="fomcNote"></p>
   <div class="fomc-summary" id="fomcSummary"></div>
   <div class="fomc-chartbox"><canvas id="fomcChart"></canvas></div>
   <div class="tblwrap"><table id="fomcTbl"><thead><tr>
-    <th>Meeting</th><th>Ref 3M</th><th>Implied %</th><th>Cum vs Fed</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
+    <th>Meeting</th><th>Ref 30d</th><th>Implied %</th><th>Cum vs Fed</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
@@ -395,7 +394,7 @@ function updatePinTray() {
       <div class="sym">${pin.symbol}</div>
       <div class="row"><span>Frozen (latest)</span><span>${f ? f.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
       <div class="row"><span>Historical</span><span>${h ? h.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
-      <div class="row"><span>vs Fed midpoint ${DATA.fed_funds_pct}%</span><span>${h ? fmtBp(h.vs_fed_bp) : '—'}</span></div>
+      <div class="row"><span>vs Fed ${DATA.fed_funds_pct}%</span><span>${h ? fmtBp(h.vs_fed_bp) : '—'}</span></div>
       <div class="row"><span>Δ vs frozen</span><span>${f && h ? fmtBp((h.implied_rate_pct - f.implied_rate_pct)*100) : '—'}</span></div>
       <div style="color:var(--mut);margin-top:4px">${hdate}</div>
       <label><input type="checkbox" data-i="${i}" class="lvlChk" ${pin.showLevelLine?'checked':''}/> Show level line</label>
@@ -511,7 +510,7 @@ function buildMainChart() {
           order: 2,
         },
         {
-          label: `Fed funds midpoint ${br}%`,
+          label: `Fed midpoint ${br}%`,
           data: labels.map(() => br),
           borderColor: '#4aa8ff',
           borderDash: [6, 4],
@@ -635,20 +634,15 @@ function setupSlider() {
   };
 }
 
-function policyPillText() {
-  const lo = DATA.fed_funds_target_low_pct;
-  const hi = DATA.fed_funds_target_high_pct;
-  const mid = DATA.fed_funds_pct;
-  if (lo != null && hi != null) {
-    return `Fed ${mid}% (${lo.toFixed(2)}–${hi.toFixed(2)})`;
-  }
-  return `Fed ${mid}%`;
-}
-
 function renderHeader(status) {
   document.getElementById('asof').textContent =
     `Data ${DATA.generated_utc}` + (status?.last_refresh_utc ? ` · refresh ${status.last_refresh_utc}` : '');
-  document.getElementById('policyPill').textContent = policyPillText();
+  const lo = DATA.fed_funds_target_low_pct;
+  const hi = DATA.fed_funds_target_high_pct;
+  document.getElementById('policyPill').textContent =
+    (lo != null && hi != null)
+      ? `Fed ${lo.toFixed(2)}–${hi.toFixed(2)} · mid ${DATA.fed_funds_pct}%`
+      : `Fed ${DATA.fed_funds_pct}%`;
   if (isLiveMode()) document.getElementById('livePill').style.display = 'inline-block';
 }
 
@@ -854,7 +848,7 @@ async function poll() {
   } catch (e) { console.warn(e); }
 }
 
-const VIEW_KEY = 'sofr3m_layout';
+const VIEW_KEY = 'ff30d_layout';
 const MQ_PHONE = window.matchMedia('(max-width: 720px)');
 
 function getViewPref() {
@@ -909,6 +903,6 @@ if (isLiveMode()) {
 </html>
 """.replace("__DATA_JSON__", DATA_JSON).replace("__LIVE_POLL_MS__", str(LIVE_POLL_MS))
 
-for name in ("sofr_3m_dashboard.html", "docs/sofr_3m_dashboard.html"):
+for name in ("ff_30d_dashboard.html", "docs/ff_30d_dashboard.html"):
     (ROOT / name).write_text(HTML, encoding="utf-8")
     print(f"Wrote {name}")

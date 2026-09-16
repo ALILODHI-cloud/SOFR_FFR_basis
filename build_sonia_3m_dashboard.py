@@ -1,4 +1,4 @@
-"""Build interactive 3M SOFR curve dashboard
+"""Build interactive 3M SONIA curve dashboard
 
 # deploy-bump: trigger Pages refresh (frozen reference + evolution overlay)."""
 from __future__ import annotations
@@ -6,15 +6,15 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from analyze_sofr_3m import compute_fomc_meeting_pricing
+from analyze_sonia_3m import compute_mpc_meeting_pricing_3m
 
 ROOT = Path(__file__).resolve().parent
-with (ROOT / "sofr_3m_data.json").open(encoding="utf-8") as f:
+with (ROOT / "sonia_3m_data.json").open(encoding="utf-8") as f:
     data = json.load(f)
 
-if "fomc_meeting_pricing" not in data:
-    data["fomc_meeting_pricing"] = compute_fomc_meeting_pricing(
-        data["contracts"], data["fed_funds_pct"], data.get("fed_funds_as_of")
+if "mpc_meeting_pricing" not in data:
+    data["mpc_meeting_pricing"] = compute_mpc_meeting_pricing_3m(
+        data["contracts"], data["bank_rate_pct"], data.get("bank_rate_as_of")
     )
 
 DATA_JSON = json.dumps(data)
@@ -25,7 +25,7 @@ HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>3M SOFR Curve Live</title>
+<title>3M SONIA Curve Live</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.1.0/dist/chartjs-plugin-annotation.min.js"></script>
 <style>
@@ -68,18 +68,18 @@ th,td{padding:7px 8px;border-bottom:1px solid var(--line)}
 td.num{text-align:right;font-variant-numeric:tabular-nums}
 th{color:var(--mut)}
 .foot{color:var(--mut);font-size:12px;margin-top:16px;line-height:1.6}
-.fomc-summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
-.fomc-stat{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:140px}
-.fomc-stat .k{font-size:11px;color:var(--mut)}
-.fomc-stat .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
-.fomc-chartbox{position:relative;height:220px;margin-bottom:12px}
+.mpc-summary{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.mpc-stat{background:#1b2536;border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:140px}
+.mpc-stat .k{font-size:11px;color:var(--mut)}
+.mpc-stat .v{font-size:18px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.mpc-chartbox{position:relative;height:220px;margin-bottom:12px}
 .probbar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:#1b2536;min-width:90px}
 .probbar span{display:block;height:100%}
 .prob-cut{background:#39d98a}
 .prob-hold{background:#64748b}
 .prob-hike{background:#f87171}
-tr.fomc-next td{background:rgba(57,217,138,0.06)}
-tr.fomc-past td{color:var(--mut)}
+tr.mpc-next td{background:rgba(57,217,138,0.06)}
+tr.mpc-past td{color:var(--mut)}
 .chg-wrap{max-height:520px;overflow:auto;border:1px solid var(--line);border-radius:10px}
 #chgTbl{font-size:11px;white-space:nowrap}
 #chgTbl th,#chgTbl td{padding:5px 7px}
@@ -109,8 +109,8 @@ body.view-phone .chartbox{height:min(52vw, 340px);min-height:260px}
 body.view-phone #pinTray{width:100%;max-height:none;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
 body.view-phone #pinTray:empty::before{min-width:100%}
 body.view-phone .pin-card{min-width:168px;margin-bottom:0;flex-shrink:0}
-body.view-phone .fomc-chartbox{height:180px}
-body.view-phone .fomc-stat{min-width:calc(50% - 6px);flex:1 1 calc(50% - 6px)}
+body.view-phone .mpc-chartbox{height:180px}
+body.view-phone .mpc-stat{min-width:calc(50% - 6px);flex:1 1 calc(50% - 6px)}
 body.view-phone .sliderrow{gap:8px}
 body.view-phone .sliderrow .btn{flex:1;min-width:0;padding:10px 8px}
 body.view-phone .sliderrow input[type=range]{min-width:100%;order:3;flex-basis:100%}
@@ -125,8 +125,8 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
   #pinTray{width:100%;max-height:none;display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
   #pinTray:empty::before{min-width:100%}
   .pin-card{min-width:168px;margin-bottom:0;flex-shrink:0}
-  .fomc-chartbox{height:180px}
-  .fomc-stat{min-width:calc(50% - 6px);flex:1 1 calc(50% - 6px)}
+  .mpc-chartbox{height:180px}
+  .mpc-stat{min-width:calc(50% - 6px);flex:1 1 calc(50% - 6px)}
   .hint.long{display:none}
   .sliderrow .btn{flex:1}
   .sliderrow input[type=range]{min-width:100%;order:3;flex-basis:100%}
@@ -137,7 +137,7 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 <body>
 <div class="wrap">
 <header>
-  <h1>3M SOFR curve · frozen reference + time travel</h1>
+  <h1>3M SONIA curve · frozen reference + time travel</h1>
   <div class="sub" id="asof"></div>
   <div>
     <span class="pill frozen">■ Frozen = latest curve</span>
@@ -176,19 +176,19 @@ body.view-phone .pill{font-size:11px;padding:4px 8px}
 </div>
 
 <div class="card">
-  <h2>FOMC meeting pricing (from 3M SOFR strip)</h2>
-  <p class="hint" id="fomcNote"></p>
-  <div class="fomc-summary" id="fomcSummary"></div>
-  <div class="fomc-chartbox"><canvas id="fomcChart"></canvas></div>
-  <div class="tblwrap"><table id="fomcTbl"><thead><tr>
-    <th>Meeting</th><th>Ref 3M</th><th>Implied %</th><th>Cum vs Fed</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
+  <h2>MPC meeting pricing (from 3M SONIA strip)</h2>
+  <p class="hint" id="mpcNote"></p>
+  <div class="mpc-summary" id="mpcSummary"></div>
+  <div class="mpc-chartbox"><canvas id="mpcChart"></canvas></div>
+  <div class="tblwrap"><table id="mpcTbl"><thead><tr>
+    <th>Meeting</th><th>Ref 3M</th><th>Implied %</th><th>Cum vs Bank</th><th>Δ at meeting</th><th>Cut</th><th>Hold</th><th>Hike</th><th>Probs</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
 <div class="card">
   <h2>All contracts (latest)</h2>
   <div class="tblwrap"><table id="tbl"><thead><tr>
-    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Fed</th><th>As of</th>
+    <th>Delivery</th><th>Symbol</th><th>Implied %</th><th>vs Bank</th><th>As of</th>
   </tr></thead><tbody></tbody></table></div>
 </div>
 
@@ -205,7 +205,7 @@ const LIVE_POLL_MS = __LIVE_POLL_MS__;
 const EMBEDDED = __DATA_JSON__;
 let DATA = EMBEDDED;
 let mainChart = null;
-let fomcChart = null;
+let mpcChart = null;
 let evoIdx = 0;
 let playTimer = null;
 let keys = [];
@@ -265,7 +265,7 @@ function initKeysAndFrozen() {
       label: c.label,
       symbol: c.symbol,
       implied_rate_pct: c.implied_rate_pct,
-      vs_fed_bp: c.vs_fed_bp,
+      vs_bank_bp: c.vs_bank_bp,
     };
   }).filter(Boolean);
 }
@@ -288,7 +288,7 @@ function yAxisBounds() {
       if (keys.includes(p.key) && p.implied_rate_pct != null) vals.push(p.implied_rate_pct);
     }
   }
-  vals.push(DATA.fed_funds_pct);
+  vals.push(DATA.bank_rate_pct);
   const lo = Math.min(...vals);
   const hi = Math.max(...vals);
   const pad = Math.max(0.08, (hi - lo) * 0.12);
@@ -395,7 +395,7 @@ function updatePinTray() {
       <div class="sym">${pin.symbol}</div>
       <div class="row"><span>Frozen (latest)</span><span>${f ? f.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
       <div class="row"><span>Historical</span><span>${h ? h.implied_rate_pct.toFixed(3)+'%' : '—'}</span></div>
-      <div class="row"><span>vs Fed midpoint ${DATA.fed_funds_pct}%</span><span>${h ? fmtBp(h.vs_fed_bp) : '—'}</span></div>
+      <div class="row"><span>vs Bank Rate ${DATA.bank_rate_pct}%</span><span>${h ? fmtBp(h.vs_bank_bp) : '—'}</span></div>
       <div class="row"><span>Δ vs frozen</span><span>${f && h ? fmtBp((h.implied_rate_pct - f.implied_rate_pct)*100) : '—'}</span></div>
       <div style="color:var(--mut);margin-top:4px">${hdate}</div>
       <label><input type="checkbox" data-i="${i}" class="lvlChk" ${pin.showLevelLine?'checked':''}/> Show level line</label>
@@ -469,7 +469,7 @@ function applySlider(updateSliderUi = true) {
 function buildMainChart() {
   const e = evo();
   const labels = frozenPts.map(p => p.label);
-  const br = DATA.fed_funds_pct;
+  const br = DATA.bank_rate_pct;
   const yb = yAxisBounds();
   const ctx = document.getElementById('mainChart');
 
@@ -511,7 +511,7 @@ function buildMainChart() {
           order: 2,
         },
         {
-          label: `Fed funds midpoint ${br}%`,
+          label: `Bank Rate ${br}%`,
           data: labels.map(() => br),
           borderColor: '#4aa8ff',
           borderDash: [6, 4],
@@ -562,10 +562,10 @@ function buildMainChart() {
               const lines = [`${ctx.dataset.label}: ${ctx.parsed.y?.toFixed(3)}%`];
               if (ctx.datasetIndex === 1 && fp && hm) {
                 lines.push(`Δ vs frozen: ${fmtBp((hm.implied_rate_pct - fp.implied_rate_pct)*100)}`);
-                lines.push(`vs Fed: ${fmtBp(hm.vs_fed_bp)}`);
+                lines.push(`vs Bank: ${fmtBp(hm.vs_bank_bp)}`);
               }
               if (ctx.datasetIndex === 0 && fp) {
-                lines.push(`vs Fed: ${fmtBp(fp.vs_fed_bp)}`);
+                lines.push(`vs Bank: ${fmtBp(fp.vs_bank_bp)}`);
               }
               lines.push('Click to pin');
               return lines;
@@ -636,13 +636,13 @@ function setupSlider() {
 }
 
 function policyPillText() {
-  const lo = DATA.fed_funds_target_low_pct;
-  const hi = DATA.fed_funds_target_high_pct;
-  const mid = DATA.fed_funds_pct;
+  const lo = DATA.bank_rate_target_low_pct;
+  const hi = DATA.bank_rate_target_high_pct;
+  const mid = DATA.bank_rate_pct;
   if (lo != null && hi != null) {
-    return `Fed ${mid}% (${lo.toFixed(2)}–${hi.toFixed(2)})`;
+    return `Bank Rate ${mid}%`;
   }
-  return `Fed ${mid}%`;
+  return `Bank Rate ${mid}%`;
 }
 
 function renderHeader(status) {
@@ -652,30 +652,30 @@ function renderHeader(status) {
   if (isLiveMode()) document.getElementById('livePill').style.display = 'inline-block';
 }
 
-function renderFomcPanel() {
-  const fomc = DATA.fomc_meeting_pricing;
+function renderMpcPanel() {
+  const fomc = DATA.mpc_meeting_pricing;
   if (!fomc?.meetings?.length) return;
 
-  document.getElementById('fomcNote').textContent = fomc.note || '';
+  document.getElementById('mpcNote').textContent = fomc.note || '';
 
-  const sum = document.getElementById('fomcSummary');
+  const sum = document.getElementById('mpcSummary');
   const nxt = fomc.next_meeting;
   sum.innerHTML = `
-    <div class="fomc-stat"><div class="k">Fed funds midpoint</div><div class="v">${fomc.fed_funds_pct.toFixed(3)}%</div>${DATA.fed_funds_target_low_pct != null ? `<div class="k" style="margin-top:4px">Range ${DATA.fed_funds_target_low_pct.toFixed(2)}–${DATA.fed_funds_target_high_pct.toFixed(2)}%</div>` : ''}</div>
-    <div class="fomc-stat"><div class="k">Total easing priced</div><div class="v">${fmtBp(fomc.total_easing_priced_bp)}</div></div>
-    ${nxt ? `<div class="fomc-stat"><div class="k">Next: ${nxt.meeting_label}</div><div class="v">${fmtBp(nxt.incremental_bp)}</div><div class="k" style="margin-top:4px">${nxt.cut_pct}% cut · ${nxt.hold_pct}% hold · ${nxt.hike_pct}% hike</div></div>` : ''}`;
+    <div class="mpc-stat"><div class="k">Bank Rate</div><div class="v">${fomc.bank_rate_pct.toFixed(3)}%</div>${DATA.bank_rate_target_low_pct != null ? `<div class="k" style="margin-top:4px">Range ${DATA.bank_rate_target_low_pct.toFixed(2)}–${DATA.bank_rate_target_high_pct.toFixed(2)}%</div>` : ''}</div>
+    <div class="mpc-stat"><div class="k">Total easing priced</div><div class="v">${fmtBp(fomc.total_easing_priced_bp)}</div></div>
+    ${nxt ? `<div class="mpc-stat"><div class="k">Next: ${nxt.meeting_label}</div><div class="v">${fmtBp(nxt.incremental_bp)}</div><div class="k" style="margin-top:4px">${nxt.cut_pct}% cut · ${nxt.hold_pct}% hold · ${nxt.hike_pct}% hike</div></div>` : ''}`;
 
-  const tbody = document.querySelector('#fomcTbl tbody');
+  const tbody = document.querySelector('#mpcTbl tbody');
   tbody.innerHTML = '';
   fomc.meetings.forEach(m => {
     const tr = document.createElement('tr');
-    if (m.status === 'next') tr.className = 'fomc-next';
-    if (m.status === 'past') tr.className = 'fomc-past';
+    if (m.status === 'next') tr.className = 'mpc-next';
+    if (m.status === 'past') tr.className = 'mpc-past';
     tr.innerHTML = `
       <td>${m.meeting_date.slice(5)} · ${m.meeting_label}</td>
       <td>${m.ref_contract_label} <span style="color:var(--mut)">${m.ref_symbol}</span></td>
       <td class="num">${m.implied_rate_pct.toFixed(3)}%</td>
-      <td class="num">${fmtBp(m.cumulative_vs_fed_bp)}</td>
+      <td class="num">${fmtBp(m.cumulative_vs_bank_bp)}</td>
       <td class="num">${fmtBp(m.incremental_bp)}</td>
       <td class="num">${m.cut_pct}%</td>
       <td class="num">${m.hold_pct}%</td>
@@ -690,17 +690,17 @@ function renderFomcPanel() {
 
   const upcoming = fomc.meetings.filter(m => m.status !== 'past');
   const labels = upcoming.map(m => m.meeting_date.slice(5));
-  const cum = upcoming.map(m => m.cumulative_vs_fed_bp);
+  const cum = upcoming.map(m => m.cumulative_vs_bank_bp);
   const inc = upcoming.map(m => m.incremental_bp);
-  const ctx = document.getElementById('fomcChart');
-  if (fomcChart) fomcChart.destroy();
-  fomcChart = new Chart(ctx, {
+  const ctx = document.getElementById('mpcChart');
+  if (mpcChart) mpcChart.destroy();
+  mpcChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
       datasets: [
         {
-          label: 'Cumulative vs Fed (bp)',
+          label: 'Cumulative vs Bank (bp)',
           data: cum,
           type: 'line',
           borderColor: '#4aa8ff',
@@ -744,7 +744,7 @@ function renderTable() {
   tbody.innerHTML = '';
   [...DATA.contracts].sort((a,b) => a.delivery_ym.localeCompare(b.delivery_ym)).forEach(c => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${c.label}</td><td>${c.symbol}</td><td class="num">${c.implied_rate_pct.toFixed(3)}%</td><td class="num">${fmtBp(c.vs_fed_bp)}</td><td>${c.latest_date}</td>`;
+    tr.innerHTML = `<td>${c.label}</td><td>${c.symbol}</td><td class="num">${c.implied_rate_pct.toFixed(3)}%</td><td class="num">${fmtBp(c.vs_bank_bp)}</td><td>${c.latest_date}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -842,7 +842,7 @@ function renderAll(status, rebuildChart = false) {
     applySlider(true);
   }
   renderTable();
-  renderFomcPanel();
+  renderMpcPanel();
   renderChgTable();
 }
 
@@ -854,7 +854,7 @@ async function poll() {
   } catch (e) { console.warn(e); }
 }
 
-const VIEW_KEY = 'sofr3m_layout';
+const VIEW_KEY = 'sonia3m_layout';
 const MQ_PHONE = window.matchMedia('(max-width: 720px)');
 
 function getViewPref() {
@@ -880,7 +880,7 @@ function applyViewMode(pref) {
   if (shortHint) shortHint.style.display = phone ? 'block' : 'none';
   requestAnimationFrame(() => {
     if (mainChart) mainChart.resize();
-    if (fomcChart) fomcChart.resize();
+    if (mpcChart) mpcChart.resize();
   });
 }
 
@@ -896,7 +896,7 @@ MQ_PHONE.addEventListener('change', () => {
 });
 window.addEventListener('resize', () => {
   if (mainChart) mainChart.resize();
-  if (fomcChart) fomcChart.resize();
+  if (mpcChart) mpcChart.resize();
 });
 
 applyViewMode(getViewPref());
@@ -909,6 +909,6 @@ if (isLiveMode()) {
 </html>
 """.replace("__DATA_JSON__", DATA_JSON).replace("__LIVE_POLL_MS__", str(LIVE_POLL_MS))
 
-for name in ("sofr_3m_dashboard.html", "docs/sofr_3m_dashboard.html"):
+for name in ("sonia_3m_dashboard.html", "docs/sonia_3m_dashboard.html"):
     (ROOT / name).write_text(HTML, encoding="utf-8")
     print(f"Wrote {name}")

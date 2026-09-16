@@ -99,8 +99,8 @@ def compute_ecb_meeting_pricing_3m(
     as_of: str | None = None,
 ) -> dict:
     cmap = {c["key"]: c for c in contracts}
-    ref_date = date.fromisoformat(as_of) if as_of else date.today()
     latest = max(date.fromisoformat(c["latest_date"]) for c in contracts)
+    ref_date = max(date.today(), latest)
 
     rows: list[dict] = []
     prev_implied: float | None = None
@@ -148,7 +148,7 @@ def compute_ecb_meeting_pricing_3m(
 
     return {
         "note": ECB_3M_PRICING_NOTE,
-        "as_of": as_of or str(ref_date),
+        "as_of": str(latest),
         "deposit_facility_pct": deposit_pct,
         "total_easing_priced_bp": total_bp,
         "next_meeting": next_mtg,
@@ -222,7 +222,6 @@ def rebuild_evolution_from_snapshot(payload: dict) -> dict:
 def build_payload() -> dict:
     out_path = ROOT / "estr_3m_data.json"
     dep = fetch_deposit_rate(out_path)
-    # Prefer committed 2.25 if present; else module default.
     deposit = float(dep["deposit_facility_pct"])
     deposit_as_of = dep.get("deposit_facility_as_of", DEPOSIT_FACILITY_AS_OF)
 

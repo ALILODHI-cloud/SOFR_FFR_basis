@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-15 20:22 UTC",
+  "generated_utc": "2026-09-16 02:20 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -38,48 +38,48 @@
       "price": 97.505,
       "implied_rate_pct": 2.495,
       "label": "Dec-26 ESTR",
-      "vs_deposit_bp": 24.5
+      "vs_deposit_bp": -0.5
     },
     "slope_bp": 154.5,
     "uk_minus_eur_bp": 154.5,
     "captured_utc": "2026-07-29 07:47 UTC",
     "source": "barchart_eod",
     "bank_rate_pct": 3.75,
-    "deposit_facility_pct": 2.25,
+    "deposit_facility_pct": 2.5,
     "sonia_vs_bank_bp": 29.0,
-    "estr_vs_deposit_bp": 24.5,
-    "relative_vs_policy_bp": 4.5
+    "estr_vs_deposit_bp": -0.5,
+    "relative_vs_policy_bp": 29.5
   },
   "mark": {
-    "date": "2026-09-14",
+    "date": "2026-09-15",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-09-14",
-      "price": 95.865,
-      "implied_rate_pct": 4.135,
-      "vs_bank_bp": 38.5
+      "date": "2026-09-15",
+      "price": 95.895,
+      "implied_rate_pct": 4.105,
+      "vs_bank_bp": 35.5
     },
     "long": {
       "symbol": "IJZ26",
-      "date": "2026-09-14",
-      "price": 97.31,
-      "implied_rate_pct": 2.69,
-      "vs_deposit_bp": 44.0
+      "date": "2026-09-15",
+      "price": 97.36,
+      "implied_rate_pct": 2.64,
+      "vs_deposit_bp": 14.0
     },
-    "slope_bp": 144.5,
-    "updated_utc": "2026-09-15 20:22 UTC",
-    "sonia_vs_bank_bp": 38.5,
-    "estr_vs_deposit_bp": 44.0,
-    "relative_vs_policy_bp": -5.5,
-    "uk_minus_eur_bp": 144.5
+    "slope_bp": 146.5,
+    "updated_utc": "2026-09-16 02:20 UTC",
+    "sonia_vs_bank_bp": 35.5,
+    "estr_vs_deposit_bp": 14.0,
+    "relative_vs_policy_bp": 21.5,
+    "uk_minus_eur_bp": 146.5
   },
   "pnl": {
-    "slope_bp": 10.0,
+    "slope_bp": 8.0,
     "quoted_long_leg_bp": 0.0,
-    "quoted_short_leg_bp": -0.0,
+    "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 250.0,
+    "usd": 200.0,
     "gbp": 0.0
   },
   "trade_path": [
@@ -93,8 +93,8 @@
       "daily_pnl_usd": -0.0,
       "cum_pnl_usd": -0.0,
       "sonia_vs_bank_bp": 29.0,
-      "estr_vs_deposit_bp": 24.5,
-      "relative_vs_policy_bp": 4.5
+      "estr_vs_deposit_bp": -0.5,
+      "relative_vs_policy_bp": 29.5
     },
     {
       "date": "2026-07-29",
@@ -106,8 +106,8 @@
       "daily_pnl_usd": -37.5,
       "cum_pnl_usd": -37.5,
       "sonia_vs_bank_bp": 33.5,
-      "estr_vs_deposit_bp": 27.5,
-      "relative_vs_policy_bp": 6.0
+      "estr_vs_deposit_bp": 2.5,
+      "relative_vs_policy_bp": 31.0
     },
     {
       "date": "2026-07-30",
@@ -119,8 +119,8 @@
       "daily_pnl_usd": 150.0,
       "cum_pnl_usd": 112.5,
       "sonia_vs_bank_bp": 26.0,
-      "estr_vs_deposit_bp": 26.0,
-      "relative_vs_policy_bp": 0.0
+      "estr_vs_deposit_bp": 1.0,
+      "relative_vs_policy_bp": 25.0
     },
     {
       "date": "2026-07-31",
@@ -132,8 +132,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 137.5,
       "sonia_vs_bank_bp": 25.5,
-      "estr_vs_deposit_bp": 26.5,
-      "relative_vs_policy_bp": -1.0
+      "estr_vs_deposit_bp": 1.5,
+      "relative_vs_policy_bp": 24.0
     },
     {
       "date": "2026-08-03",
@@ -145,8 +145,8 @@
       "daily_pnl_usd": 62.5,
       "cum_pnl_usd": 200.0,
       "sonia_vs_bank_bp": 21.5,
-      "estr_vs_deposit_bp": 25.0,
-      "relative_vs_policy_bp": -3.5
+      "estr_vs_deposit_bp": 0.0,
+      "relative_vs_policy_bp": 21.5
     },
     {
       "date": "2026-08-04",
@@ -158,8 +158,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 225.0,
       "sonia_vs_bank_bp": 18.5,
-      "estr_vs_deposit_bp": 23.0,
-      "relative_vs_policy_bp": -4.5
+      "estr_vs_deposit_bp": -2.0,
+      "relative_vs_policy_bp": 20.5
     },
     {
       "date": "2026-08-05",
@@ -171,8 +171,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 212.5,
       "sonia_vs_bank_bp": 17.0,
-      "estr_vs_deposit_bp": 21.0,
-      "relative_vs_policy_bp": -4.0
+      "estr_vs_deposit_bp": -4.0,
+      "relative_vs_policy_bp": 21.0
     },
     {
       "date": "2026-08-06",
@@ -184,8 +184,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 200.0,
       "sonia_vs_bank_bp": 18.0,
-      "estr_vs_deposit_bp": 21.5,
-      "relative_vs_policy_bp": -3.5
+      "estr_vs_deposit_bp": -3.5,
+      "relative_vs_policy_bp": 21.5
     },
     {
       "date": "2026-08-07",
@@ -197,8 +197,8 @@
       "daily_pnl_usd": 0.0,
       "cum_pnl_usd": 200.0,
       "sonia_vs_bank_bp": 18.0,
-      "estr_vs_deposit_bp": 21.5,
-      "relative_vs_policy_bp": -3.5
+      "estr_vs_deposit_bp": -3.5,
+      "relative_vs_policy_bp": 21.5
     },
     {
       "date": "2026-08-10",
@@ -210,8 +210,8 @@
       "daily_pnl_usd": 0.0,
       "cum_pnl_usd": 200.0,
       "sonia_vs_bank_bp": 20.0,
-      "estr_vs_deposit_bp": 23.5,
-      "relative_vs_policy_bp": -3.5
+      "estr_vs_deposit_bp": -1.5,
+      "relative_vs_policy_bp": 21.5
     },
     {
       "date": "2026-08-11",
@@ -223,8 +223,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 225.0,
       "sonia_vs_bank_bp": 19.0,
-      "estr_vs_deposit_bp": 23.5,
-      "relative_vs_policy_bp": -4.5
+      "estr_vs_deposit_bp": -1.5,
+      "relative_vs_policy_bp": 20.5
     },
     {
       "date": "2026-08-12",
@@ -236,8 +236,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 212.5,
       "sonia_vs_bank_bp": 20.0,
-      "estr_vs_deposit_bp": 24.0,
-      "relative_vs_policy_bp": -4.0
+      "estr_vs_deposit_bp": -1.0,
+      "relative_vs_policy_bp": 21.0
     },
     {
       "date": "2026-08-13",
@@ -249,8 +249,8 @@
       "daily_pnl_usd": 0.0,
       "cum_pnl_usd": 212.5,
       "sonia_vs_bank_bp": 19.5,
-      "estr_vs_deposit_bp": 23.5,
-      "relative_vs_policy_bp": -4.0
+      "estr_vs_deposit_bp": -1.5,
+      "relative_vs_policy_bp": 21.0
     },
     {
       "date": "2026-08-14",
@@ -262,8 +262,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 200.0,
       "sonia_vs_bank_bp": 20.0,
-      "estr_vs_deposit_bp": 23.5,
-      "relative_vs_policy_bp": -3.5
+      "estr_vs_deposit_bp": -1.5,
+      "relative_vs_policy_bp": 21.5
     },
     {
       "date": "2026-08-17",
@@ -275,8 +275,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 225.0,
       "sonia_vs_bank_bp": 20.5,
-      "estr_vs_deposit_bp": 25.0,
-      "relative_vs_policy_bp": -4.5
+      "estr_vs_deposit_bp": 0.0,
+      "relative_vs_policy_bp": 20.5
     },
     {
       "date": "2026-08-18",
@@ -288,8 +288,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 250.0,
       "sonia_vs_bank_bp": 21.5,
-      "estr_vs_deposit_bp": 27.0,
-      "relative_vs_policy_bp": -5.5
+      "estr_vs_deposit_bp": 2.0,
+      "relative_vs_policy_bp": 19.5
     },
     {
       "date": "2026-08-19",
@@ -301,8 +301,8 @@
       "daily_pnl_usd": 75.0,
       "cum_pnl_usd": 325.0,
       "sonia_vs_bank_bp": 19.0,
-      "estr_vs_deposit_bp": 27.5,
-      "relative_vs_policy_bp": -8.5
+      "estr_vs_deposit_bp": 2.5,
+      "relative_vs_policy_bp": 16.5
     },
     {
       "date": "2026-08-20",
@@ -314,8 +314,8 @@
       "daily_pnl_usd": -37.5,
       "cum_pnl_usd": 287.5,
       "sonia_vs_bank_bp": 20.0,
-      "estr_vs_deposit_bp": 27.0,
-      "relative_vs_policy_bp": -7.0
+      "estr_vs_deposit_bp": 2.0,
+      "relative_vs_policy_bp": 18.0
     },
     {
       "date": "2026-08-21",
@@ -327,8 +327,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 275.0,
       "sonia_vs_bank_bp": 19.5,
-      "estr_vs_deposit_bp": 26.0,
-      "relative_vs_policy_bp": -6.5
+      "estr_vs_deposit_bp": 1.0,
+      "relative_vs_policy_bp": 18.5
     },
     {
       "date": "2026-08-24",
@@ -340,8 +340,8 @@
       "daily_pnl_usd": 12.5,
       "cum_pnl_usd": 287.5,
       "sonia_vs_bank_bp": 20.5,
-      "estr_vs_deposit_bp": 27.5,
-      "relative_vs_policy_bp": -7.0
+      "estr_vs_deposit_bp": 2.5,
+      "relative_vs_policy_bp": 18.0
     },
     {
       "date": "2026-08-25",
@@ -353,8 +353,8 @@
       "daily_pnl_usd": 12.5,
       "cum_pnl_usd": 300.0,
       "sonia_vs_bank_bp": 18.5,
-      "estr_vs_deposit_bp": 26.0,
-      "relative_vs_policy_bp": -7.5
+      "estr_vs_deposit_bp": 1.0,
+      "relative_vs_policy_bp": 17.5
     },
     {
       "date": "2026-08-26",
@@ -366,8 +366,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 325.0,
       "sonia_vs_bank_bp": 17.5,
-      "estr_vs_deposit_bp": 26.0,
-      "relative_vs_policy_bp": -8.5
+      "estr_vs_deposit_bp": 1.0,
+      "relative_vs_policy_bp": 16.5
     },
     {
       "date": "2026-08-27",
@@ -379,8 +379,8 @@
       "daily_pnl_usd": 12.5,
       "cum_pnl_usd": 337.5,
       "sonia_vs_bank_bp": 17.5,
-      "estr_vs_deposit_bp": 26.5,
-      "relative_vs_policy_bp": -9.0
+      "estr_vs_deposit_bp": 1.5,
+      "relative_vs_policy_bp": 16.0
     },
     {
       "date": "2026-08-28",
@@ -392,8 +392,8 @@
       "daily_pnl_usd": -62.5,
       "cum_pnl_usd": 275.0,
       "sonia_vs_bank_bp": 20.0,
-      "estr_vs_deposit_bp": 26.5,
-      "relative_vs_policy_bp": -6.5
+      "estr_vs_deposit_bp": 1.5,
+      "relative_vs_policy_bp": 18.5
     },
     {
       "date": "2026-08-31",
@@ -405,7 +405,7 @@
       "daily_pnl_usd": NaN,
       "cum_pnl_usd": NaN,
       "sonia_vs_bank_bp": NaN,
-      "estr_vs_deposit_bp": 27.5,
+      "estr_vs_deposit_bp": 2.5,
       "relative_vs_policy_bp": NaN
     },
     {
@@ -418,8 +418,8 @@
       "daily_pnl_usd": NaN,
       "cum_pnl_usd": 237.5,
       "sonia_vs_bank_bp": 23.0,
-      "estr_vs_deposit_bp": 28.0,
-      "relative_vs_policy_bp": -5.0
+      "estr_vs_deposit_bp": 3.0,
+      "relative_vs_policy_bp": 20.0
     },
     {
       "date": "2026-09-02",
@@ -431,8 +431,8 @@
       "daily_pnl_usd": 37.5,
       "cum_pnl_usd": 275.0,
       "sonia_vs_bank_bp": 24.0,
-      "estr_vs_deposit_bp": 30.5,
-      "relative_vs_policy_bp": -6.5
+      "estr_vs_deposit_bp": 5.5,
+      "relative_vs_policy_bp": 18.5
     },
     {
       "date": "2026-09-03",
@@ -444,8 +444,8 @@
       "daily_pnl_usd": 37.5,
       "cum_pnl_usd": 312.5,
       "sonia_vs_bank_bp": 21.5,
-      "estr_vs_deposit_bp": 29.5,
-      "relative_vs_policy_bp": -8.0
+      "estr_vs_deposit_bp": 4.5,
+      "relative_vs_policy_bp": 17.0
     },
     {
       "date": "2026-09-04",
@@ -457,8 +457,8 @@
       "daily_pnl_usd": 25.0,
       "cum_pnl_usd": 337.5,
       "sonia_vs_bank_bp": 19.5,
-      "estr_vs_deposit_bp": 28.5,
-      "relative_vs_policy_bp": -9.0
+      "estr_vs_deposit_bp": 3.5,
+      "relative_vs_policy_bp": 16.0
     },
     {
       "date": "2026-09-07",
@@ -470,8 +470,8 @@
       "daily_pnl_usd": 0.0,
       "cum_pnl_usd": 337.5,
       "sonia_vs_bank_bp": 21.0,
-      "estr_vs_deposit_bp": 30.0,
-      "relative_vs_policy_bp": -9.0
+      "estr_vs_deposit_bp": 5.0,
+      "relative_vs_policy_bp": 16.0
     },
     {
       "date": "2026-09-08",
@@ -483,8 +483,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 325.0,
       "sonia_vs_bank_bp": 21.0,
-      "estr_vs_deposit_bp": 29.5,
-      "relative_vs_policy_bp": -8.5
+      "estr_vs_deposit_bp": 4.5,
+      "relative_vs_policy_bp": 16.5
     },
     {
       "date": "2026-09-09",
@@ -496,8 +496,8 @@
       "daily_pnl_usd": -12.5,
       "cum_pnl_usd": 312.5,
       "sonia_vs_bank_bp": 23.0,
-      "estr_vs_deposit_bp": 31.0,
-      "relative_vs_policy_bp": -8.0
+      "estr_vs_deposit_bp": 6.0,
+      "relative_vs_policy_bp": 17.0
     },
     {
       "date": "2026-09-10",
@@ -509,8 +509,8 @@
       "daily_pnl_usd": 62.5,
       "cum_pnl_usd": 375.0,
       "sonia_vs_bank_bp": 31.5,
-      "estr_vs_deposit_bp": 42.0,
-      "relative_vs_policy_bp": -10.5
+      "estr_vs_deposit_bp": 17.0,
+      "relative_vs_policy_bp": 14.5
     },
     {
       "date": "2026-09-11",
@@ -522,8 +522,8 @@
       "daily_pnl_usd": -50.0,
       "cum_pnl_usd": 325.0,
       "sonia_vs_bank_bp": 32.5,
-      "estr_vs_deposit_bp": 41.0,
-      "relative_vs_policy_bp": -8.5
+      "estr_vs_deposit_bp": 16.0,
+      "relative_vs_policy_bp": 16.5
     },
     {
       "date": "2026-09-14",
@@ -535,8 +535,21 @@
       "daily_pnl_usd": -75.0,
       "cum_pnl_usd": 250.0,
       "sonia_vs_bank_bp": 38.5,
-      "estr_vs_deposit_bp": 44.0,
-      "relative_vs_policy_bp": -5.5
+      "estr_vs_deposit_bp": 19.0,
+      "relative_vs_policy_bp": 19.5
+    },
+    {
+      "date": "2026-09-15",
+      "quoted_long_rate": 4.105,
+      "quoted_short_rate": 2.64,
+      "slope_bp": 146.5,
+      "dslope_bp": 8.0,
+      "cum_pnl_gbp": 200.0,
+      "daily_pnl_usd": -50.0,
+      "cum_pnl_usd": 200.0,
+      "sonia_vs_bank_bp": 35.5,
+      "estr_vs_deposit_bp": 14.0,
+      "relative_vs_policy_bp": 21.5
     }
   ],
   "regime_attribution": [
@@ -564,9 +577,9 @@
     {
       "regime": "bull_flattening",
       "label": "Bull flattening",
-      "days": 2,
-      "pnl_slope_bp": -1.0,
-      "pnl_gbp": -25.0
+      "days": 3,
+      "pnl_slope_bp": -3.0,
+      "pnl_gbp": -75.0
     },
     {
       "regime": "unchanged",
@@ -599,12 +612,12 @@
   "dual_policy": {
     "bank_rate_pct": 3.75,
     "bank_rate_as_of": "2026-06-18",
-    "deposit_facility_pct": 2.25,
-    "deposit_facility_as_of": "2026-07-15",
-    "policy_gap_bp": 150.0
+    "deposit_facility_pct": 2.5,
+    "deposit_facility_as_of": "2026-09-10",
+    "policy_gap_bp": 125.0
   },
   "view": {
     "primary": "relative_vs_policy_bp",
-    "note": "Implied change by end-2026: SONIA Dec-26 \u2212 Bank Rate (3.75%), ESTR Dec-26 \u2212 ECB deposit (2.25%). Relative = UK gap \u2212 EUR gap (bp). Absolute UK\u2212EUR = relative + 150.0 bp policy gap."
+    "note": "Implied change by end-2026: SONIA Dec-26 \u2212 Bank Rate (3.75%), ESTR Dec-26 \u2212 ECB deposit (2.50%). Relative = UK gap \u2212 EUR gap (bp). Absolute UK\u2212EUR = relative + 125.0 bp policy gap."
   }
 }
