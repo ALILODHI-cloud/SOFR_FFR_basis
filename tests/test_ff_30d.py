@@ -74,3 +74,24 @@ def test_fomc_pricing_marks_next_meeting_and_uses_fed_midpoint():
     if out["next_meeting"]:
         assert out["next_meeting"]["status"] == "next"
         assert out["next_meeting"]["meeting_date"] > "2026-09-15"
+
+
+def test_dashboard_html_has_time_travel_and_fomc_panel():
+    from pathlib import Path
+
+    html = (Path(__file__).resolve().parents[1] / "ff_30d_dashboard.html").read_text(
+        encoding="utf-8"
+    )
+    for needle in (
+        "30-day Fed Funds",
+        "dateSlider",
+        "Frozen · latest",
+        "FOMC meeting pricing",
+        "Fed funds midpoint",
+        "curve_evolution",
+        "chgTbl",
+        "ZQV26",
+    ):
+        assert needle in html, needle
+    assert "vs cash rate" not in html
+    assert "RBA" not in html
