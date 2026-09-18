@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-18 13:14 UTC",
+  "generated_utc": "2026-09-18 19:49 UTC",
   "source": "Barchart historical lastPrice (finalized EOD sessions only)",
   "contract": "CME 3M \u20acSTR (EB*)",
   "quote_convention": "price = 100 \u2212 implied rate (%)",
@@ -273,12 +273,12 @@
         2030,
         6
       ],
-      "latest_date": "2026-09-16",
-      "price": 96.7875,
-      "implied_rate_pct": 3.2125,
-      "vs_deposit_bp": 71.3,
-      "vs_deposit_hikes_25bp": 2.85,
-      "bp_change": 2.5
+      "latest_date": "2026-09-17",
+      "price": 96.81,
+      "implied_rate_pct": 3.19,
+      "vs_deposit_bp": 69.0,
+      "vs_deposit_hikes_25bp": 2.76,
+      "bp_change": 0.2
     },
     {
       "key": "2030-09",
@@ -294,7 +294,7 @@
       "implied_rate_pct": 3.2,
       "vs_deposit_bp": 70.0,
       "vs_deposit_hikes_25bp": 2.8,
-      "bp_change": -1.2
+      "bp_change": 1.0
     },
     {
       "key": "2030-12",
@@ -533,17 +533,7 @@
       },
       {
         "date": "2026-06-22",
-        "2026-06": 2.2025,
-        "2030-03": 2.6125,
-        "2030-06": 2.64,
-        "2030-09": 2.67,
-        "2030-12": 2.7,
-        "2031-03": 2.73,
-        "2031-06": 2.7575,
-        "2031-09": 2.7825,
-        "2031-12": 2.7875,
-        "2032-03": 2.79,
-        "2032-06": 2.7875
+        "2026-06": 2.2025
       },
       {
         "date": "2026-06-23",
@@ -2296,6 +2286,7 @@
         "2029-09": 3.1825,
         "2029-12": 3.185,
         "2030-03": 3.1875,
+        "2030-06": 3.19,
         "2030-09": 3.2,
         "2030-12": 3.21,
         "2031-03": 3.2175,
@@ -2379,76 +2370,6 @@
             "symbol": "EBM26",
             "implied_rate_pct": 2.2025,
             "vs_deposit_bp": -29.7
-          },
-          {
-            "key": "2030-03",
-            "label": "Mar-30",
-            "symbol": "EBH30",
-            "implied_rate_pct": 2.6125,
-            "vs_deposit_bp": 11.2
-          },
-          {
-            "key": "2030-06",
-            "label": "Jun-30",
-            "symbol": "EBM30",
-            "implied_rate_pct": 2.64,
-            "vs_deposit_bp": 14.0
-          },
-          {
-            "key": "2030-09",
-            "label": "Sep-30",
-            "symbol": "EBU30",
-            "implied_rate_pct": 2.67,
-            "vs_deposit_bp": 17.0
-          },
-          {
-            "key": "2030-12",
-            "label": "Dec-30",
-            "symbol": "EBZ30",
-            "implied_rate_pct": 2.7,
-            "vs_deposit_bp": 20.0
-          },
-          {
-            "key": "2031-03",
-            "label": "Mar-31",
-            "symbol": "EBH31",
-            "implied_rate_pct": 2.73,
-            "vs_deposit_bp": 23.0
-          },
-          {
-            "key": "2031-06",
-            "label": "Jun-31",
-            "symbol": "EBM31",
-            "implied_rate_pct": 2.7575,
-            "vs_deposit_bp": 25.7
-          },
-          {
-            "key": "2031-09",
-            "label": "Sep-31",
-            "symbol": "EBU31",
-            "implied_rate_pct": 2.7825,
-            "vs_deposit_bp": 28.3
-          },
-          {
-            "key": "2031-12",
-            "label": "Dec-31",
-            "symbol": "EBZ31",
-            "implied_rate_pct": 2.7875,
-            "vs_deposit_bp": 28.8
-          },
-          {
-            "key": "2032-03",
-            "label": "Mar-32",
-            "symbol": "EBH32",
-            "implied_rate_pct": 2.79,
-            "vs_deposit_bp": 29.0
-          },
-          {
-            "key": "2032-06",
-            "label": "Jun-32",
-            "symbol": "EBM32",
-            "implied_rate_pct": 2.7875,
-            "vs_deposit_bp": 28.8
           }
         ]
       },
@@ -13705,6 +13626,13 @@
             "symbol": "EBH30",
             "implied_rate_pct": 3.1875,
             "vs_deposit_bp": 68.8
+          },
+          {
+            "key": "2030-06",
+            "label": "Jun-30",
+            "symbol": "EBM30",
+            "implied_rate_pct": 3.19,
+            "vs_deposit_bp": 69.0
           },
           {
             "key": "2030-09",
