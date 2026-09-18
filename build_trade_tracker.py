@@ -503,7 +503,7 @@ h2{margin:0 0 8px;font-size:16px}
   <a class="card" href="estr_1m_dashboard.html"><h2>1M ESTR curve live</h2><p>15 Sep EOD · DFR 2.50% after 10 Sep hike</p></a>
   <a class="card" href="estr_sonia_1m_dashboard.html"><h2>1M ESTR vs SONIA (bp vs policy)</h2><p>15 Sep EOD · UK still more hawkish</p></a>
   <a class="card" href="estr_3m_dashboard.html"><h2>3M ESTR curve · ECB</h2><p>15 Sep EOD · next Oct ECB</p></a>
-  <a class="card" href="euribor_3m_dashboard.html"><h2>3M Euribor curve · ECB</h2><p>ICE IM* · next Oct ECB</p></a>
+  <a class="card" href="euribor_3m_dashboard.html"><h2>3M Euribor curve · ECB</h2><p>17 Sep EOD · Z27−Z26 +43.5 · next Oct ECB</p></a>
   <a class="card" href="sofr_3m_dashboard.html"><h2>3M SOFR curve live</h2><p>15 Sep EOD · Sep FOMC tomorrow</p></a>
   <a class="card" href="ff_30d_dashboard.html"><h2>30-day Fed Funds curve · FOMC</h2><p>CME ZQ* · 15 Sep EOD · Sep FOMC 100% hike</p></a>
   <a class="card" href="asx_ib_30d_dashboard.html"><h2>ASX 30-day cash rate live</h2><p>Refreshed strip · next 29 Sep RBA</p></a>
