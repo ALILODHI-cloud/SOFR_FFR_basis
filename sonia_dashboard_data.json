@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-18 13:17 UTC",
+  "generated_utc": "2026-09-18 19:51 UTC",
   "definitions": {
     "slope_bp": "Implied 1M SONIA rate (Dec-27) minus implied rate (Dec-26), in bp. Futures quoted 100 \u2212 rate; rates computed in % then scaled to bp.",
     "basis_bp": "Dec-26 futures implied rate minus spot SONIA fixing, in bp (cash\u2013futures basis).",
@@ -83,7 +83,7 @@
     "n_valid_corr": 33,
     "start": "2026-06-22",
     "end": "2026-09-17",
-    "overlap_start": "2026-06-19",
+    "overlap_start": "2026-06-22",
     "note": "Full JUZ26\u2229JUZ27 overlap (63 sessions). First 29 sessions have no 30d rolling correlation."
   },
   "slope_history": {
