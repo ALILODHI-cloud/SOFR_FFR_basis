@@ -1,0 +1,302 @@
+"""
+Fetch full 3M Euribor futures curve from Barchart EOD (ICE IM*).
+
+Writes euribor_3m_data.json for build_euribor_3m_dashboard.py.
+"""
+from __future__ import annotations
+
+import re
+from datetime import date, datetime, timezone
+from pathlib import Path
+
+import pandas as pd
+
+ROOT = Path(__file__).resolve().parent
+
+from analyze_sonia import UA, price_to_rate
+from analyze_stir_curves import fetch_barchart_batch, symbol_to_meta
+from curve_chain import strip_symbols
+from curve_snapshot import write_snapshot
+from analyze_estr_1m import (
+    ECB_GOVERNING_COUNCIL,
+    DEPOSIT_FACILITY_AS_OF,
+    fetch_deposit_rate,
+    _meeting_probs_25bp,
+)
+from analyze_estr_3m import _ref_contract_key
+
+CHAIN_URL = "https://www.barchart.com/futures/quotes/IM*0/futures-prices"
+PREFIX = "IM"
+MIN_CHAIN = 8
+SYNTH_CHAIN = 28
+
+EURIBOR_3M_PRICING_NOTE = (
+    "Approximate meeting path from ICE 3M Euribor futures (not ECB-dated OIS / WIRP). "
+    "Each meeting maps to the next quarterly contract after the decision as a "
+    "post-meeting rate proxy. Probabilities assume 25bp steps. 3M Euribor is an "
+    "unsecured term fixing and usually sits above the ECB deposit facility — "
+    "use Bloomberg WIRP for precise per-meeting OIS pricing."
+)
+
+
+def meta(symbol: str) -> dict | None:
+    return symbol_to_meta(PREFIX, symbol)
+
+
+def discover_im_chain() -> list[str]:
+    from playwright.sync_api import sync_playwright
+
+    found: set[str] = set()
+    pat = re.compile(rf"{PREFIX}[HMUZ]\d{{2}}")
+
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_context(user_agent=UA["User-Agent"]).new_page()
+
+        def on_resp(response) -> None:
+            if response.status != 200:
+                return
+            try:
+                body = response.text()
+            except Exception:
+                return
+            if PREFIX in body and len(body) < 900_000:
+                found.update(pat.findall(body))
+
+        page.on("response", on_resp)
+        page.goto(CHAIN_URL, wait_until="domcontentloaded", timeout=120_000)
+        page.wait_for_timeout(2000)
+        found.update(pat.findall(page.content()))
+        browser.close()
+
+    if len(found) < MIN_CHAIN:
+        print(
+            f"Chain scrape returned {len(found)} {PREFIX}* symbols "
+            f"(min {MIN_CHAIN}); adding synthesized strip"
+        )
+        found.update(strip_symbols(PREFIX, SYNTH_CHAIN, quarterly=True))
+
+    syms = sorted(found, key=lambda s: meta(s)["sort_key"] if meta(s) else (9999, 99))
+    print(f"Discovered {len(syms)} {PREFIX}* 3M Euribor contracts")
+    return syms
+
+
+def compute_ecb_meeting_pricing_3m(
+    contracts: list[dict],
+    deposit_pct: float,
+    as_of: str | None = None,
+) -> dict:
+    cmap = {c["key"]: c for c in contracts}
+    latest = max(date.fromisoformat(c["latest_date"]) for c in contracts)
+    ref_date = max(date.today(), latest)
+
+    rows: list[dict] = []
+    prev_implied: float | None = None
+    marked_next = False
+
+    for mtg in ECB_GOVERNING_COUNCIL:
+        mdate = date.fromisoformat(mtg["date"])
+        if mdate.year > latest.year + 1:
+            break
+        ref_key = _ref_contract_key(mdate)
+        c = cmap.get(ref_key)
+        if not c:
+            continue
+
+        implied = float(c["implied_rate_pct"])
+        cumulative_bp = round((implied - deposit_pct) * 100, 1)
+        anchor = deposit_pct if prev_implied is None else prev_implied
+        incremental_bp = round((implied - anchor) * 100, 1)
+        prev_implied = implied
+
+        if mdate <= ref_date:
+            status = "past"
+        elif not marked_next:
+            status = "next"
+            marked_next = True
+        else:
+            status = "upcoming"
+
+        rows.append({
+            "meeting_date": mtg["date"],
+            "meeting_label": mtg["label"],
+            "status": status,
+            "ref_contract_key": ref_key,
+            "ref_contract_label": c["label"],
+            "ref_symbol": c["symbol"],
+            "implied_rate_pct": round(implied, 4),
+            "cumulative_vs_deposit_bp": cumulative_bp,
+            "incremental_bp": incremental_bp,
+            **_meeting_probs_25bp(incremental_bp),
+        })
+
+    total_bp = rows[-1]["cumulative_vs_deposit_bp"] if rows else 0.0
+    upcoming = [r for r in rows if r["status"] != "past"]
+    next_mtg = upcoming[0] if upcoming else None
+
+    return {
+        "note": EURIBOR_3M_PRICING_NOTE,
+        "as_of": str(latest),
+        "deposit_facility_pct": deposit_pct,
+        "total_easing_priced_bp": total_bp,
+        "next_meeting": next_mtg,
+        "meetings": rows,
+        "calendar": ECB_GOVERNING_COUNCIL,
+        "calendar_source": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
+    }
+
+
+def _compute_curve_evolution(
+    wide: pd.DataFrame, contracts: list[dict], deposit: float
+) -> dict:
+    """Full listed strip over time; later contracts appear when they quote."""
+    keys_all = [c["key"] for c in contracts]
+    label_map = {c["key"]: c for c in contracts}
+    last_key = keys_all[-1] if keys_all else ""
+    note = (
+        f"Full listed 3M Euribor strip ({len(keys_all)} contracts through "
+        f"{last_key or 'n/a'}). Later deliveries have shorter history; "
+        "the amber line skips missing points."
+    )
+
+    history: list[dict] = []
+    for dt, row in wide.iterrows():
+        pts = []
+        for k in keys_all:
+            if k not in wide.columns:
+                continue
+            v = row[k]
+            if pd.isna(v):
+                continue
+            rate = float(v)
+            pts.append({
+                "key": k,
+                "label": label_map[k]["label"],
+                "symbol": label_map[k]["symbol"],
+                "implied_rate_pct": round(rate, 4),
+                "vs_deposit_bp": round((rate - deposit) * 100, 1),
+            })
+        if pts:
+            history.append({"date": str(dt.date()), "points": pts})
+
+    return {
+        "n_contracts": len(keys_all),
+        "contract_keys": keys_all,
+        "n_sessions": int(len(history)),
+        "start": history[0]["date"] if history else None,
+        "end": history[-1]["date"] if history else None,
+        "note": note,
+        "history": history,
+    }
+
+
+def rebuild_evolution_from_snapshot(payload: dict) -> dict:
+    """Recompute curve_evolution from an existing timeseries snapshot."""
+    rows = payload.get("timeseries", {}).get("rows") or []
+    contracts = payload.get("contracts") or []
+    deposit = float(payload["deposit_facility_pct"])
+    series: dict[str, dict] = {}
+    for rec in rows:
+        dt = pd.Timestamp(rec["date"])
+        for k, v in rec.items():
+            if k == "date" or v is None:
+                continue
+            series.setdefault(k, {})[dt] = float(v)
+    wide = pd.DataFrame(series).sort_index()
+    payload["curve_evolution"] = _compute_curve_evolution(wide, contracts, deposit)
+    return payload
+
+
+def build_payload() -> dict:
+    out_path = ROOT / "euribor_3m_data.json"
+    fallback = out_path if out_path.is_file() else ROOT / "estr_3m_data.json"
+    dep = fetch_deposit_rate(fallback if fallback.is_file() else None)
+    deposit = float(dep["deposit_facility_pct"])
+    deposit_as_of = dep.get("deposit_facility_as_of", DEPOSIT_FACILITY_AS_OF)
+
+    symbols = discover_im_chain()
+    print(f"Fetching EOD for {len(symbols)} contracts…")
+    batch = fetch_barchart_batch(symbols)
+
+    contracts: list[dict] = []
+    series: dict[str, pd.Series] = {}
+
+    for sym in symbols:
+        m = meta(sym)
+        if not m:
+            continue
+        df = batch.get(sym)
+        if df is None or df.empty:
+            print(f"  SKIP {sym}")
+            continue
+        rates = price_to_rate(df["price"])
+        key = m["key"]
+        series[key] = rates
+        implied = float(rates.iloc[-1])
+        vs_dep_bp = (implied - deposit) * 100.0
+        contracts.append({
+            **m,
+            "latest_date": str(rates.index[-1].date()),
+            "price": round(float(df["price"].iloc[-1]), 4),
+            "implied_rate_pct": round(implied, 4),
+            "vs_deposit_bp": round(vs_dep_bp, 1),
+            "vs_deposit_hikes_25bp": round(vs_dep_bp / 25.0, 2),
+        })
+        print(f"  {sym} {m['label']}: {implied:.3f}% ({vs_dep_bp:+.1f} bp vs {deposit}%)")
+
+    if not contracts:
+        raise RuntimeError("No 3M Euribor contracts fetched")
+
+    for i, c in enumerate(contracts):
+        if i == 0:
+            c["bp_change"] = None
+        else:
+            c["bp_change"] = round(
+                (c["implied_rate_pct"] - contracts[i - 1]["implied_rate_pct"]) * 100, 1
+            )
+
+    wide = pd.DataFrame(series).sort_index(axis=1)
+    records = []
+    for dt, row in wide.iterrows():
+        rec = {"date": str(dt.date())}
+        for col in wide.columns:
+            v = row[col]
+            if pd.notna(v):
+                rec[col] = round(float(v), 4)
+        records.append(rec)
+
+    evolution = _compute_curve_evolution(wide, contracts, deposit)
+    pricing = compute_ecb_meeting_pricing_3m(contracts, deposit, deposit_as_of)
+
+    return {
+        "generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "source": "Barchart historical lastPrice (finalized EOD sessions only)",
+        "contract": "ICE 3M Euribor (IM*)",
+        "quote_convention": "price = 100 − implied rate (%)",
+        "deposit_facility_pct": deposit,
+        "deposit_facility_as_of": deposit_as_of,
+        "deposit_facility_source": dep.get("deposit_facility_source", "committed fallback"),
+        "n_contracts": len(contracts),
+        "contracts": contracts,
+        "timeseries": {
+            "dates": [str(d.date()) for d in wide.index],
+            "columns": list(wide.columns),
+            "rows": records,
+            "n_sessions": int(len(wide)),
+            "start": str(wide.index.min().date()),
+            "end": str(wide.index.max().date()),
+        },
+        "curve_evolution": evolution,
+        "ecb_meeting_pricing": pricing,
+        "ecb_calendar": ECB_GOVERNING_COUNCIL,
+        "ecb_calendar_source": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html",
+    }
+
+
+def main() -> None:
+    payload = build_payload()
+    write_snapshot(payload, ROOT / "euribor_3m_data.json", min_contracts=8)
+
+
+if __name__ == "__main__":
+    main()
