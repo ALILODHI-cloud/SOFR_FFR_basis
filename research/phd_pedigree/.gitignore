@@ -1,0 +1,7 @@
+# Pipeline outputs: large, regenerable, and specific to one run.
+data/authors_*.json
+data/tiers_*.json
+data/analysis_*.json
+data/validation_*.csv
+data/sed_biomed_phds_by_institution.csv
+__pycache__/
