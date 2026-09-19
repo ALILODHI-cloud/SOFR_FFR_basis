@@ -87,6 +87,19 @@ Same UX as the 1M SONIA dashboard: frozen latest curve (green), historical time-
 
 GitHub Actions fetches all CME 3M SOFR (`SQ*`) and 30-day Fed Funds (`ZQ*`) contracts from Barchart twice on weekdays (~10:00 and ~18:30 London) and redeploys. Trigger manually: **Actions → 3M SOFR curve — fetch, build, deploy → Run workflow**.
 
+### 3M Euribor curve dashboard
+
+**Permanent URL (static, auto-refreshed weekdays):**  
+https://alilodhi-cloud.github.io/SOFR_FFR_basis/euribor_3m_dashboard.html
+
+Same UX as 3M €STR: frozen latest quarterly strip, historical time-travel, pin legs, ECB meeting pricing (next-quarter contract as post-decision proxy), daily Δ table. Policy anchor is the ECB deposit facility. Rebuilds on the 3M €STR weekday workflow.
+
+```bash
+python3 analyze_euribor_3m.py
+python3 build_euribor_3m_dashboard.py
+```
+
+
 ### 30-day Fed Funds curve dashboard
 
 **Permanent URL (static, auto-refreshed weekdays):**  
