@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-22 13:54 UTC",
+  "generated_utc": "2026-09-22 14:04 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -67,7 +67,7 @@
       "vs_deposit_bp": 12.0
     },
     "slope_bp": 139.0,
-    "updated_utc": "2026-09-22 13:54 UTC",
+    "updated_utc": "2026-09-22 14:04 UTC",
     "sonia_vs_bank_bp": 26.0,
     "estr_vs_deposit_bp": 12.0,
     "relative_vs_policy_bp": 14.0,
