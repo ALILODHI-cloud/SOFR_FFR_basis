@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-22 20:28 UTC",
+  "generated_utc": "2026-09-23 14:05 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -51,35 +51,35 @@
     "relative_vs_policy_bp": 29.5
   },
   "mark": {
-    "date": "2026-09-21",
+    "date": "2026-09-22",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-09-21",
-      "price": 95.99,
-      "implied_rate_pct": 4.01,
-      "vs_bank_bp": 26.0
+      "date": "2026-09-22",
+      "price": 95.985,
+      "implied_rate_pct": 4.015,
+      "vs_bank_bp": 26.5
     },
     "long": {
       "symbol": "IJZ26",
-      "date": "2026-09-21",
-      "price": 97.38,
-      "implied_rate_pct": 2.62,
-      "vs_deposit_bp": 12.0
+      "date": "2026-09-22",
+      "price": 97.385,
+      "implied_rate_pct": 2.615,
+      "vs_deposit_bp": 11.5
     },
-    "slope_bp": 139.0,
-    "updated_utc": "2026-09-22 20:28 UTC",
-    "sonia_vs_bank_bp": 26.0,
-    "estr_vs_deposit_bp": 12.0,
-    "relative_vs_policy_bp": 14.0,
-    "uk_minus_eur_bp": 139.0
+    "slope_bp": 140.0,
+    "updated_utc": "2026-09-23 14:05 UTC",
+    "sonia_vs_bank_bp": 26.5,
+    "estr_vs_deposit_bp": 11.5,
+    "relative_vs_policy_bp": 15.0,
+    "uk_minus_eur_bp": 140.0
   },
   "pnl": {
-    "slope_bp": 15.5,
+    "slope_bp": 14.5,
     "quoted_long_leg_bp": 0.0,
-    "quoted_short_leg_bp": 0.0,
+    "quoted_short_leg_bp": -0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 387.5,
+    "usd": 362.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -602,6 +602,19 @@
       "sonia_vs_bank_bp": 26.0,
       "estr_vs_deposit_bp": 12.0,
       "relative_vs_policy_bp": 14.0
+    },
+    {
+      "date": "2026-09-22",
+      "quoted_long_rate": 4.015,
+      "quoted_short_rate": 2.615,
+      "slope_bp": 140.0,
+      "dslope_bp": 14.5,
+      "cum_pnl_gbp": 362.5,
+      "daily_pnl_usd": -25.0,
+      "cum_pnl_usd": 362.5,
+      "sonia_vs_bank_bp": 26.5,
+      "estr_vs_deposit_bp": 11.5,
+      "relative_vs_policy_bp": 15.0
     }
   ],
   "regime_attribution": [
@@ -643,7 +656,7 @@
     {
       "regime": "mixed_flattening",
       "label": "Mixed flattening",
-      "days": 7,
+      "days": 8,
       "pnl_slope_bp": NaN,
       "pnl_gbp": NaN
     },
