@@ -1,5 +1,5 @@
 {
-  "generated_utc": "2026-09-24 14:13 UTC",
+  "generated_utc": "2026-09-25 14:26 UTC",
   "trade": {
     "id": "dec26_uk_eur_flattener",
     "type": "spread",
@@ -51,35 +51,35 @@
     "relative_vs_policy_bp": 29.5
   },
   "mark": {
-    "date": "2026-09-23",
+    "date": "2026-09-24",
     "short": {
       "symbol": "JUZ26",
-      "date": "2026-09-23",
-      "price": 95.965,
-      "implied_rate_pct": 4.035,
-      "vs_bank_bp": 28.5
+      "date": "2026-09-24",
+      "price": 95.96,
+      "implied_rate_pct": 4.04,
+      "vs_bank_bp": 29.0
     },
     "long": {
       "symbol": "IJZ26",
-      "date": "2026-09-23",
+      "date": "2026-09-24",
       "price": 97.35,
       "implied_rate_pct": 2.65,
       "vs_deposit_bp": 15.0
     },
-    "slope_bp": 138.5,
-    "updated_utc": "2026-09-24 14:13 UTC",
-    "sonia_vs_bank_bp": 28.5,
+    "slope_bp": 139.0,
+    "updated_utc": "2026-09-25 14:26 UTC",
+    "sonia_vs_bank_bp": 29.0,
     "estr_vs_deposit_bp": 15.0,
-    "relative_vs_policy_bp": 13.5,
-    "uk_minus_eur_bp": 138.5
+    "relative_vs_policy_bp": 14.0,
+    "uk_minus_eur_bp": 139.0
   },
   "pnl": {
-    "slope_bp": 16.0,
-    "quoted_long_leg_bp": -0.0,
+    "slope_bp": 15.5,
+    "quoted_long_leg_bp": 0.0,
     "quoted_short_leg_bp": 0.0,
     "to_stop_bp": null,
     "to_tp_bp": null,
-    "usd": 400.0,
+    "usd": 387.5,
     "gbp": 0.0
   },
   "trade_path": [
@@ -628,6 +628,19 @@
       "sonia_vs_bank_bp": 28.5,
       "estr_vs_deposit_bp": 15.0,
       "relative_vs_policy_bp": 13.5
+    },
+    {
+      "date": "2026-09-24",
+      "quoted_long_rate": 4.04,
+      "quoted_short_rate": 2.65,
+      "slope_bp": 139.0,
+      "dslope_bp": 15.5,
+      "cum_pnl_gbp": 387.5,
+      "daily_pnl_usd": -12.5,
+      "cum_pnl_usd": 387.5,
+      "sonia_vs_bank_bp": 29.0,
+      "estr_vs_deposit_bp": 15.0,
+      "relative_vs_policy_bp": 14.0
     }
   ],
   "regime_attribution": [
@@ -669,7 +682,7 @@
     {
       "regime": "mixed_flattening",
       "label": "Mixed flattening",
-      "days": 8,
+      "days": 9,
       "pnl_slope_bp": NaN,
       "pnl_gbp": NaN
     },
